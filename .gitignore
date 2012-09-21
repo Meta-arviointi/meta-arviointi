@@ -1,5 +1,20 @@
+# PHP kohtaiset
 tmp/*
 config/database.php
 app/tmp/*
 app/config/database.php
 !empty
+
+# Näitä ei haluta versionhallintaan!
+*.properties
+*.swp
+.DS_Store
+.DS_Store?
+.Spotlight-V100
+.Trashes
+._*
+/.sonar/
+Icon?
+Thumbs.db
+destop.ini
+ehthumbs.db
