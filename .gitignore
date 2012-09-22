@@ -1,4 +1,4 @@
-# PHP kohtaiset
+﻿# PHP kohtaiset
 tmp/*
 config/database.php
 app/tmp/*
@@ -18,3 +18,5 @@ Icon?
 Thumbs.db
 destop.ini
 ehthumbs.db
+*.sublime-project
+*.sublime-workspace
