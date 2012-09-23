@@ -148,26 +148,6 @@ ALTER TABLE ONLY students ALTER COLUMN id SET DEFAULT nextval('students_id_seq':
 
 
 --
--- TOC entry 1931 (class 0 OID 16494)
--- Dependencies: 168
--- Data for Name: notifications; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY notifications (id, student_id, content, created) FROM stdin;
-\.
-
-
---
--- TOC entry 1932 (class 0 OID 16502)
--- Dependencies: 170
--- Data for Name: students; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY students (id, last_name, first_name, student_number) FROM stdin;
-\.
-
-
---
 -- TOC entry 1927 (class 2606 OID 16513)
 -- Name: notifications_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
