@@ -20,3 +20,4 @@ destop.ini
 ehthumbs.db
 *.sublime-project
 *.sublime-workspace
+/nbproject/
