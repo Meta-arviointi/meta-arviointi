@@ -32,9 +32,12 @@ App::uses('Controller', 'Controller');
  * @link http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
 class AppController extends Controller {
+	function beforeFilter() {
+
+	}
 
 	function beforeRender() {
-
+		/*
 		//CoffeeScript compiler
 		App::import('Vendor', 'CoffeeScript', array('file' => 'CoffeeScript' . DS . 'Init.php'));
 		CoffeeScript\Init::load();
@@ -46,5 +49,6 @@ class AppController extends Controller {
 		App::import('Vendor', 'LessPHP', array('file' => 'lessphp' . DS . 'lessc.inc.php'));
 		$less = new lessc;
 		//echo $less->compile(".block { padding: 3 + 4px }");
+		*/
 	}
 }
