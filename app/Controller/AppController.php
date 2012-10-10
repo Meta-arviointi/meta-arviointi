@@ -32,23 +32,25 @@ App::uses('Controller', 'Controller');
  * @link http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
 class AppController extends Controller {
-	function beforeFilter() {
 
-	}
+    public $helpers = array('Form', 'Html', 'Session', 'Less', 'Coffee');
 
-	function beforeRender() {
-		/*
-		//CoffeeScript compiler
-		App::import('Vendor', 'CoffeeScript', array('file' => 'CoffeeScript' . DS . 'Init.php'));
-		CoffeeScript\Init::load();
+    function beforeFilter() {
 
-		//echo CoffeeScript\Compiler::compile('alert "foo"');
+    }
+
+    function beforeRender() {
+        
+        //CoffeeScript compiler
+        //App::import('Vendor', 'CoffeeScript', array('file' => 'CoffeeScript' . DS . 'Init.php'));
+        /*CoffeeScript\Init::load();
+
+        echo CoffeeScript\Compiler::compile('alert "foo"');*/
 
 
-		//LessCSS compiler
-		App::import('Vendor', 'LessPHP', array('file' => 'lessphp' . DS . 'lessc.inc.php'));
-		$less = new lessc;
-		//echo $less->compile(".block { padding: 3 + 4px }");
-		*/
-	}
+        //LessCSS compiler
+        /*App::import('Vendor', 'LessPHP', array('file' => 'lessphp' . DS . 'lessc.inc.php'));
+        $less = new lessc;
+        echo $less->compile(".block { padding: 3 + 4px }");*/
+    }
 }
