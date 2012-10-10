@@ -31,6 +31,10 @@
  */
 	Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
 
+	// Passing course ID in url to define global scope
+	Router::connect('/:course_id/:controller', array('action' => 'index'), array('course_id' => '[0-9]+'));
+	Router::connect('/:course_id/:controller/:action/*', array(), array('course_id' => '[0-9]+'));
+
 /**
  * Load all plugin routes.  See the CakePlugin documentation on 
  * how to customize the loading of plugin routes.
