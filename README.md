@@ -12,3 +12,5 @@ Netbeans - Git-integraatio testi by Risto
 Readme understood [X], Joni
 
 Uusi rivi &copy; Janne, All rights reserved &reg;
+
+Testi. Ella
