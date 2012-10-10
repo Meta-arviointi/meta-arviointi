@@ -10,3 +10,5 @@ Netbeans - Git-integraatio testi by Risto
 "Elvis has left the building", Mika
 
 Readme understood [X], Joni
+
+Uusi rivi &copy; Janne, All rights reserved &reg;
