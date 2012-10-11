@@ -1,20 +1,14 @@
 <?php
-
 namespace CoffeeScript;
 
 define('COFFEESCRIPT_VERSION', '1.3.1');
 
 class Init {
 
-  /**
-   * Dummy function that doesn't actually do anything, it's just used to make
-   * sure that this file gets loaded.
-   */
+  function __construct() {}
+
   static function init() {}
 
-  /**
-   * This function may be used in lieu of an autoloader.
-   */
   static function load($root = NULL)
   {
     if ($root === NULL)
@@ -69,15 +63,11 @@ class Init {
 
     foreach ($files as $file)
     {
-      require_once "$root/$file.php";
+      require_once $root . DIRECTORY_SEPARATOR . $file . ".php";
     }
   }
 
 }
-
-//
-// Function shortcuts. These are all used internally.
-//
 
 function args(array $args, $required, array $optional = NULL) { return Helpers::args($args, $required, $optional); }
 function compact(array $array) { return Helpers::compact($array); }

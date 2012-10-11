@@ -38,19 +38,4 @@ class AppController extends Controller {
     function beforeFilter() {
 
     }
-
-    function beforeRender() {
-        
-        //CoffeeScript compiler
-        //App::import('Vendor', 'CoffeeScript', array('file' => 'CoffeeScript' . DS . 'Init.php'));
-        /*CoffeeScript\Init::load();
-
-        echo CoffeeScript\Compiler::compile('alert "foo"');*/
-
-
-        //LessCSS compiler
-        /*App::import('Vendor', 'LessPHP', array('file' => 'lessphp' . DS . 'lessc.inc.php'));
-        $less = new lessc;
-        echo $less->compile(".block { padding: 3 + 4px }");*/
-    }
 }

@@ -34,12 +34,14 @@ $cakeDescription = __d('cake_dev', 'CakePHP: the rapid development php framework
 		echo $this->fetch('meta');
 		echo $this->fetch('css');
 		echo $this->fetch('script');
+
+		echo $this->Html->script('jquery-1.8.2.min');
+
+		echo $this->Less->import('meta');
+		echo $this->Coffee->import('application');
 	?>
 </head>
 <body>
-	<?php
-		echo $this->Less->import('meta');
-	?>
 	<div id="container">
 		<div id="header">
 			<h1><?php echo $this->Html->link($cakeDescription, 'http://cakephp.org'); ?></h1>
