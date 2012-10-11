@@ -1,6 +1,4 @@
 <?php
-//echo APP.'Vendor'.DS.'CoffeeScript'.DS.'Init.php';
-//require_once(APP.'Vendor'.DS.'CoffeeScript'.DS.'Init.php');
 
 class CoffeeHelper extends AppHelper {
 
