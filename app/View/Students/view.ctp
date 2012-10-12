@@ -1,25 +1,36 @@
 <div class="row">
 	<div class="twelvecol last">
 		<?php
-		echo $this->Html->link('Takaisin listaukseen', array('action' => 'index'), array('class' => 'button'));
-		echo '<br>';
-		echo '<br>';
-		echo $student['Student']['last_name'];
-		echo $student['Student']['first_name'];
-		echo '<br>';
-		echo $student['Student']['student_number'];
-		echo '<br>';
-		echo '<br>';
-		echo $this->Html->link('Poista', array('action' => 'delete', $student['Student']['id']), array('class' => 'button'));
-		echo ' ';
-		echo $this->Html->link('Muokkaa', array('action' => 'edit', $student['Student']['id']), array('class' => 'button'));
-		echo '<br>';
-		echo '<br>';
+		echo $this->Html->link('&larr; Takaisin listaukseen', array('action' => 'index'), array('escape' => false));
 		?>
 	</div>
 </div>
+<hr class="row">
 <div class="row">
+	<div class="ninecol">
+		<?php
+
+		echo '<h1>';
+		echo '<strong>' . trim($student['Student']['first_name']) . ' ' . trim($student['Student']['last_name']) . '</strong> ' . $student['Student']['student_number'];
+		echo '</h1>';
+		?>
+		<p>
+			etunimi.sukunimi@uta.fi
+		</p>
+
+	</div>
+	<div class="threecol last">
+		<?php
+		echo $this->Html->link('Muokkaa', array('action' => 'edit', $student['Student']['id']), array('class' => 'button float-right'));
+		echo $this->Html->link('Poista', array('action' => 'delete', $student['Student']['id']), array('class' => 'button float-right'), 'Haluatko varmasti poistaa opiskelijan järjestelmästä?');
+		?>
+	</div>
+</div>
+<hr class="row">
+<div class="row student-entries">
 	<div class="sixcol">
+		<a href='#' class="button float-right">Lisää toimenpide</a>
+
 		<h2>Toimenpiteet</h2>
 
 		<table class="data-table">

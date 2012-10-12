@@ -5,8 +5,7 @@ class StudentsController extends AppController {
 
 	public function index() {
 
-		// Don't fetch associated data (Notifications etc)
-		$this->Student->recursive = 0;
+		$this->Student->recursive = 1;
 		
 		$students = $this->Student->find('all');
 		$this->set('students', $students);

@@ -7,6 +7,7 @@
 			<th>Sukunimi</th>
 			<th>Etunimi</th>
 			<th>Opiskelijanumero</th>
+			<th>Toimenpiteitä</th>
 		</tr>
 		<?php
 		foreach($students as $student) {
@@ -14,6 +15,7 @@
 			echo '<td>'.$this->Html->link($student['Student']['last_name'], array('action' => 'view', $student['Student']['id'])).'</td>';
 			echo '<td>'.$this->Html->link($student['Student']['first_name'], array('action' => 'view', $student['Student']['id'])).'</td>';
 			echo '<td>'.$student['Student']['student_number'].'</td>';
+			echo '<td>'.count($student['Notification']).'</td>';
 			echo '</tr>';
 		}
 		?>
