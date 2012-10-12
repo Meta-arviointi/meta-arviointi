@@ -1,3 +1,3 @@
 $(document).ready ->
-    #code goes here
-    true
+    $('#add-notification-link').click ->
+        $('#add-notification-form').slideDown(100).find('textarea').focus()
