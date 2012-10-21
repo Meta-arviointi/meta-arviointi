@@ -3,12 +3,52 @@ class StudentsController extends AppController {
 
 	public $name = 'Students';
 
+	public $helpers = array(
+		'Html',
+		'Form',
+		'Paginator');
+
+	public $paginate = array(
+		'Student' => array(
+			'limit' => 25,
+			'order' => array(
+				'Student.last_name' => 'asc'
+			))
+		);
+
 	public function index() {
 
 		$this->Student->recursive = 1;
 		
-		$students = $this->Student->find('all');
+		//$students = $this->Student->find('all');
+		$students = $this->paginate('Student');
 		$this->set('students', $students);
+
+
+		/* Get users (not ready yet) */
+		$users = $this->Student->Group->User->find('list', array(
+			'fields' => array('User.id', 'User.first_name'))
+		);
+		/* Get groups */
+		$groups = $this->Student->Group->find('list', array(
+			'fields' => array('Group.user_id', 'Group.id'))
+		);
+
+
+		$user_groups = array();
+
+		/* Add association Group_id => User.firstname */
+		foreach($groups as $user_id => $group_id) {
+			$user_groups[$group_id] = $users[$user_id];
+		}
+
+		/* Set for selection */
+		$this->set('user_groups', $user_groups);
+
+		/* Debug */
+		$this->set('users', $users);
+		$this->set('groups', $groups);
+
 	}
 
 	public function view($id) {
