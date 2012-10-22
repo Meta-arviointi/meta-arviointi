@@ -25,10 +25,11 @@ class StudentsController extends AppController {
 		$this->set('students', $students);
 
 
-		/* Get users (not ready yet) */
+		/* Get users. 'User.name' is a virtual field! */
 		$users = $this->Student->Group->User->find('list', array(
-			'fields' => array('User.id', 'User.first_name'))
+			'fields' => array('User.id', 'User.name'))
 		);
+
 		/* Get groups */
 		$groups = $this->Student->Group->find('list', array(
 			'fields' => array('Group.user_id', 'Group.id'))
@@ -37,7 +38,9 @@ class StudentsController extends AppController {
 
 		$user_groups = array();
 
-		/* Add association Group_id => User.firstname */
+		/* Make array with 'Group.id' as key and 'User.name' as value.
+		 * This way we get correct group_id => user name pairs for selection.
+		 */
 		foreach($groups as $user_id => $group_id) {
 			$user_groups[$group_id] = $users[$user_id];
 		}

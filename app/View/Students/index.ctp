@@ -7,15 +7,16 @@
 	<?php 
 	/* DEBUG
 	echo '<pre>';
-	var_dump($intersect);
-	var_dump($groups);
+	//var_dump($user_groups);
+	//var_dump($groups);
 	var_dump($users);
 	echo '</pre>';
 	*/
 
 	// Selection for assistent groups (not ready yet!)
-	echo $this->Form->create('Student', array('action' => 'filter', 'type' => 'get')); // En tiedä miten pitäisi tehdä :(
-	echo $this->Form->select('group', $user_groups);
+	echo $this->Form->create('Student', array('action' => 'filter', 'type' => 'get')); // Tähän jotain AJAXia?
+	echo $this->Form->label('Vastuuryhmä');
+	echo $this->Form->select('group', $user_groups, array('empty' => array(0 => 'Kaikki')));
 	echo $this->Form->end();
 	?>
 
