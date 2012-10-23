@@ -11,46 +11,38 @@ class StudentsController extends AppController {
 	public $paginate = array(
 		'Student' => array(
 			'limit' => 25,
-			'order' => array(
-				'Student.last_name' => 'asc'
-			))
+			'order' => array('Student.last_name' => 'asc'),
+			'contain' => array(
+				'Notification', // Test Notifications, to be replaced with Note/Action
+				'Group' => array(
+					'User' => array(
+						'fields' => 'name'
+						)
+					)
+				)
+			)
 		);
 
 	public function index() {
 
+		// 1 = default?
 		$this->Student->recursive = 1;
 		
 		//$students = $this->Student->find('all');
 		$students = $this->paginate('Student');
 		$this->set('students', $students);
 
+		// Call Group-model to return groups with assistant names
+		$results = $this->Student->Group->groups();
 
-		/* Get users. 'User.name' is a virtual field! */
-		$users = $this->Student->Group->User->find('list', array(
-			'fields' => array('User.id', 'User.name'))
-		);
-
-		/* Get groups */
-		$groups = $this->Student->Group->find('list', array(
-			'fields' => array('Group.user_id', 'Group.id'))
-		);
-
-
-		$user_groups = array();
-
-		/* Make array with 'Group.id' as key and 'User.name' as value.
-		 * This way we get correct group_id => user name pairs for selection.
-		 */
-		foreach($groups as $user_id => $group_id) {
-			$user_groups[$group_id] = $users[$user_id];
+		// Create array with 'Group.id' as key and 'User.name' as value
+		// NOTE: 'User.name' is virtual field defined in User-model
+		foreach($results as $result) {
+			$user_groups[$result['Group']['id']] = $result['User']['name'];
 		}
 
-		/* Set for selection */
+		// Set array to be used in drop-down selection
 		$this->set('user_groups', $user_groups);
-
-		/* Debug */
-		$this->set('users', $users);
-		$this->set('groups', $groups);
 
 	}
 

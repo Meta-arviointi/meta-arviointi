@@ -31,4 +31,6 @@ App::uses('Model', 'Model');
  * @package       app.Model
  */
 class AppModel extends Model {
+	/* Add Containable-behaviour to all models */
+	public $actsAs = array('Containable');
 }

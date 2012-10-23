@@ -5,13 +5,12 @@
 
 
 	<?php 
-	/* DEBUG
-	echo '<pre>';
+	 /* DEBUG */
+	//echo '<pre>';
+	// var_dump($students);
 	//var_dump($user_groups);
-	//var_dump($groups);
-	var_dump($users);
-	echo '</pre>';
-	*/
+	//var_dump($students[1]);
+	//echo '</pre>';
 
 	// Selection for assistent groups (not ready yet!)
 	echo $this->Form->create('Student', array('action' => 'filter', 'type' => 'get')); // Tähän jotain AJAXia?
@@ -25,7 +24,7 @@
 			<th><?php echo $this->Paginator->sort('last_name', 'Sukunimi'); ?></th>
 			<th><?php echo $this->Paginator->sort('first_name', 'Etunimi'); ?></th>
 			<th><?php echo $this->Paginator->sort('student_number', 'Opiskelijanumero'); ?></th>
-			<th>Assistentti</th>
+			<th>Assistentti</th> <!-- TODO: Assistentti Paginator-sorttuas -->
 			<th>Toimenpiteitä</th>
 		</tr>
 		<?php
@@ -34,7 +33,18 @@
 			echo '<td>'.$this->Html->link($student['Student']['last_name'], array('action' => 'view', $student['Student']['id'])).'</td>';
 			echo '<td>'.$this->Html->link($student['Student']['first_name'], array('action' => 'view', $student['Student']['id'])).'</td>';
 			echo '<td>'.$student['Student']['student_number'].'</td>';
-			echo '<td>Asseri Assistentti</td>';
+
+			/* If student belongs to a group, print assistant name */
+			if ( isset($student['Group']['User']) ) {
+				echo '<td>'.$student['Group']['User']['name'].'</td>';
+			} else {
+				/* If not in any group, leave cell empty */
+				echo '<td></td>';
+
+			}
+			
+			// Jos ei tietokantataulut ole vielä kunnossa kommentoi yo. if ja laita vain "Asseri Assistentti":
+			//echo '<td>Asseri Assistentti</td>';
 			echo '<td>'.count($student['Notification']).'</td>';
 			echo '</tr>';
 		}
