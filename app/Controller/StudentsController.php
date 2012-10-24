@@ -37,6 +37,8 @@ class StudentsController extends AppController {
 
 		// Create array with 'Group.id' as key and 'User.name' as value
 		// NOTE: 'User.name' is virtual field defined in User-model
+
+		$user_groups = array();
 		foreach($results as $result) {
 			$user_groups[$result['Group']['id']] = $result['User']['name'];
 		}
