@@ -8,6 +8,7 @@
 
 	echo $this->Form->input('last_name');
 	echo $this->Form->input('student_number');
+	echo $this->Form->input('email');
 
 	echo $this->Form->submit('Tallenna');
 	echo $this->Html->link('Peruuta', array('action' => 'view', $this->data['Student']['id']));

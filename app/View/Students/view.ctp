@@ -15,7 +15,7 @@
 		echo '</h1>';
 		?>
 		<p>
-			etunimi.sukunimi@uta.fi
+			<?php echo $student['Student']['email'] ?>
 		</p>
 
 	</div>
