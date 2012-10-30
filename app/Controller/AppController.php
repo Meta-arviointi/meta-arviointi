@@ -35,7 +35,21 @@ class AppController extends Controller {
 
     public $helpers = array('Form', 'Html', 'Session', 'Less', 'Coffee');
 
-    function beforeFilter() {
+    public $components = array(
+        'Session',
+        'Auth' => array(
+            'loginRedirect' => array('controller' => 'students', 'action' => 'index'),
+            'logoutRedirect' => array('controller' => 'pages', 'action' => 'display', 'home'),
+            'authenticate' => array(
+                'Form' => array(
+                    'fields' => array('username' => 'basic_user_account')
+                )
+            )
+        )
+    );
 
+    public function beforeFilter() {
+//        $this->Auth->allow('*');
+//        $this->Auth->allow('add', 'logout');
     }
 }

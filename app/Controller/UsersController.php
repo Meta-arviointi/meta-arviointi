@@ -3,14 +3,8 @@ class UsersController extends AppController {
 
     public $name = 'Users';
 
-    public function beforeFilter() {
-        parent::beforeFilter();
-//        $this->Auth->allow('add', 'logout');
-    }
-
     public function login() {
         if ($this->request->is('post')) {
-debug($this->Auth->login());
             if ($this->Auth->login()) {
                 $this->redirect($this->Auth->redirect());
             } else {

@@ -20,10 +20,10 @@ class User extends AppModel {
     );
 
     public $validate = array(
-        'email' => array(
+        'basic_user_account' => array(
             'required' => array(
                 'rule' => array('notEmpty'),
-                'message' => 'Email is required'
+                'message' => 'A basic user account is required'
             )
         ),
         'password' => array(
