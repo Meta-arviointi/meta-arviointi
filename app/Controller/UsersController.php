@@ -10,6 +10,7 @@ class UsersController extends AppController {
 
     public function login() {
         if ($this->request->is('post')) {
+debug($this->Auth->login());
             if ($this->Auth->login()) {
                 $this->redirect($this->Auth->redirect());
             } else {
@@ -26,7 +27,7 @@ class UsersController extends AppController {
         $this->User->recursive = 0;
         $this->set('users', $this->paginate());
     }
-
+/*
     public function view($id = null) {
         $this->User->id = $id;
         if (!$this->User->exists()) {
@@ -34,7 +35,7 @@ class UsersController extends AppController {
         }
         $this->set('user', $this->User->read(null, $id));
     }
-
+*/
     public function add() {
         if ($this->request->is('post')) {
             $this->User->create();
@@ -46,7 +47,7 @@ class UsersController extends AppController {
             }
         }
     }
-
+/*
     public function edit($id = null) {
         $this->User->id = $id;
         if (!$this->User->exists()) {
@@ -80,4 +81,5 @@ class UsersController extends AppController {
         $this->Session->setFlash(__('User was not deleted'));
         $this->redirect(array('action' => 'index'));
     }
+*/
 }
