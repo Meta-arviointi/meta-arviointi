@@ -274,7 +274,7 @@ ALTER SEQUENCE notes_id_seq OWNED BY notes.id;
 -- Name: notes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('notes_id_seq', 1, true);
+SELECT pg_catalog.setval('notes_id_seq', 3, true);
 
 
 
