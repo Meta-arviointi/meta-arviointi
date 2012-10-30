@@ -45,7 +45,7 @@
 			
 			// Jos ei tietokantataulut ole vielä kunnossa kommentoi yo. if ja laita vain "Asseri Assistentti":
 			//echo '<td>Asseri Assistentti</td>';
-			echo '<td>'.count($student['Notification']).'</td>';
+			echo '<td>'.count($student['Note']).'</td>';
 			echo '</tr>';
 		}
 		?>

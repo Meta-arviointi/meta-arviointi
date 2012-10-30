@@ -34,19 +34,20 @@
 		<h2>Toimenpiteet</h2>
 
 		<?php
-		echo $this->Form->create('Notification', array('id' => 'add-notification-form', 'url' => array('controller' => 'students', 'action' => 'add_notification')));
+		echo $this->Form->create('Note', array('id' => 'add-notification-form', 'url' => array('controller' => 'students', 'action' => 'add_notification')));
 		echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $student['Student']['id']));
-		echo $this->Form->input('content', array('label' => false));
+		echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => 2)); // Userin 2 antama joka kerta!
+		echo $this->Form->input('note', array('label' => false));
 		echo $this->Form->submit('Lisää');
 		echo $this->Form->end();
 		?>
 
 		<table class="data-table">
 		<?php
-		foreach($student['Notification'] as $notification) {
+		foreach($student['Note'] as $note) {
 			echo '<tr>';
-			echo '<td>'.date('d.m.Y H:i:s', strtotime($notification['created'])).'</td>';
-			echo '<td>'.$notification['content'].'</td>';
+			echo '<td>'.date('d.m.Y H:i:s', strtotime($note['created'])).'</td>';
+			echo '<td>'.$note['note'].'</td>';
 			echo '</tr>';
 		}
 		?>

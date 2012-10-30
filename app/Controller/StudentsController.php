@@ -13,7 +13,7 @@ class StudentsController extends AppController {
 			'limit' => 25,
 			'order' => array('Student.last_name' => 'asc'),
 			'contain' => array(
-				'Notification', // Test Notifications, to be replaced with Note/Action
+				'Note',
 				'Group' => array(
 					'User' => array(
 						'fields' => 'name'
@@ -83,10 +83,10 @@ class StudentsController extends AppController {
 
 
 
-	public function add_notification() {
+	public function add_notification() { // change to add_note?
 		if($this->request->is('post')) {
-			if($this->Student->Notification->save($this->request->data)) {
-				$this->redirect(array('action' => 'view', $this->request->data['Notification']['student_id']));
+			if($this->Student->Note->save($this->request->data)) {
+				$this->redirect(array('action' => 'view', $this->request->data['Note']['student_id']));
 			}
 		}
 	}
