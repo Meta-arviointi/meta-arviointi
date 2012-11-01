@@ -1,3 +1,10 @@
+<script type="text/javascript">
+$(document).ready(function() {
+	$('#StudentGroup').change(function() {
+		window.location = '/meta-arviointi/students/index/' + $(this).val();
+	});
+})
+</script>
 <div class="row">
 	<div class="twelvecol last">
 	<?php echo $this->Html->link('Lisää uusi opiskelija', array('action' => 'add'), array('class' => 'button')); ?>
@@ -12,10 +19,10 @@
 	//var_dump($students[1]);
 	//echo '</pre>';
 
-	// Selection for assistent groups (not ready yet!)
-	echo $this->Form->create('Student', array('action' => 'filter', 'type' => 'get')); // Tähän jotain AJAXia?
+	// Selection for assistent groups
+	echo $this->Form->create('Student');
 	echo $this->Form->label('group', 'Vastuuryhmä');
-	echo $this->Form->select('group', $user_groups, array('empty' => array(0 => 'Kaikki')));
+	echo $this->Form->select('group', $user_groups, array('empty' => array(0 => 'Kaikki'), 'default' => $group_id));
 	echo $this->Form->end();
 	?>
 

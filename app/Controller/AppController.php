@@ -33,7 +33,7 @@ App::uses('Controller', 'Controller');
  */
 class AppController extends Controller {
 
-    public $helpers = array('Form', 'Html', 'Session', 'Less', 'Coffee');
+    public $helpers = array('Form', 'Html', 'Session', 'Less', 'Coffee', 'Paginator');
 
     public $components = array(
         'Session',
@@ -45,7 +45,8 @@ class AppController extends Controller {
                     'fields' => array('username' => 'basic_user_account')
                 )
             )
-        )
+        ),
+        'RequestHandler'
     );
 
     public function beforeFilter() {

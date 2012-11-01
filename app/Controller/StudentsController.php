@@ -3,34 +3,50 @@ class StudentsController extends AppController {
 
 	public $name = 'Students';
 
-	public $helpers = array(
-		'Html',
-		'Form',
-		'Paginator');
+	public function index($group_id = 0) {
 
-	public $paginate = array(
-		'Student' => array(
-			'limit' => 25,
-			'order' => array('Student.last_name' => 'asc'),
-			'contain' => array(
-				'Note',
-				'Group' => array(
-					'User' => array(
-						'fields' => 'name'
+		if ( $group_id > 0 ) { // Filter by group
+			$this->paginate = array(
+				'Student' => array(
+					'limit' => 25,
+					'conditions' => array('Student.group_id' => $group_id), // Only students in group X
+					'order' => array('Student.last_name' => 'asc'),
+					'contain' => array(
+						'Note',
+						'Group' => array(
+							'User' => array(
+								'fields' => 'name'
+							)
 						)
 					)
 				)
-			)
-		);
+			);
 
-	public function index() {
-
+		} else { // All students
+			$this->paginate = array(
+				'Student' => array(
+					'limit' => 25,
+					'order' => array('Student.last_name' => 'asc'),
+					'contain' => array(
+						'Note',
+						'Group' => array(
+							'User' => array(
+								'fields' => 'name'
+							)
+						)
+					)
+				)
+			);
+		}
 		// 1 = default?
 		$this->Student->recursive = 1;
 		
 		//$students = $this->Student->find('all');
 		$students = $this->paginate('Student');
 		$this->set('students', $students);
+
+
+		/* Get data for select-form to filter groups by assistant */
 
 		// Call Group-model to return groups with assistant names
 		$results = $this->Student->Group->groups();
@@ -45,6 +61,9 @@ class StudentsController extends AppController {
 
 		// Set array to be used in drop-down selection
 		$this->set('user_groups', $user_groups);
+
+		// Group_id visible for view
+		$this->set('group_id', $group_id);
 
 	}
 
