@@ -11,8 +11,8 @@ class CoffeeHelper extends AppHelper {
         CoffeeScript\Init::load();
 
         // Paths
-        $input_file = WWW_ROOT.DS.'coffee'.DS.$filename.'.coffee';
-        $output_file = WWW_ROOT.DS.'js'.DS.$filename.'.js';
+        $input_file = WWW_ROOT.'coffee'.DS.$filename.'.coffee';
+        $output_file = WWW_ROOT.'js'.DS.$filename.'.js';
 
         // If modified, re-compile
         if(!file_exists($output_file) || filemtime($input_file) > filemtime($output_file)) {

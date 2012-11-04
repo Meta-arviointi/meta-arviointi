@@ -11,8 +11,8 @@ class LessHelper extends AppHelper {
         $less = new lessc;
 
         // Paths
-        $input_file = WWW_ROOT.DS.'less'.DS.$filename.'.less';
-        $output_file = WWW_ROOT.DS.'css'.DS.$filename.'.css';
+        $input_file = WWW_ROOT.'less'.DS.$filename.'.less';
+        $output_file = WWW_ROOT.'css'.DS.$filename.'.css';
 
         // If modified, re-compile
         if(!file_exists($output_file) || filemtime($input_file) > filemtime($output_file)) {
