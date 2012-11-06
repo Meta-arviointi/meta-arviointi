@@ -14,7 +14,7 @@ class StudentsController extends AppController {
 					'conditions' => array('Student.group_id' => $group_id), // Only students in group X
 					'order' => array('Student.last_name' => 'asc'),
 					'contain' => array(
-						'Note',
+						'Action',
 						'Group' => array(
 							'User' => array(
 								'fields' => 'name'
@@ -30,7 +30,7 @@ class StudentsController extends AppController {
 					'limit' => 25,
 					'order' => array('Student.last_name' => 'asc'),
 					'contain' => array(
-						'Note',
+						'Action',
 						'Group' => array(
 							'User' => array(
 								'fields' => 'name'
