@@ -29,7 +29,7 @@
 /**
  * ...and connect the rest of 'Pages' controller's urls.
  */
-	Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
+	//Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
 
 	// Passing course ID in url to define global scope
 	Router::connect('/:course_id/:controller', array('action' => 'index'), array('course_id' => '[0-9]+', 'persist' => array('course_id')));

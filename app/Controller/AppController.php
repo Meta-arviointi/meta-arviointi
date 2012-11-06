@@ -42,8 +42,9 @@ class AppController extends Controller {
     public $components = array(
         'Session',
         'Auth' => array(
+            'loginAction' => array('controller' => 'users', 'action' => 'login', 'course_id' => false),
             'loginRedirect' => array('controller' => 'students', 'action' => 'index'),
-            'logoutRedirect' => array('controller' => 'pages', 'action' => 'display', 'home'),
+            'logoutRedirect' => array('controller' => 'users', 'action' => 'login', 'course_id' => false),
             'authenticate' => array(
                 'Form' => array(
                     'fields' => array('username' => 'basic_user_account')
@@ -54,15 +55,17 @@ class AppController extends Controller {
     );
 
     public function beforeFilter() {
-        if(!is_null($this->request->course_id)) {
-            $this->_course = $this->Course->findById($this->request->course_id);
-        }
-        if(!$this->request->course_id || !$this->_course) {
-            $params = array(
-                'order' => array('Course.starttime DESC')
-            );
-            $this->_course = $this->Course->find('first', $params);
-            $this->redirect(array('course_id' => $this->_course['Course']['id']));
+        if($this->Auth->user()) {
+            if(!is_null($this->request->course_id)) {
+                $this->_course = $this->Course->findById($this->request->course_id);
+            }
+            if(!$this->request->course_id || !$this->_course) {
+                $params = array(
+                    'order' => array('Course.starttime DESC')
+                );
+                $this->_course = $this->Course->find('first', $params);
+                $this->redirect(array('course_id' => $this->_course['Course']['id']));
+            }
         }
 //        $this->Auth->allow('*');
 //        $this->Auth->allow('add', 'logout');

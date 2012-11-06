@@ -20,7 +20,11 @@
 </head>
 <body>
 	<div class="container">
-		<?php echo $this->Session->flash(); ?>
+		<div class="row">
+			<div class="twelvecol">
+				<?php echo $this->Session->flash(); ?>
+			</div>
+		</div>
 		<?php echo $this->fetch('content'); ?>
 	</div>
 
@@ -28,6 +32,18 @@
 		<div class="container">
 			<div class="row">
 				<div class="twelvecol">
+					<?php
+						if($this->Session->read('Auth.User')) {
+							echo '<div id="login-details">';
+							echo '<span class="logged-user">' . $this->Session->read('Auth.User.name') . '</span>';
+							echo $this->Html->link(
+								__('Kirjaudu ulos'),
+								array('controller' => 'users', 'action' => 'logout', 'course_id' => false),
+								array('id' => 'logout-link')
+							);
+							echo '</div>';
+						} 
+					?>
 					<h1>Meta-arviointi</h1>
 				</div>
 			</div>

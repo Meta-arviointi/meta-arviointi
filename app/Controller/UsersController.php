@@ -3,6 +3,11 @@ class UsersController extends AppController {
 
     public $name = 'Users';
 
+    public function beforeFilter() {
+        parent::beforeFilter();
+        $this->Auth->allow(array('login', 'logout'));
+    }
+
     public function login() {
         if ($this->request->is('post')) {
             if ($this->Auth->login()) {
@@ -14,6 +19,7 @@ class UsersController extends AppController {
     }
 
     public function logout() {
+        $this->Session->setFlash(__('Kirjauduit ulos'));
         $this->redirect($this->Auth->logout());
     }
 
