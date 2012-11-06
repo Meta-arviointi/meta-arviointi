@@ -37,6 +37,7 @@ body {
     text-shadow: 1px 1px 0px #fff;
     color: #4d5b60;
     padding-top: 60px;
+    padding-bottom: 40px;
 }
 
 h1, h2, h3, h4, h5, h6, th {
@@ -197,6 +198,7 @@ textarea {
         font-family: 'OpenSansBold';
         margin-bottom: 10px;
     }
+    border-radius: 5px;
     background: #fff;
     box-shadow: 0px 2px 5px rgba(77,91,96,0.1);
     margin: 20px auto;
@@ -215,6 +217,97 @@ textarea {
         text-align: right;
         input {
             width: auto;
+        }
+    }
+}
+
+#add-action-form,
+#add-note-form {
+    background: #fff;
+    box-shadow: 0px 2px 5px rgba(77,91,96,0.1);
+    margin: 20px 0;
+    padding: 10px 20px;
+    border-radius: 5px;
+    .input {
+        border-bottom: 1px solid #f0f0f0;
+        padding: 5px 0;
+        label {
+            display: inline-block;
+            width: 25%;
+        }
+    }
+    textarea {
+        width: 95%;
+    }
+    .submit {
+        padding-top: 5px;
+        color: #b0b0b0;
+        font-size: 0.8em;
+        text-align: right;
+        .cancel {
+            float: left;
+            line-height: 30px;
+            color: #b0b0b0;
+        }
+        input {
+            margin-right: 0;
+        }
+    }
+    .decollapse-toggle {
+        display: block;
+        text-align: center;
+        text-shadow: none;
+        font-family: OpenSansBold;
+    }
+}
+
+#add-note-form {
+    .submit {
+        text-align: right;
+        input {
+        }
+    }
+}
+
+.action, .note {
+    background: #fff;
+    box-shadow: 0px 2px 5px rgba(77,91,96,0.1);
+    margin: 20px 0;
+    padding: 20px 20px 10px 20px;
+    border-radius: 5px;
+    p {
+        margin: 10px 0;
+    }
+    .meta {
+        padding-top: 5px;
+        margin-top: 10px;
+        border-top: 1px solid #f0f0f0;
+        color: #b0b0b0;
+        font-size: 0.8em;
+        text-align: right;
+    }
+}
+
+.note {
+    h3 {
+        font-size: 1em;
+        margin-bottom: 0.2em;
+    }
+    p {
+        margin-top: 0.2em;
+    }
+}
+
+#add-student-link {
+    float: right;
+}
+
+#StudentAddForm,
+#StudentEditForm {
+    .input {
+        label {
+            display: inline-block;
+            width: 150px;
         }
     }
 }
