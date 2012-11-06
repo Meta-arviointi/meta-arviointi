@@ -3,7 +3,9 @@ class StudentsController extends AppController {
 
 	public $name = 'Students';
 
-	public function index($group_id = 0) {
+	public function index() {
+		$group_id = 0;
+		if(isset($this->request['url']['group_id'])) $group_id = $this->request['url']['group_id'];
 
 		if ( $group_id > 0 ) { // Filter by group
 			$this->paginate = array(
@@ -12,7 +14,7 @@ class StudentsController extends AppController {
 					'conditions' => array('Student.group_id' => $group_id), // Only students in group X
 					'order' => array('Student.last_name' => 'asc'),
 					'contain' => array(
-						'Note',
+						'Action',
 						'Group' => array(
 							'User' => array(
 								'fields' => 'name'
@@ -28,7 +30,7 @@ class StudentsController extends AppController {
 					'limit' => 25,
 					'order' => array('Student.last_name' => 'asc'),
 					'contain' => array(
-						'Note',
+						'Action',
 						'Group' => array(
 							'User' => array(
 								'fields' => 'name'
@@ -68,7 +70,9 @@ class StudentsController extends AppController {
 	}
 
 	public function view($id) {
+		$this->Student->recursive = 2;
 		$student = $this->Student->findById($id);
+		$this->set('exercises', $this->Student->Action->Exercise->find('list'));
 		$this->set('student', $student);
 	}
 
@@ -100,12 +104,18 @@ class StudentsController extends AppController {
 		$this->redirect(array('action' => 'index'));
 	}
 
-
-
-	public function add_notification() { // change to add_note?
+	public function add_note() { // change to add_note?
 		if($this->request->is('post')) {
 			if($this->Student->Note->save($this->request->data)) {
 				$this->redirect(array('action' => 'view', $this->request->data['Note']['student_id']));
+			}
+		}
+	}
+
+	public function add_action() { // change to add_note?
+		if($this->request->is('post')) {
+			if($this->Student->Action->save($this->request->data)) {
+				$this->redirect(array('action' => 'view', $this->request->data['Action']['student_id']));
 			}
 		}
 	}

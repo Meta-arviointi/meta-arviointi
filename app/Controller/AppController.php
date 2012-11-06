@@ -35,6 +35,10 @@ class AppController extends Controller {
 
     public $helpers = array('Form', 'Html', 'Session', 'Less', 'Coffee', 'Paginator');
 
+    public $uses = array('Course');
+
+    private $_course;
+
     public $components = array(
         'Session',
         'Auth' => array(
@@ -50,6 +54,16 @@ class AppController extends Controller {
     );
 
     public function beforeFilter() {
+        if(!is_null($this->request->course_id)) {
+            $this->_course = $this->Course->findById($this->request->course_id);
+        }
+        if(!$this->request->course_id || !$this->_course) {
+            $params = array(
+                'order' => array('Course.starttime DESC')
+            );
+            $this->_course = $this->Course->find('first', $params);
+            $this->redirect(array('course_id' => $this->_course['Course']['id']));
+        }
 //        $this->Auth->allow('*');
 //        $this->Auth->allow('add', 'logout');
     }
