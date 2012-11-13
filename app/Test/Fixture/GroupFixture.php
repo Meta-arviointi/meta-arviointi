@@ -9,8 +9,8 @@ class GroupFixture extends CakeTestFixture {
 		'user_id' => array('type' => 'integer')
 	);
 	public $records = array(
-		array('id' => 1, 'course_id' => 1, 'user_id' => 2);
-		array('id' => 2, 'course_id' => 1, 'user_id' => 3);
+		array('id' => 1, 'course_id' => 1, 'user_id' => 2),
+		array('id' => 2, 'course_id' => 1, 'user_id' => 3)
 		//array('id' => 3, 'course_id' => 1, 'user_id' => 4);
 	);
 

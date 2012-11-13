@@ -21,7 +21,7 @@ class UserFixture extends CakeTestFixture {
 			'email' => 'vastuu.ope@uta.fi', 
 			'is_admin' => 'true',
 			'password' => 'testi'
-		);
+		),
 		array('id' => 2,
 			'basic_user_account' => 23456, 
 			'last_name' => 'Assistentti',
@@ -29,7 +29,7 @@ class UserFixture extends CakeTestFixture {
 			'email' => 'asseri.assistentti@uta.fi',
 			'is_admin' => 'false',
 			'password' => 'testi'
-		);
+		),
 		array('id' => 3,
 			'basic_user_account' => 34567, 
 			'last_name' => 'Assistentti',
@@ -37,7 +37,7 @@ class UserFixture extends CakeTestFixture {
 			'email' => 'testi.assistentti@uta.fi',
 			'is_admin' => 'false',
 			'password' => 'testi'
-		);
+		),
 		array('id' => 4,
 			'basic_user_account' => 45678, 
 			'last_name' => 'Auttaja',
@@ -45,7 +45,7 @@ class UserFixture extends CakeTestFixture {
 			'email' => 'aapo.auttaja@uta.fi',
 			'is_admin' => 'false',
 			'password' => 'testi'
-		);
+		)
 	);
 }
 

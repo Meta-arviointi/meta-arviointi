@@ -18,7 +18,7 @@ class GroupTest extends CakeTestCase {
 					'basic_user_account' => 23456,
 					'last_name' => 'Assistentti',
 					'first_name' => 'Asseri',
-					'email' => 'asseri.assistentti@uta.fi'
+					'email' => 'asseri.assistentti@uta.fi',
 					'is_admin' => 'false',
 					'password' => 'testi')
 					)
@@ -30,7 +30,7 @@ class GroupTest extends CakeTestCase {
 					'basic_user_account' => 34567,
 					'last_name' => 'Assistentti',
 					'first_name' => 'Testi',
-					'email' => 'testi.assistentti@uta.fi'
+					'email' => 'testi.assistentti@uta.fi',
 					'is_admin' => 'false',
 					'password' => 'testi')
 					)
@@ -38,7 +38,7 @@ class GroupTest extends CakeTestCase {
 			)	 
 		);
 		
-		$this->asserEquals($expected, $result);
+		$this->assertEquals($expected, $result);
 		
 	}
 }
