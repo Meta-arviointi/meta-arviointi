@@ -13,7 +13,7 @@ class User extends AppModel {
 
     public $name = 'User';
 
-    public $hasMany = array('Group');
+    public $hasMany = array('Group', 'ActionComment');
 
     public $virtualFields = array(
         'name' => 'User.first_name || \' \' || User.last_name'
