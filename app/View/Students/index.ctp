@@ -7,7 +7,7 @@
 	<?php 
 	 /* DEBUG */
 	echo '<pre>';
-	 var_dump($students);
+	// var_dump($students);
 	//var_dump($user_groups);
 	//var_dump($students[1]);
 	echo '</pre>';

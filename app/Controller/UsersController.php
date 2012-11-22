@@ -23,6 +23,33 @@ class UsersController extends AppController {
         $this->redirect($this->Auth->logout());
     }
 
+
+    public function start() {
+        //var_dump($this->Auth->user());
+        $course_id = $this->request->params['course_id'];
+        $is_admin = $this->Auth->user('is_admin');
+        /* Get user's group in current course */
+        $user = $this->User->Group->find('first', array(
+            'conditions' => array(
+                'Group.user_id' => $this->Auth->user('id'),
+                'Group.course_id' => $course_id
+                ),
+            'contain' => array(
+                'User',
+                )
+            )
+        );
+        if ( !empty($user['Group']) ) {
+            $this->redirect('/'.$course_id.'/students/index?group_id='.$user['Group']['id']);    
+        } else { // user has not a group in current course 
+            $this->redirect(array(
+                'controller' => 'students',
+                'action' => 'index'
+                )
+            );
+        }
+        
+    }
     public function index() {
         $this->User->recursive = 0;
         $this->set('users', $this->paginate());
