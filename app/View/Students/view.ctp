@@ -1,3 +1,9 @@
+<?php 
+	 /* DEBUG */
+	echo '<pre>';
+	 var_dump($student);
+	echo '</pre>';
+?>
 <div class="row">
 	<div class="twelvecol last">
 		<?php
@@ -17,6 +23,7 @@
 		<p>
 			<?php echo $student['Student']['email'] ?>
 		</p>
+		<p><?php echo $student['CourseMembership'][0]['comment'] ?></p>
 
 	</div>
 	<div class="threecol last">
@@ -37,14 +44,10 @@
 		echo '<a href="#" class="decollapse-toggle">' . __('Lisää toimenpide') . '</a>';
 		echo '<div class="collapsable">';
 		echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $student['Student']['id']));
-		echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => 2)); // Userin 2 antama joka kerta!
+		echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
 
 
-		echo $this->Form->input('type', array('label' => __('Tyyppi'), 'options' => array(
-			'Lisäaika' => 'Lisäaika',
-			'Hylkäys' => 'Hylkäys',
-			'Korjauspyyntö' => 'Korjauspyyntö'
-		)));
+		echo $this->Form->input('type', array('label' => __('Tyyppi'), 'options' => $action_types));
 		echo $this->Form->input('exercise_id', array('label' => __('Harjoitus'), 'options' => $exercises));
 		$default_deadline = date('Y-m-d') . ' 16:00:00';
 		$default_deadline = date('Y-m-d H:i:s', strtotime('+ 7 day', strtotime($default_deadline)));
@@ -65,11 +68,11 @@
 		echo $this->Form->end();
 
 		foreach($student['Action'] as $action) {
-			$action_title = $action['type'];
+			$action_title = $action['ActionType']['name'];
 			if(!empty($action['exercise_id'])) $action_title = 'H' . $action['exercise_id'] . ': ' . $action_title;
 			echo '<div class="action">';
 			echo '<h3>' . $action_title . '</h3>';
-			if(!empty($action['comment'])) echo '<p class="comment">'.$action['comment'].'</p>';
+			if(!empty($action['description'])) echo '<p class="comment">'.$action['description'].'</p>';
 			echo '<div class="meta">';
 			echo '<span class="timestamp">'.date('d.m.Y H:i:s', strtotime($action['created'])).'</span> - ';
 			echo '<span class="by">' . $action['User']['name'] . '</span>';
@@ -80,27 +83,7 @@
 	</div>
 	<div class="threecol">
 		<h2>Kommentit</h2>
-		<?php
-		echo $this->Form->create('Note', array('id' => 'add-note-form', 'url' => array('controller' => 'students', 'action' => 'add_note')));
-		echo '<a href="#" class="decollapse-toggle">' . __('Lisää kommentti') . '</a>';
-		echo '<div class="collapsable">';
-		echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $student['Student']['id']));
-		echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => 2)); // Userin 2 antama joka kerta!
-		echo $this->Form->input('note', array('rows' => 3, 'label' => false, 'placeholder' => __('Kirjoita kommentti...')));
-		echo $this->Form->submit(__('Lähetä'), array('before' => '<a href="#" class="collapse-toggle cancel">' . __('Peruuta') . '</a>'));
-		echo '</div>';
-		echo $this->Form->end();
-
-		foreach($student['Note'] as $note) {
-			echo '<div class="note">';
-			echo '<h3>' . $note['User']['name'] . ':</h3>';
-			if(!empty($note['note'])) echo '<p class="comment">'.$note['note'].'</p>';
-			echo '<div class="meta">';
-			echo '<span class="timestamp">'.date('d.m.Y H:i:s', strtotime($note['created'])).'</span>';
-			echo '</div>';
-			echo '</div>';
-		}
-		?>
+		<p>Yleinen kommentti siirretty opiskelijan tietojen alle.</p>
 	</div>
 	<div class="threecol last">
 		<h2>Sähköposti</h2>

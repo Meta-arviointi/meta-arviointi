@@ -6,11 +6,11 @@
 
 	<?php 
 	 /* DEBUG */
-	//echo '<pre>';
+	echo '<pre>';
 	// var_dump($students);
 	//var_dump($user_groups);
 	//var_dump($students[1]);
-	//echo '</pre>';
+	echo '</pre>';
 
 	// Selection for assistent groups
 	echo $this->Form->create(false, array('id' => 'StudentIndexFilters', 'type' => 'get'));
@@ -21,12 +21,19 @@
 
 	<table class="data-table">
 		<tr>
+			<th><?php echo __('Sukunimi'); ?></th>
+			<th><?php echo __('Etunimi'); ?></th>
+			<th><?php echo __('Opiskelijanumero'); ?></th>
+			<th><?php echo __('Assistentti'); ?></th> <!-- TODO: Assistentti Paginator-sorttuas -->
+			<th><?php echo __('Toimenpiteitä'); ?></th>
+		</tr>
+		<!--<tr> paginaatio poistettu käytöstä (toistaiseksi)
 			<th><?php echo $this->Paginator->sort('last_name', 'Sukunimi'); ?></th>
 			<th><?php echo $this->Paginator->sort('first_name', 'Etunimi'); ?></th>
 			<th><?php echo $this->Paginator->sort('student_number', 'Opiskelijanumero'); ?></th>
-			<th>Assistentti</th> <!-- TODO: Assistentti Paginator-sorttuas -->
+			<th>Assistentti</th>
 			<th>Toimenpiteitä</th>
-		</tr>
+		</tr> -->
 		<?php
 		foreach($students as $student) {
 			echo '<tr>';
@@ -35,8 +42,8 @@
 			echo '<td>'.$student['Student']['student_number'].'</td>';
 
 			/* If student belongs to a group, print assistant name */
-			if ( isset($student['Group']['User']) ) {
-				echo '<td>'.$student['Group']['User']['name'].'</td>';
+			if ( isset($student['Group'][0]['User']) ) {
+				echo '<td>'.$student['Group'][0]['User']['name'].'</td>';
 			} else {
 				/* If not in any group, leave cell empty */
 				echo '<td></td>';

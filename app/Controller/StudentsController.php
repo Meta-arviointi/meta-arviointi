@@ -7,11 +7,14 @@ class StudentsController extends AppController {
 		$group_id = 0;
 		if(isset($this->request['url']['group_id'])) $group_id = $this->request['url']['group_id'];
 
+		/* Paginointi ei toimi suoraan HABTM modelin kanssa kun ehtoina halutaan käyttää
+		syvemmällä assosiaatiossa olevia arvoja. Esim Studenteja ei voi paginoida Group.id:n perusteella
+
 		if ( $group_id > 0 ) { // Filter by group
 			$this->paginate = array(
 				'Student' => array(
 					'limit' => 25,
-					'conditions' => array('Student.group_id' => $group_id), // Only students in group X
+					//'conditions' => array('Student.group_id' => $group_id), // Only students in group X
 					'order' => array('Student.last_name' => 'asc'),
 					'contain' => array(
 						'Action',
@@ -40,11 +43,55 @@ class StudentsController extends AppController {
 				)
 			);
 		}
-		// 1 = default?
-		$this->Student->recursive = 1;
-		
-		//$students = $this->Student->find('all');
-		$students = $this->paginate('Student');
+		*/
+		if ( $group_id > 0 ) {
+			/*
+			 * Joins tables students, groups_students and groups
+			 * using find and use group_id as condition.
+			 */
+			$options['joins'] = array(
+				array('table' => 'groups_students',
+					'alias' => 'GroupStudent',
+					'type' => 'inner',
+					'conditions' => array(
+						'Student.id = GroupStudent.student_id')
+				),
+				array('table' => 'groups',
+					'alias' => 'Group',
+					'type' => 'inner',
+					'conditions' => array(
+						'Group.id = GroupStudent.group_id')
+				)
+			);
+			$options['conditions'] = array(
+				'Group.id = ' . $group_id
+			);
+
+			$options['contain'] = array(
+				'Action',
+				'Group' => array(
+					'User' => array(
+							'fields' => 'name'
+					)
+				)
+			);
+
+			$students = $this->Student->find('all', $options);
+
+		} else { // Show all students
+			$students = $this->Student->find('all', array(
+				'contain' => array(
+							'Action',
+							'Group' => array(
+								'User' => array(
+									'fields' => 'name'
+								)
+							)
+						)
+				));
+
+		}
+		//$students = $this->paginate('Student');
 		$this->set('students', $students);
 
 
@@ -55,7 +102,6 @@ class StudentsController extends AppController {
 
 		// Create array with 'Group.id' as key and 'User.name' as value
 		// NOTE: 'User.name' is virtual field defined in User-model
-
 		$user_groups = array();
 		foreach($results as $result) {
 			$user_groups[$result['Group']['id']] = $result['User']['name'];
@@ -74,6 +120,9 @@ class StudentsController extends AppController {
 		$student = $this->Student->findById($id);
 		$this->set('exercises', $this->Student->Action->Exercise->find('list'));
 		$this->set('student', $student);
+		/* Load ActionType-model to get action types for selection list */
+		$this->loadModel('ActionType');
+		$this->set('action_types', $this->ActionType->types());
 	}
 
 	public function add() {
