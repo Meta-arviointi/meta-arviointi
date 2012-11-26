@@ -1,7 +1,7 @@
 <?php 
 	 /* DEBUG */
 	echo '<pre>';
-	 var_dump($student);
+	//var_dump($student);
 	echo '</pre>';
 ?>
 <div class="row">
@@ -23,7 +23,7 @@
 		<p>
 			<?php echo $student['Student']['email'] ?>
 		</p>
-		<p><?php echo $student['CourseMembership'][0]['comment'] ?></p>
+		<p>Kommentti: <?php echo empty($student['CourseMembership'][0]['comment']) ? '-' : $student['CourseMembership'][0]['comment'] ?></p>
 
 	</div>
 	<div class="threecol last">
