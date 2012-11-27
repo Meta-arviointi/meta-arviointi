@@ -12,3 +12,15 @@ $(document).ready ->
 
     $('#StudentIndexFilters select').change ->
         $(this).parents('form').submit()
+
+    $('.student-action-form').hide()
+
+    $('#student-action-form-links a').on 'click', ->
+        $(this).addClass('active').siblings('a').removeClass 'active'
+
+        form = $('#' + $(this).data('action-type') + '-action-form')
+        form.show().siblings('.student-action-form').hide()
+        false
+
+    $('.student-action-form a.cancel').on 'click', ->
+        $(this).parents('form').hide()
