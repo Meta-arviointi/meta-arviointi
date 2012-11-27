@@ -567,10 +567,10 @@ ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regcl
 -- Data for Name: action_comments; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO action_comments VALUES (1, 1, 2, 'No on tuo melko hyvä..', '2012-11-22 12:03:26.42+02');
-INSERT INTO action_comments VALUES (2, 1, 4, 'Voisi olla tarkempi :)', '2012-11-22 12:03:26.42+02');
-INSERT INTO action_comments VALUES (3, 3, 4, 'Ei vastannut edes posteihin...', '2012-11-22 12:03:26.42+02');
-INSERT INTO action_comments VALUES (4, 5, 2, 'Tää on melko kärttyinen muutenkin!', '2012-11-22 12:03:26.42+02');
+INSERT INTO action_comments VALUES (default, 1, 2, 'No on tuo melko hyvä..', '2012-11-22 12:03:26.42+02');
+INSERT INTO action_comments VALUES (default, 1, 4, 'Voisi olla tarkempi :)', '2012-11-22 12:03:26.42+02');
+INSERT INTO action_comments VALUES (default, 3, 4, 'Ei vastannut edes posteihin...', '2012-11-22 12:03:26.42+02');
+INSERT INTO action_comments VALUES (default, 5, 2, 'Tää on melko kärttyinen muutenkin!', '2012-11-22 12:03:26.42+02');
 
 
 --
@@ -579,10 +579,10 @@ INSERT INTO action_comments VALUES (4, 5, 2, 'Tää on melko kärttyinen muutenk
 -- Data for Name: action_types; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO action_types VALUES (1, 'Korjauspyyntö');
-INSERT INTO action_types VALUES (2, 'Hylkäys');
-INSERT INTO action_types VALUES (3, 'Huomautus');
-INSERT INTO action_types VALUES (4, 'Lisäaika');
+INSERT INTO action_types VALUES (default, 'Korjauspyyntö');
+INSERT INTO action_types VALUES (default, 'Hylkäys');
+INSERT INTO action_types VALUES (default, 'Huomautus');
+INSERT INTO action_types VALUES (default, 'Lisäaika');
 
 
 --
@@ -591,11 +591,11 @@ INSERT INTO action_types VALUES (4, 'Lisäaika');
 -- Data for Name: actions; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO actions VALUES (1, 4, 4, 2, 3, 'Arviointi voisi olla tarkempi', '2012-11-22 12:03:26.42+02', NULL);
-INSERT INTO actions VALUES (2, 4, 4, 3, 1, 'Epätarkka arvionti, parempi vaaditaan', '2012-11-22 12:03:26.42+02', '2013-02-10 00:00:00+02');
-INSERT INTO actions VALUES (3, 4, 4, 3, 2, 'Ei tehnyt tehtävää huomautuksesta huolimatta', '2013-02-10 16:24:01+02', NULL);
-INSERT INTO actions VALUES (4, 2, 2, 2, 4, 'Flunssassa, lisäaikaa annettu', '2012-11-22 12:03:26.42+02', '2013-01-14 23:00:00+02');
-INSERT INTO actions VALUES (5, 3, 5, 2, 3, 'Rakentavampi arviointi olisi paikallaan', '2012-11-22 12:03:26.42+02', NULL);
+INSERT INTO actions VALUES (default, 4, 4, 2, 3, 'Arviointi voisi olla tarkempi', '2012-11-22 12:03:26.42+02', NULL);
+INSERT INTO actions VALUES (default, 4, 4, 3, 1, 'Epätarkka arvionti, parempi vaaditaan', '2012-11-22 12:03:26.42+02', '2013-02-10 00:00:00+02');
+INSERT INTO actions VALUES (default, 4, 4, 3, 2, 'Ei tehnyt tehtävää huomautuksesta huolimatta', '2013-02-10 16:24:01+02', NULL);
+INSERT INTO actions VALUES (default, 2, 2, 2, 4, 'Flunssassa, lisäaikaa annettu', '2012-11-22 12:03:26.42+02', '2013-01-14 23:00:00+02');
+INSERT INTO actions VALUES (default, 3, 5, 2, 3, 'Rakentavampi arviointi olisi paikallaan', '2012-11-22 12:03:26.42+02', NULL);
 
 
 --
@@ -604,11 +604,11 @@ INSERT INTO actions VALUES (5, 3, 5, 2, 3, 'Rakentavampi arviointi olisi paikall
 -- Data for Name: course_memberships; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO course_memberships VALUES (1, 2, 1, false, '');
-INSERT INTO course_memberships VALUES (2, 2, 2, false, '');
-INSERT INTO course_memberships VALUES (3, 2, 3, false, '');
-INSERT INTO course_memberships VALUES (4, 2, 4, false, '');
-INSERT INTO course_memberships VALUES (5, 2, 5, false, 'Yksinhuoltaja sorsa');
+INSERT INTO course_memberships VALUES (default, 2, 1, false, '');
+INSERT INTO course_memberships VALUES (default, 2, 2, false, '');
+INSERT INTO course_memberships VALUES (default, 2, 3, false, '');
+INSERT INTO course_memberships VALUES (default, 2, 4, false, '');
+INSERT INTO course_memberships VALUES (default, 2, 5, false, 'Yksinhuoltaja sorsa');
 
 
 --
@@ -617,8 +617,8 @@ INSERT INTO course_memberships VALUES (5, 2, 5, false, 'Yksinhuoltaja sorsa');
 -- Data for Name: courses; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO courses VALUES (1, 'T3 K2012', '2012-01-02 23:00:00+02', '2012-08-31 01:00:00+03');
-INSERT INTO courses VALUES (2, 'T3 S2012', '2012-10-21 00:00:00+03', '2013-01-31 00:00:00+02');
+INSERT INTO courses VALUES (default, 'T3 K2012', '2012-01-02 23:00:00+02', '2012-08-31 01:00:00+03');
+INSERT INTO courses VALUES (default, 'T3 S2012', '2012-10-21 00:00:00+03', '2013-01-31 00:00:00+02');
 
 
 --
@@ -627,10 +627,10 @@ INSERT INTO courses VALUES (2, 'T3 S2012', '2012-10-21 00:00:00+03', '2013-01-31
 -- Data for Name: exercises; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO exercises VALUES (1, 1, 1, '2012-08-15 01:00:00+03');
-INSERT INTO exercises VALUES (2, 2, 1, '2013-01-10 00:00:00+02');
-INSERT INTO exercises VALUES (3, 2, 2, '2013-02-05 00:00:00+02');
-INSERT INTO exercises VALUES (4, 2, 3, '2013-02-15 00:00:00+02');
+INSERT INTO exercises VALUES (default, 1, 1, '2012-08-15 01:00:00+03');
+INSERT INTO exercises VALUES (default, 2, 1, '2013-01-10 00:00:00+02');
+INSERT INTO exercises VALUES (default, 2, 2, '2013-02-05 00:00:00+02');
+INSERT INTO exercises VALUES (default, 2, 3, '2013-02-15 00:00:00+02');
 
 
 --
@@ -639,9 +639,9 @@ INSERT INTO exercises VALUES (4, 2, 3, '2013-02-15 00:00:00+02');
 -- Data for Name: groups; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO groups VALUES (1, 2, 2);
-INSERT INTO groups VALUES (2, 2, 3);
-INSERT INTO groups VALUES (3, 2, 4);
+INSERT INTO groups VALUES (default, 2, 2);
+INSERT INTO groups VALUES (default, 2, 3);
+INSERT INTO groups VALUES (default, 2, 4);
 
 
 --
@@ -650,11 +650,11 @@ INSERT INTO groups VALUES (3, 2, 4);
 -- Data for Name: groups_students; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO groups_students VALUES (1, 1, 1);
-INSERT INTO groups_students VALUES (2, 1, 2);
-INSERT INTO groups_students VALUES (3, 2, 3);
-INSERT INTO groups_students VALUES (4, 3, 4);
-INSERT INTO groups_students VALUES (5, 2, 5);
+INSERT INTO groups_students VALUES (default, 1, 1);
+INSERT INTO groups_students VALUES (default, 1, 2);
+INSERT INTO groups_students VALUES (default, 2, 3);
+INSERT INTO groups_students VALUES (default, 3, 4);
+INSERT INTO groups_students VALUES (default, 2, 5);
 
 
 --
@@ -663,11 +663,11 @@ INSERT INTO groups_students VALUES (5, 2, 5);
 -- Data for Name: students; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO students VALUES (1, 34243, 'Testaaja', 'Testi', 'testi.testaaja@uta.fi');
-INSERT INTO students VALUES (2, 12345, 'Opiskelija', 'Ossi', 'ossi.opiskelija@uta.fi');
-INSERT INTO students VALUES (3, 98765, 'Mänty', 'Jarmo', 'jarmo.manty@uta.fi');
-INSERT INTO students VALUES (4, 43214, 'Luttinen', 'Usko', 'usko.luttinen@uta.fi');
-INSERT INTO students VALUES (5, 26371, 'Sorsa', 'Pulla', 'pulla.sorsa@uta.fi');
+INSERT INTO students VALUES (default, 34243, 'Testaaja', 'Testi', 'testi.testaaja@uta.fi');
+INSERT INTO students VALUES (default, 12345, 'Opiskelija', 'Ossi', 'ossi.opiskelija@uta.fi');
+INSERT INTO students VALUES (default, 98765, 'Mänty', 'Jarmo', 'jarmo.manty@uta.fi');
+INSERT INTO students VALUES (default, 43214, 'Luttinen', 'Usko', 'usko.luttinen@uta.fi');
+INSERT INTO students VALUES (default, 26371, 'Sorsa', 'Pulla', 'pulla.sorsa@uta.fi');
 
 
 --
@@ -676,10 +676,10 @@ INSERT INTO students VALUES (5, 26371, 'Sorsa', 'Pulla', 'pulla.sorsa@uta.fi');
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO users VALUES (1, '12345', 'Opettaja', 'Vastuu', 'vastuuope@uta.fi', 'ce192a5d433c20a11b143e63319f960f3a2361b8', true);
-INSERT INTO users VALUES (2, '23456', 'Assistentti', 'Asseri', 'asseri.assistentti@uta.fi', 'ce192a5d433c20a11b143e63319f960f3a2361b8', false);
-INSERT INTO users VALUES (3, '34567', 'Assistentti', 'Testi', 'testi.assistentti@uta.fi', 'ce192a5d433c20a11b143e63319f960f3a2361b8', false);
-INSERT INTO users VALUES (4, '45678', 'Auttaja', 'Aapo', 'aapo.auttaja@uta.fi', 'ce192a5d433c20a11b143e63319f960f3a2361b8', false);
+INSERT INTO users VALUES (default, '12345', 'Opettaja', 'Vastuu', 'vastuuope@uta.fi', 'ce192a5d433c20a11b143e63319f960f3a2361b8', true);
+INSERT INTO users VALUES (default, '23456', 'Assistentti', 'Asseri', 'asseri.assistentti@uta.fi', 'ce192a5d433c20a11b143e63319f960f3a2361b8', false);
+INSERT INTO users VALUES (default, '34567', 'Assistentti', 'Testi', 'testi.assistentti@uta.fi', 'ce192a5d433c20a11b143e63319f960f3a2361b8', false);
+INSERT INTO users VALUES (default, '45678', 'Auttaja', 'Aapo', 'aapo.auttaja@uta.fi', 'ce192a5d433c20a11b143e63319f960f3a2361b8', false);
 
 
 --
