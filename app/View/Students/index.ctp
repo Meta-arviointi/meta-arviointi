@@ -1,5 +1,15 @@
 <div class="row">
 	<div class="twelvecol last">
+		<?php
+			echo __('Opiskelijat');
+			echo ' | ';
+			echo $this->Html->link(__('Toimenpiteet'), array('action' => 'index_actions'));
+		?>
+		<hr>
+	</div>
+</div>
+<div class="row">
+	<div class="twelvecol last">
 	<?php echo $this->Html->link('Lisää uusi opiskelija', array('action' => 'add'), array('class' => 'button', 'id' => 'add-student-link')); ?>
 
 

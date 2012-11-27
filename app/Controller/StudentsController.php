@@ -161,6 +161,11 @@ class StudentsController extends AppController {
 		}
 	}
 
+	public function index_actions() {
+		$actions = $this->Student->Action->find('all');
+		$this->set('actions', $actions);
+	}
+
 	public function add_action() { // change to add_note?
 		if($this->request->is('post')) {
 			if($this->Student->Action->save($this->request->data)) {
