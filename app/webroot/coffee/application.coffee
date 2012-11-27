@@ -23,4 +23,6 @@ $(document).ready ->
         false
 
     $('.student-action-form a.cancel').on 'click', ->
+        $('#student-action-form-links a').removeClass 'active'
         $(this).parents('form').hide()
+        false
