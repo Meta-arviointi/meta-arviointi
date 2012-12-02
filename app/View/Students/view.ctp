@@ -183,6 +183,7 @@
                 echo '<strong>' . $comment['User']['name'] . ':</strong> ';
                 echo $comment['comment'];
                 echo '</p>';
+                echo '<span class="timestamp">['.date('d.m.Y H:i', strtotime($comment['created'])).']</span>';
                 echo '</div>';
             }
 
