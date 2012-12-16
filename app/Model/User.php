@@ -15,6 +15,8 @@ class User extends AppModel {
 
     public $hasMany = array('Group', 'ActionComment');
 
+    public $hasAndBelongsToMany = array('Course');
+
     public $virtualFields = array(
         'name' => 'User.first_name || \' \' || User.last_name'
     );

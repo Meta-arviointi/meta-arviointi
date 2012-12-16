@@ -116,7 +116,7 @@ class StudentsController extends AppController {
 	}
 
 	public function view($id) {
-		$this->Student->recursive = 2;
+		$this->Student->recursive = 3;
 		$student = $this->Student->findById($id);
 		$this->set('exercises', $this->Student->Action->Exercise->find('list'));
 		$this->set('student', $student);
@@ -161,10 +161,24 @@ class StudentsController extends AppController {
 		}
 	}
 
+	public function index_actions() {
+		$actions = $this->Student->Action->find('all');
+		$this->set('actions', $actions);
+	}
+
 	public function add_action() { // change to add_note?
 		if($this->request->is('post')) {
 			if($this->Student->Action->save($this->request->data)) {
 				$this->redirect(array('action' => 'view', $this->request->data['Action']['student_id']));
+			}
+		}
+	}
+
+	public function add_action_comment() { // change to add_note?
+		if($this->request->is('post')) {
+			if($this->Student->Action->ActionComment->save($this->request->data)) {
+				$ac = $this->Student->Action->ActionComment->read();
+				$this->redirect(array('action' => 'view', $ac['Action']['student_id']));
 			}
 		}
 	}

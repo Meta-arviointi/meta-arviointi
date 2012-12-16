@@ -10,8 +10,7 @@ class StudentFixture extends CakeTestFixture {
 			'student_number' => 12345, 
 			'last_name' => 'Teppo', 
 			'first_name' => 'Testilä',
-			'email' => 'teppo.testila@uta.fi', 
-			'group_id' => '1'
+			'email' => 'teppo.testila@uta.fi',
 		)
 	);
 }
