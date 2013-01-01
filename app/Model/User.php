@@ -13,7 +13,7 @@ class User extends AppModel {
 
     public $name = 'User';
 
-    public $hasMany = array('Group', 'ActionComment');
+    public $hasMany = array('Group', 'ActionComment', 'Action');
 
     public $hasAndBelongsToMany = array('Course');
 

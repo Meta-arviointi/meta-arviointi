@@ -162,20 +162,13 @@ class StudentsController extends AppController {
 		$this->redirect(array('action' => 'index'));
 	}
 
-	public function add_note() { // change to add_note?
-		if($this->request->is('post')) {
-			if($this->Student->Note->save($this->request->data)) {
-				$this->redirect(array('action' => 'view', $this->request->data['Note']['student_id']));
-			}
-		}
-	}
 
 	public function index_actions() {
 		$actions = $this->Student->Action->find('all');
 		$this->set('actions', $actions);
 	}
 
-	public function add_action() { // change to add_note?
+	public function add_action() {
 		if($this->request->is('post')) {
 			if($this->Student->Action->save($this->request->data)) {
 				$this->redirect(array('action' => 'view', $this->request->data['Action']['student_id']));
@@ -183,7 +176,7 @@ class StudentsController extends AppController {
 		}
 	}
 
-	public function add_action_comment() { // change to add_note?
+	public function add_action_comment() {
 		if($this->request->is('post')) {
 			if($this->Student->Action->ActionComment->save($this->request->data)) {
 				$ac = $this->Student->Action->ActionComment->read();
