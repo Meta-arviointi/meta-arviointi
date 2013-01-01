@@ -24,8 +24,11 @@ class UsersController extends AppController {
     }
 
 
+    /**
+     * Perform operations after successful login.
+     * Such as selecting default group for user.
+     */
     public function start() {
-        //var_dump($this->Auth->user());
         $course_id = $this->request->params['course_id'];
         $is_admin = $this->Auth->user('is_admin');
         /* Get user's group in current course */
@@ -39,15 +42,16 @@ class UsersController extends AppController {
                 )
             )
         );
+        // If present, set group_id to session
         if ( !empty($user['Group']) ) {
-            $this->redirect('/'.$course_id.'/students/index?group_id='.$user['Group']['id']);    
-        } else { // user has not a group in current course 
-            $this->redirect(array(
-                'controller' => 'students',
-                'action' => 'index'
-                )
-            );
+            $this->Session->write('User.group_id', $user['Group']['id']);
         }
+        // Redirect to students index-view
+        $this->redirect(array(
+            'controller' => 'students',
+            'action' => 'index'
+            )
+        );
         
     }
     public function index() {

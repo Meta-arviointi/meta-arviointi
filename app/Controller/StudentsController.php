@@ -4,8 +4,17 @@ class StudentsController extends AppController {
 	public $name = 'Students';
 
 	public function index() {
-		$group_id = 0;
-		if(isset($this->request['url']['group_id'])) $group_id = $this->request['url']['group_id'];
+		$group_id = null;
+		// Check if get-request has 'group_id'.
+		// If so, set it to session 'User.group_id'
+		if (isset($this->request['url']['group_id'])) {
+			$group_id = $this->request['url']['group_id'];
+			$this->Session->write('User.group_id', $group_id);
+		} else { // No variable in get-request, take group_id from session
+
+			// Read group_id from session, if 'null' group_id = 0.
+			$group_id = $this->Session->read('User.group_id') == null ? 0 : $this->Session->read('User.group_id');
+		}
 
 		/* Paginointi ei toimi suoraan HABTM modelin kanssa kun ehtoina halutaan käyttää
 		syvemmällä assosiaatiossa olevia arvoja. Esim Studenteja ei voi paginoida Group.id:n perusteella
