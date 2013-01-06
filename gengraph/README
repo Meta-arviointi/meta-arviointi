@@ -1,0 +1,9 @@
+### Dependencies
+- Gnuplot
+- Python 2.x (might work with 3.x too)
+
+### Usage
+$ cd meta-arviointi
+$ ln -s gengraph/doall.sh .
+$ ./doall.sh
+
