@@ -168,20 +168,4 @@ class StudentsController extends AppController {
 		$this->set('actions', $actions);
 	}
 
-	public function add_action() {
-		if($this->request->is('post')) {
-			if($this->Student->Action->save($this->request->data)) {
-				$this->redirect(array('action' => 'view', $this->request->data['Action']['student_id']));
-			}
-		}
-	}
-
-	public function add_action_comment() {
-		if($this->request->is('post')) {
-			if($this->Student->Action->ActionComment->save($this->request->data)) {
-				$ac = $this->Student->Action->ActionComment->read();
-				$this->redirect(array('action' => 'view', $ac['Action']['student_id']));
-			}
-		}
-	}
 }

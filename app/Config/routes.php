@@ -25,15 +25,15 @@
  * its action called 'display', and we pass a param to select the view file
  * to use (in this case, /app/View/Pages/home.ctp)...
  */
-	Router::connect('/', array('controller' => 'students', 'action' => 'index'));
+	Router::connect('/', array('controller' => 'courses', 'action' => 'index'));
 /**
  * ...and connect the rest of 'Pages' controller's urls.
  */
 	//Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
 
-	// Passing course ID in url to define global scope
-	Router::connect('/:course_id/:controller', array('action' => 'index'), array('course_id' => '[0-9]+', 'persist' => array('course_id')));
-	Router::connect('/:course_id/:controller/:action/*', array(), array('course_id' => '[0-9]+', 'persist' => array('course_id')));
+	// Passing course ID in url to define global scope - change 6.1.2013: take course_id from Session
+//	Router::connect('/:course_id/:controller', array('action' => 'index'), array('course_id' => '[0-9]+', 'persist' => array('course_id')));
+//	Router::connect('/:course_id/:controller/:action/*', array(), array('course_id' => '[0-9]+', 'persist' => array('course_id')));
 
 /**
  * Load all plugin routes.  See the CakePlugin documentation on 
