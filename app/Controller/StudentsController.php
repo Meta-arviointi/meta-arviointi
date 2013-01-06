@@ -124,15 +124,6 @@ class StudentsController extends AppController {
 
 	}
 
-	public function view($id) {
-		$this->Student->recursive = 3;
-		$student = $this->Student->findById($id);
-		$this->set('exercises', $this->Student->Action->Exercise->find('list'));
-		$this->set('student', $student);
-		/* Load ActionType-model to get action types for selection list */
-		$this->loadModel('ActionType');
-		$this->set('action_types', $this->ActionType->types());
-	}
 
 	public function add() {
 		if($this->request->is('post')) {
