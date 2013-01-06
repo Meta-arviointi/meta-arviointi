@@ -1,13 +1,14 @@
 <?php 
      /* DEBUG */
     echo '<pre>';
-    //var_dump($student);
+    //var_dump($course_membership);
+    //    debug($this->request);
     echo '</pre>';
 ?>
 <div class="row">
     <div class="twelvecol last">
         <?php
-        echo $this->Html->link('&larr; Takaisin listaukseen', array('action' => 'index'), array('escape' => false));
+        echo $this->Html->link('&larr; Takaisin listaukseen', array('controller' => 'courses', 'action' => 'index'), array('escape' => false));
         ?>
     </div>
 </div>
@@ -17,19 +18,19 @@
         <?php
 
         echo '<h1>';
-        echo '<strong>' . trim($student['Student']['first_name']) . ' ' . trim($student['Student']['last_name']) . '</strong> ' . $student['Student']['student_number'];
+        echo '<strong>' . trim($course_membership['Student']['first_name']) . ' ' . trim($course_membership['Student']['last_name']) . '</strong> ' . $course_membership['Student']['student_number'];
         echo '</h1>';
         ?>
         <p>
-            <?php echo $student['Student']['email'] ?>
+            <?php echo $course_membership['Student']['email'] ?>
         </p>
-        <p>Kommentti: <?php echo empty($student['CourseMembership'][0]['comment']) ? '-' : $student['CourseMembership'][0]['comment'] ?></p>
+        <p>Kommentti: <?php echo empty($course_membership['CourseMembership']['comment']) ? '-' : $course_membership['CourseMembership']['comment'] ?></p>
 
     </div>
     <div class="threecol last">
         <?php
-        echo $this->Html->link('Muokkaa', array('action' => 'edit', $student['Student']['id']), array('class' => 'button float-right'));
-        echo $this->Html->link('Poista', array('action' => 'delete', $student['Student']['id']), array('class' => 'button float-right'), 'Haluatko varmasti poistaa opiskelijan järjestelmästä?');
+        echo $this->Html->link('Muokkaa', array('controller' => 'students', 'action' => 'edit', $course_membership['Student']['id']), array('class' => 'button float-right'));
+      //  echo $this->Html->link('Poista', array('action' => 'delete', $course_membership['Student']['id']), array('class' => 'button float-right'), 'Haluatko varmasti poistaa opiskelijan järjestelmästä?');
         ?>
     </div>
 </div>
@@ -56,9 +57,10 @@
             echo $this->Form->create('Action', array(
                 'class' => 'student-action-form', 
                 'id' => 'request-action-form', 
-                'url' => array('controller' => 'students', 'action' => 'add_action')
+                'url' => array('controller' => 'actions', 'action' => 'add_action')
             ));
-            echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $student['Student']['id']));
+            echo $this->Form->input('redirect', array('type ' => 'hidden', 'default' => $course_membership['CourseMembership']['id']));
+            echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $course_membership['Student']['id']));
             echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
             echo $this->Form->input('action_type_id', array('type' => 'hidden', 'default' => '1'));
             echo $this->Form->input('exercise_id', array('label' => __('Harjoitus'), 'options' => $exercises));
@@ -86,9 +88,10 @@
             echo $this->Form->create('Action', array(
                 'class' => 'student-action-form', 
                 'id' => 'notice-action-form', 
-                'url' => array('controller' => 'students', 'action' => 'add_action')
+                'url' => array('controller' => 'actions', 'action' => 'add_action')
             ));
-            echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $student['Student']['id']));
+            echo $this->Form->input('redirect', array('type' => 'hidden', 'default' => $course_membership['CourseMembership']['id']));
+            echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $course_membership['Student']['id']));
             echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
             echo $this->Form->input('action_type_id', array('type' => 'hidden', 'default' => '3'));
             echo $this->Form->input('exercise_id', array('label' => __('Harjoitus'), 'options' => $exercises));
@@ -102,9 +105,10 @@
             echo $this->Form->create('Action', array(
                 'class' => 'student-action-form', 
                 'id' => 'reject-action-form', 
-                'url' => array('controller' => 'students', 'action' => 'add_action')
+                'url' => array('controller' => 'actions', 'action' => 'add_action')
             ));
-            echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $student['Student']['id']));
+            echo $this->Form->input('redirect', array('type' => 'hidden', 'default' => $course_membership['CourseMembership']['id']));
+            echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $course_membership['Student']['id']));
             echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
             echo $this->Form->input('action_type_id', array('type' => 'hidden', 'default' => '2'));
             echo $this->Form->input('exercise_id', array('label' => __('Harjoitus'), 'options' => $exercises));
@@ -119,9 +123,10 @@
             echo $this->Form->create('Action', array(
                 'class' => 'student-action-form', 
                 'id' => 'extra-action-form', 
-                'url' => array('controller' => 'students', 'action' => 'add_action')
+                'url' => array('controller' => 'actions', 'action' => 'add_action')
             ));
-            echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $student['Student']['id']));
+            echo $this->Form->input('redirect', array('type' => 'hidden', 'default' => $course_membership['CourseMembership']['id']));
+            echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $course_membership['Student']['id']));
             echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
             echo $this->Form->input('action_type_id', array('type' => 'hidden', 'default' => '4'));
             echo $this->Form->input('exercise_id', array('label' => __('Harjoitus'), 'options' => $exercises));
@@ -162,15 +167,15 @@
 
         echo '</div>';
 
-        foreach($student['Action'] as $action) {
+        foreach($student_actions as $action) {
             $action_title = $action['ActionType']['name'];
-            if(!empty($action['exercise_id'])) $action_title = 'H' . $action['exercise_id'] . ': ' . $action_title;
+            if(!empty($action['Action']['exercise_id'])) $action_title = 'H' . $action['Action']['exercise_id'] . ': ' . $action_title;
             echo '<div class="action">';
             echo '<h3>' . $action_title . '</h3>';
-            if(!empty($action['deadline'])) echo '<p class="deadline">Aikaraja: '.date('d.m.Y H:i', strtotime($action['deadline'])).'</p>';
-            if(!empty($action['description'])) echo '<p class="comment">'.$action['description'].'</p>';
+            if(!empty($action['Action']['deadline'])) echo '<p class="deadline">Aikaraja: '.date('d.m.Y H:i', strtotime($action['Action']['deadline'])).'</p>';
+            if(!empty($action['Action']['description'])) echo '<p class="comment">'.$action['Action']['description'].'</p>';
             echo '<div class="meta">';
-            echo '<span class="timestamp">'.date('d.m.Y H:i', strtotime($action['created'])).'</span> - ';
+            echo '<span class="timestamp">'.date('d.m.Y H:i', strtotime($action['Action']['created'])).'</span> - ';
             echo '<span class="by">' . $action['User']['name'] . '</span>';
             echo '</div>';
 
@@ -189,12 +194,13 @@
 
             // ADD A NEW COMMENT
             echo $this->Form->create('ActionComment', array(
-                'url' => array('controller' => 'students', 'action' => 'add_action_comment'),
+                'url' => array('controller' => 'actions', 'action' => 'add_action_comment'),
                 'inputDefaults' => array(
                     'label' => false
                 )
             ));
-            echo $this->Form->input('action_id', array('type' => 'hidden', 'default' => $action['id']));
+            echo $this->Form->input('redirect', array('type' => 'hidden', 'default' => $course_membership['CourseMembership']['id']));
+            echo $this->Form->input('action_id', array('type' => 'hidden', 'default' => $action['Action']['id']));
             echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
             echo $this->Form->input('comment', array('rows' => 2));
             echo $this->Form->submit(__('Lähetä kommentti'));
