@@ -29,7 +29,8 @@ class UsersController extends AppController {
      * Such as selecting default group for user.
      */
     public function start() {
-        $course_id = $this->request->params['course_id'];
+        // Read course_id from session
+        $course_id = $this->Session->read('Course.course_id');
         $is_admin = $this->Auth->user('is_admin');
         /* Get user's group in current course */
         $user = $this->User->Group->find('first', array(
@@ -48,7 +49,7 @@ class UsersController extends AppController {
         }
         // Redirect to students index-view
         $this->redirect(array(
-            'controller' => 'students',
+            'controller' => 'courses',
             'action' => 'index'
             )
         );
