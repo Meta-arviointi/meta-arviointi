@@ -17,9 +17,7 @@
 	<?php 
 	 /* DEBUG */
 	echo '<pre>';
-	// var_dump($students);
-	//var_dump($user_groups);
-	//var_dump($students[1]);
+//	debug($students);
 	echo '</pre>';
 
 	// Selection for assistent groups
@@ -47,8 +45,8 @@
 		<?php
 		foreach($students as $student) {
 			echo '<tr>';
-			echo '<td>'.$this->Html->link($student['Student']['last_name'], array('action' => 'view', $student['Student']['id'])).'</td>';
-			echo '<td>'.$this->Html->link($student['Student']['first_name'], array('action' => 'view', $student['Student']['id'])).'</td>';
+			echo '<td>'.$this->Html->link($student['Student']['last_name'], array('controller' => 'course_memberships', 'action' => 'view', $student['CourseMembership'][0]['id'])).'</td>';
+			echo '<td>'.$this->Html->link($student['Student']['first_name'], array('controller' => 'course_memberships', 'action' => 'view', $student['CourseMembership'][0]['id'])).'</td>';
 			echo '<td>'.$student['Student']['student_number'].'</td>';
 
 			/* If student belongs to a group, print assistant name */
