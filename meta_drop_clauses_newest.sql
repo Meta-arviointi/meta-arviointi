@@ -61,5 +61,4 @@ DROP SEQUENCE public.action_types_id_seq;
 DROP TABLE public.action_types;
 DROP SEQUENCE public.action_comments_id_seq;
 DROP TABLE public.action_comments;
-DROP SCHEMA public;
 DROP EXTENSION plpgsql;
