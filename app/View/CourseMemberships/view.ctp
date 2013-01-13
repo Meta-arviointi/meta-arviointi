@@ -63,7 +63,7 @@
             echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $course_membership['Student']['id']));
             echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
             echo $this->Form->input('action_type_id', array('type' => 'hidden', 'default' => '1'));
-            echo $this->Form->input('exercise_id', array('label' => __('Harjoitus'), 'options' => $exercises));
+            echo $this->Form->input('Exercise.id', array('label' => __('Harjoitus'), 'options' => $exercises));
             echo $this->Form->input('status', array('label' => __('Tila'), 'options' => array('0' => __('Ei käsitelty'), '1' => __('Käsitelty'))));
             $default_deadline = date('Y-m-d') . ' 16:00:00';
             $default_deadline = date('Y-m-d H:i:s', strtotime('+ 7 day', strtotime($default_deadline)));
@@ -94,7 +94,7 @@
             echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $course_membership['Student']['id']));
             echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
             echo $this->Form->input('action_type_id', array('type' => 'hidden', 'default' => '3'));
-            echo $this->Form->input('exercise_id', array('label' => __('Harjoitus'), 'options' => $exercises));
+            echo $this->Form->input('Exercise.id', array('label' => __('Harjoitus'), 'options' => $exercises));
             echo $this->Form->input('status', array('label' => __('Tila'), 'options' => array('0' => __('Ei käsitelty'), '1' => __('Käsitelty'))));
             echo $this->Form->input('description', array('label' => false, 'rows' => 3));
             echo $this->Form->submit(__('Lisää'), array('before' => '<a href="#" class="collapse-toggle cancel">' . __('Peruuta') . '</a>'));
@@ -111,7 +111,7 @@
             echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $course_membership['Student']['id']));
             echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
             echo $this->Form->input('action_type_id', array('type' => 'hidden', 'default' => '2'));
-            echo $this->Form->input('exercise_id', array('label' => __('Harjoitus'), 'options' => $exercises));
+            echo $this->Form->input('Exercise.id', array('label' => __('Harjoitus'), 'options' => $exercises));
             echo $this->Form->input('status', array('label' => __('Tila'), 'options' => array('0' => __('Ei käsitelty'), '1' => __('Käsitelty'))));
             echo $this->Form->input('description', array('label' => false, 'rows' => 3));
             echo $this->Form->submit(__('Lisää'), array('before' => '<a href="#" class="collapse-toggle cancel">' . __('Peruuta') . '</a>'));
@@ -129,7 +129,7 @@
             echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $course_membership['Student']['id']));
             echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
             echo $this->Form->input('action_type_id', array('type' => 'hidden', 'default' => '4'));
-            echo $this->Form->input('exercise_id', array('label' => __('Harjoitus'), 'options' => $exercises));
+            echo $this->Form->input('Exercise.id', array('label' => __('Harjoitus'), 'options' => $exercises));
             echo $this->Form->input('status', array('label' => __('Tila'), 'options' => array('0' => __('Ei käsitelty'), '1' => __('Käsitelty'))));
             $default_deadline = date('Y-m-d') . ' 16:00:00';
             echo $this->Form->input('previous_deadline', array(
@@ -168,47 +168,64 @@
         echo '</div>';
 
         foreach($student_actions as $action) {
-            $action_title = $action['ActionType']['name'];
-            if(!empty($action['Action']['exercise_id'])) $action_title = 'H' . $action['Action']['exercise_id'] . ': ' . $action_title;
-            echo '<div class="action">';
-            echo '<h3>' . $action_title . '</h3>';
-            if(!empty($action['Action']['deadline'])) echo '<p class="deadline">Aikaraja: '.date('d.m.Y H:i', strtotime($action['Action']['deadline'])).'</p>';
-            if(!empty($action['Action']['description'])) echo '<p class="comment">'.$action['Action']['description'].'</p>';
-            echo '<div class="meta">';
-            echo '<span class="timestamp">'.date('d.m.Y H:i', strtotime($action['Action']['created'])).'</span> - ';
-            echo '<span class="by">' . $action['User']['name'] . '</span>';
-            echo '</div>';
+            // Check that Exercise is valid
+            if ( !empty($action['Exercise']) ) {    
 
-            echo '<div class="comments">';
+                $action_title = null;
 
-            // LIST COMMENTS
-            foreach($action['ActionComment'] as $comment) {
-                echo '<div class="comment">';
-                echo '<p>';
-                echo '<strong>' . $comment['User']['name'] . ':</strong> ';
-                echo $comment['comment'];
-                echo '</p>';
-                echo '<span class="timestamp">['.date('d.m.Y H:i', strtotime($comment['created'])).']</span>';
+                // If Actions belongs to several Exercises
+                if ( count($action['Exercise']) > 1 ) {
+                    foreach($action['Exercise'] as $exercise) {
+                        $action_title = $action_title . 'H' . $exercise['exercise_number'] . ', ';
+                    }
+                    // Remove last two characters ',' and ' '
+                    $action_title = substr($action_title, 0, -2);
+                    
+                } else { // only one exercise
+                    $action_title = 'H' . $action['Exercise'][0]['exercise_number'];
+                }
+                $action_title = $action_title .  ': ' . $action['ActionType']['name'];
+
+                echo '<div class="action">';
+                echo '<h3>' . $action_title . '</h3>';
+                if(!empty($action['Action']['deadline'])) echo '<p class="deadline">Aikaraja: '.date('d.m.Y H:i', strtotime($action['Action']['deadline'])).'</p>';
+                if(!empty($action['Action']['description'])) echo '<p class="comment">'.$action['Action']['description'].'</p>';
+                echo '<div class="meta">';
+                echo '<span class="timestamp">'.date('d.m.Y H:i', strtotime($action['Action']['created'])).'</span> - ';
+                echo '<span class="by">' . $action['User']['name'] . '</span>';
                 echo '</div>';
+
+                echo '<div class="comments">';
+
+                // LIST COMMENTS
+                foreach($action['ActionComment'] as $comment) {
+                    echo '<div class="comment">';
+                    echo '<p>';
+                    echo '<strong>' . $comment['User']['name'] . ':</strong> ';
+                    echo $comment['comment'];
+                    echo '</p>';
+                    echo '<span class="timestamp">['.date('d.m.Y H:i', strtotime($comment['created'])).']</span>';
+                    echo '</div>';
+                }
+
+                // ADD A NEW COMMENT
+                echo $this->Form->create('ActionComment', array(
+                    'url' => array('controller' => 'actions', 'action' => 'add_action_comment'),
+                    'inputDefaults' => array(
+                        'label' => false
+                    )
+                ));
+                echo $this->Form->input('redirect', array('type' => 'hidden', 'default' => $course_membership['CourseMembership']['id']));
+                echo $this->Form->input('action_id', array('type' => 'hidden', 'default' => $action['Action']['id']));
+                echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
+                echo $this->Form->input('comment', array('rows' => 2));
+                echo $this->Form->submit(__('Lähetä kommentti'));
+                echo $this->Form->end();
+
+                echo '</div>';
+
+                echo '</div>';   
             }
-
-            // ADD A NEW COMMENT
-            echo $this->Form->create('ActionComment', array(
-                'url' => array('controller' => 'actions', 'action' => 'add_action_comment'),
-                'inputDefaults' => array(
-                    'label' => false
-                )
-            ));
-            echo $this->Form->input('redirect', array('type' => 'hidden', 'default' => $course_membership['CourseMembership']['id']));
-            echo $this->Form->input('action_id', array('type' => 'hidden', 'default' => $action['Action']['id']));
-            echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
-            echo $this->Form->input('comment', array('rows' => 2));
-            echo $this->Form->submit(__('Lähetä kommentti'));
-            echo $this->Form->end();
-
-            echo '</div>';
-
-            echo '</div>';
         }
         ?>
     </div>

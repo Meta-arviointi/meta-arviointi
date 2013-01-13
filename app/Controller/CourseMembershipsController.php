@@ -19,10 +19,19 @@ class CourseMembershipsController extends AppController {
 		
 		// get student's actions in selected course enrolment
 		// TODO: check complexity
-		$this->CourseMembership->Course->Exercise->Action->recursive = 2;
 		$student_actions = $this->CourseMembership->Course->Exercise->Action->find('all', array(
+				'contain' => array(
+					'Student',
+					'User',
+					'ActionType',
+					'ActionComment' => array('User'),
+					'Exercise' => array(
+						'conditions' => array(
+							'Exercise.course_id' => $course_membership['Course']['id']
+						)
+					)
+				),
 				'conditions' => array(
-					'Exercise.course_id' => $course_membership['Course']['id'],
 					'Action.student_id' => $course_membership['Student']['id']
 				)
 				

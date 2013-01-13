@@ -3,7 +3,8 @@
 class Action extends AppModel {
 	public $name = 'Action';
 
-	public $belongsTo = array('Exercise', 'Student', 'User', 'ActionType');
+	public $belongsTo = array('Student', 'User', 'ActionType');
 	public $hasMany = array('ActionComment');
+	public $hasAndBelongsToMany = array('Exercise');
 }
 ?>
