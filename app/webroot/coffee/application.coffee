@@ -1,3 +1,34 @@
+# default configs for datepicker:
+
+datepickerDefaults = {
+    dayNames: [
+        'Sunnuntai', 
+        'Maanantai', 
+        'Tiistai', 
+        'Keskiviikko', 
+        'Torstai', 
+        'Perjantai', 
+        'Lauantai'
+    ]
+    dayNamesMin: ['Su', 'Ma', 'Ti', 'Ke', 'To', 'Pe', 'La']
+    monthNames: [
+        'Tammikuu',
+        'Helmikuu',
+        'Maaliskuu',
+        'Huhtikuu',
+        'Toukokuu',
+        'Kesäkuu',
+        'Heinäkuu',
+        'Elokuu',
+        'Syyskuu',
+        'Lokakuu',
+        'Marraskuu',
+        'Joulukuu'
+    ]
+    firstDay: 1 #week starts on monday
+    dateFormat: 'dd.mm.yy'
+}
+
 $(document).ready ->
 
     $('.collapsable').hide()
@@ -26,3 +57,5 @@ $(document).ready ->
         $('#student-action-form-links a').removeClass 'active'
         $(this).parents('form').hide()
         false
+
+    #$('#InputFieldId').datepicker datepickerDefaults
