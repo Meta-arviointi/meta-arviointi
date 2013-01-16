@@ -30,8 +30,37 @@
     <div class="threecol last">
         <?php
         echo $this->Html->link('Muokkaa', array('controller' => 'students', 'action' => 'edit', $course_membership['Student']['id']), array('class' => 'button float-right'));
-      //  echo $this->Html->link('Poista', array('action' => 'delete', $course_membership['Student']['id']), array('class' => 'button float-right'), 'Haluatko varmasti poistaa opiskelijan järjestelmästä?');
         ?>
+        <div class="quit-info">
+            <?php
+            if(empty($course_membership['CourseMembership']['quit_time'])) {
+                echo $this->Html->link(
+                    'Aseta keskeyttäneeksi', 
+                    array(
+                        'action' => 'set_quit', 
+                        $course_membership['CourseMembership']['id']
+                    ),
+                    null,
+                    __('Haluatko varmasti merkitä opiskelijan keskeyttäneeksi?')
+                );
+            }
+            else {
+                echo 'Keskeyttänyt: ' . date('d.m.Y', strtotime($course_membership['CourseMembership']['quit_time']));
+                echo '<br>';
+                echo $this->Html->link(
+                    'Peruuta keskeyttäminen', 
+                    array(
+                        'action' => 'unset_quit', 
+                        $course_membership['CourseMembership']['id']
+                    ),
+                    null,
+                    __('Haluatko varmasti poistaa keskeytysmerkinnän?')
+                );
+            }
+
+            //  echo $this->Html->link('Poista', array('action' => 'delete', $course_membership['Student']['id']), array('class' => 'button float-right'), 'Haluatko varmasti poistaa opiskelijan järjestelmästä?');
+            ?>
+        </div>
     </div>
 </div>
 <hr class="row">

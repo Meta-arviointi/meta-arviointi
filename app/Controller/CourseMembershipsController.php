@@ -45,4 +45,27 @@ class CourseMembershipsController extends AppController {
 		
 	}
 	
+	public function set_quit($id) {
+		$this->CourseMembership->read(null, $id);
+		$this->CourseMembership->set(array(
+			'quit_time' => date('Y-m-d H:i:s'),
+			'quit_id' 	=> $this->Auth->user('id')
+		));
+		if($this->CourseMembership->save()) {
+			$this->Session->setFlash(__('Opiskelija merkitty keskeyttäneeksi.'));
+		}
+		$this->redirect(array('action' => 'view', $id));
+	}
+
+	public function unset_quit($id) {
+		$this->CourseMembership->read(null, $id);
+		$this->CourseMembership->set(array(
+			'quit_time' => '',
+			'quit_id' 	=> ''
+		));
+		if($this->CourseMembership->save()) {
+			$this->Session->setFlash(__('Keskeyttämismerkintä poistettu.'));
+		}
+		$this->redirect(array('action' => 'view', $id));
+	}
 }
