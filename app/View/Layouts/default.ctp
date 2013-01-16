@@ -52,6 +52,16 @@
 		</div>
 	</div>
 
+	<div class="modal">
+		<div class="modal-overlay"></div>
+		<div class="modal-container">
+			<h1>Testimodaali</h1>
+			<a href="#" class="modal-close">Sulje</a>
+			<div class="modal-content">
+			</div>
+		</div>
+	</div>
+
 	<?php
 		//echo $this->element('sql_dump');
 	?>

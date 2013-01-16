@@ -29,7 +29,7 @@
     </div>
     <div class="threecol last">
         <?php
-        echo $this->Html->link('Muokkaa', array('controller' => 'students', 'action' => 'edit', $course_membership['Student']['id']), array('class' => 'button float-right'));
+        echo $this->Html->link('Muokkaa', array('controller' => 'students', 'action' => 'edit', $course_membership['Student']['id']), array('class' => 'button float-right modal-link'));
         ?>
         <div class="quit-info">
             <?php
