@@ -55,11 +55,8 @@ class AppController extends Controller {
     );
 
     public function beforeFilter() {
-        if($this->Auth->user()) {
-            if(!is_null($this->Session->read('Course.course_id'))) {
-                $this->_course = $this->Course->findById($this->request->course_id);
-            }
-            if(!$this->Session->read('Course.course_id') || !$this->_course) {
+        if ( $this->Auth->user() ) {
+            if ( !$this->Session->read('Course.course_id') ) {
                 $params = array(
                     'order' => array('Course.starttime DESC')
                 );
