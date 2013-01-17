@@ -37,11 +37,18 @@ class CourseMembershipsController extends AppController {
 				
 			)
 		);
+
+		// Get list of users (used in course_membership['quit_id'])
+		$users = $this->CourseMembership->Course->User->find('list', array(
+        	'fields' => array('User.name')
+    	));
+
 		//debug($course_membership);
 		//debug($student_actions);
 		$this->set('course_membership', $course_membership);
 		$this->set('student_actions', $student_actions);
 		$this->set('exercises', $this->CourseMembership->Course->Exercise->find('list'));
+		$this->set('users', $users);
 		
 	}
 	

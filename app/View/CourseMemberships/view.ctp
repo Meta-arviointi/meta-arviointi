@@ -47,6 +47,8 @@
             else {
                 echo 'Keskeyttänyt: ' . date('d.m.Y', strtotime($course_membership['CourseMembership']['quit_time']));
                 echo '<br>';
+                echo '(Merkinnyt: <em>'. $users[$course_membership['CourseMembership']['quit_id']] . '</em>)';
+                echo '<br>';
                 echo $this->Html->link(
                     'Peruuta keskeyttäminen', 
                     array(
