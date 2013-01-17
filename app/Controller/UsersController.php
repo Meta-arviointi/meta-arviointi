@@ -31,6 +31,9 @@ class UsersController extends AppController {
      * Such as selecting default group for user.
      */
     public function start() {
+        // Empty group_id just in case it's old session
+        $this->Session->delete('User.group_id');
+
         // Read course_id from session
         $course_id = $this->Session->read('Course.course_id');
         $is_admin = $this->Auth->user('is_admin');
