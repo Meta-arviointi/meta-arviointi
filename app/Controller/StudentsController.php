@@ -5,8 +5,18 @@ class StudentsController extends AppController {
 
 	public function add() {
 		if($this->request->is('post')) {
-			if($this->Student->save($this->request->data)) {
-				$this->redirect(array('action' => 'view', $this->Student->id));
+			if(empty($this->data['Student']['file'])) {
+				if($this->Student->save($this->request->data)) {
+					$this->redirect(array('action' => 'view', $this->Student->id));
+				}
+			} else {
+/*				foreach(
+					str_getcsv ( file_get_contents( $tmp_file ), $line = "\n" )
+					as $row )
+				        $csv[] = str_getcsv( $row, $delim = ',', $enc = '"' );
+
+				print_r( $csv );
+*/
 			}
 		}
 	}

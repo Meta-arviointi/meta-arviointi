@@ -10,7 +10,7 @@
 </div>
 <div class="row">
 	<div class="twelvecol last">
-	<?php echo $this->Html->link('Lisää uusi opiskelija', array('action' => 'add'), array('class' => 'button', 'id' => 'add-student-link')); ?>
+	<?php echo $this->Html->link('Lisää uusi opiskelija', array('action' => 'add', 'controller' => 'students'), array('class' => 'button', 'id' => 'add-student-link')); ?>
 
 
 

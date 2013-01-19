@@ -5,17 +5,17 @@ class CoursesController extends AppController {
 	/**
 	 * Index method prints information about course and it's
 	 * attendees.
-	 */ 
+	 */
 	public function index($course_id = 0) {
 		/* Check if course_id is requested in params */
 		if ( $course_id > 0 ) {
 			// Save new course_id to session for further use
 			$this->Session->write('Course.course_id', $course_id);
-		} else { 
+		} else {
 			// No course_id in request, take id from session
 			$course_id = $this->Session->read('Course.course_id') == null ? 0 : $this->Session->read('Course.course_id');
 		}
-		
+
 		$group_id = null;
 		// Check if get-request has 'group_id'.
 		// If so, set it to session 'User.group_id'
@@ -109,7 +109,7 @@ class CoursesController extends AppController {
 		// Group_id visible for view
 		$this->set('group_id', $group_id);
 	}
-	
+
 	/**
 	 * List all actions
 	 */
@@ -127,12 +127,12 @@ class CoursesController extends AppController {
 				'User'
 			)
 		);*/
-		
+
 		// TODO: add functionality where only actions of the selected course are taken,
 		// now it takes actions of all courses...
 		$actions = $this->Course->Exercise->Action->find('all');
 		$this->set('actions', $actions);
-		
+
 		// get mapping student.id => course_membership.id, to use in link on view side
 		// '<td>' . $this->Html->link($action['Student']['last_name'] etc... 
 		$course_memberships = $this->Course->CourseMembership->find('list', 
@@ -141,9 +141,20 @@ class CoursesController extends AppController {
 			)
 		);
 		$this->set('course_memberships', $course_memberships);
-		
+
 	}
-	
+
+    public function add() {
+        if ($this->request->is('post')) {
+            $this->Course->create();
+            if ($this->Course->save($this->request->data)) {
+                $this->Session->setFlash(__('The course has been added'));
+                $this->redirect(array('action' => 'index'));
+            } else {
+                $this->Session->setFlash(__('The course could not be added. Please, try again.'));
+            }
+        }
+    }
 
 }
 
