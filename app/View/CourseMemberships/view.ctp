@@ -2,9 +2,34 @@
      /* DEBUG */
     echo '<pre>';
     //var_dump($course_membership);
-    //    debug($this->request);
+      // debug($this->request);
     echo '</pre>';
 ?>
+<script type="text/javascript">
+    <?php /* Load review date for default option. */ ?>
+    $(document).ready(function() {
+        $.ajax({
+            type: 'GET',
+            url: '<?php echo $this->request->webroot ?>course_memberships/review_end/' + $('#extra-action-form #ExerciseId').val(),
+            success: function(data){
+                $('#review_date').html(data);
+            }
+        });
+    })
+
+    $(document).ready(function() {
+        <?php /* Load review date for selected option. */ ?>
+        $('#extra-action-form #ExerciseId').change(function() {
+            $.ajax({
+                type: 'GET',
+                url: '<?php echo $this->request->webroot ?>course_memberships/review_end/' + $(this).val(),
+                success: function(data){
+                    $('#review_date').html(data);
+                }
+            });
+        });
+    })
+</script>
 <div class="row">
     <div class="twelvecol last">
         <?php
@@ -29,9 +54,40 @@
     </div>
     <div class="threecol last">
         <?php
-        echo $this->Html->link('Muokkaa', array('controller' => 'students', 'action' => 'edit', $course_membership['Student']['id']), array('class' => 'button float-right'));
-      //  echo $this->Html->link('Poista', array('action' => 'delete', $course_membership['Student']['id']), array('class' => 'button float-right'), 'Haluatko varmasti poistaa opiskelijan järjestelmästä?');
+        echo $this->Html->link('Muokkaa', array('controller' => 'students', 'action' => 'edit', $course_membership['Student']['id']), array('class' => 'button float-right modal-link'));
         ?>
+        <div class="quit-info">
+            <?php
+            if(empty($course_membership['CourseMembership']['quit_time'])) {
+                echo $this->Html->link(
+                    'Aseta keskeyttäneeksi', 
+                    array(
+                        'action' => 'set_quit', 
+                        $course_membership['CourseMembership']['id']
+                    ),
+                    null,
+                    __('Haluatko varmasti merkitä opiskelijan keskeyttäneeksi?')
+                );
+            }
+            else {
+                echo 'Keskeyttänyt: ' . date('d.m.Y', strtotime($course_membership['CourseMembership']['quit_time']));
+                echo '<br>';
+                echo '(Merkinnyt: <em>'. $users[$course_membership['CourseMembership']['quit_id']] . '</em>)';
+                echo '<br>';
+                echo $this->Html->link(
+                    'Peruuta keskeyttäminen', 
+                    array(
+                        'action' => 'unset_quit', 
+                        $course_membership['CourseMembership']['id']
+                    ),
+                    null,
+                    __('Haluatko varmasti poistaa keskeytysmerkinnän?')
+                );
+            }
+
+            //  echo $this->Html->link('Poista', array('action' => 'delete', $course_membership['Student']['id']), array('class' => 'button float-right'), 'Haluatko varmasti poistaa opiskelijan järjestelmästä?');
+            ?>
+        </div>
     </div>
 </div>
 <hr class="row">
@@ -57,7 +113,8 @@
             echo $this->Form->create('Action', array(
                 'class' => 'student-action-form', 
                 'id' => 'request-action-form', 
-                'url' => array('controller' => 'actions', 'action' => 'add_action')
+                'url' => array('controller' => 'actions', 'action' => 'add_action'),
+                'inputDefaults' => array('label' => false) // ilman tätä tulostuu jostain "Redirect" labeliksi
             ));
             echo $this->Form->input('redirect', array('type ' => 'hidden', 'default' => $course_membership['CourseMembership']['id']));
             echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $course_membership['Student']['id']));
@@ -132,18 +189,7 @@
             echo $this->Form->input('Exercise.id', array('label' => __('Harjoitus'), 'options' => $exercises));
             echo $this->Form->input('status', array('label' => __('Tila'), 'options' => array('0' => __('Ei käsitelty'), '1' => __('Käsitelty'))));
             $default_deadline = date('Y-m-d') . ' 16:00:00';
-            echo $this->Form->input('previous_deadline', array(
-                'type'          => 'datetime',
-                'label'         => __('Vanha aikaraja'), 
-                'default'       => $default_deadline, 
-                'timeFormat'    => 24, 
-                'dateFormat'    => 'DMY',
-                'interval'      => 15,
-                'minYear'       => date('Y'),
-                'maxYear'       => date('Y') + 1,
-                'monthNames'    => false,
-                'separator'     => '.'
-            ));
+            echo  __('Viimeinen arviointipäivä: ') . '<span id="review_date"></span>';
 
             $default_deadline = date('Y-m-d') . ' 16:00:00';
             $default_deadline = date('Y-m-d H:i:s', strtotime('+ 7 day', strtotime($default_deadline)));

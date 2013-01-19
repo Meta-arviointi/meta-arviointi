@@ -11,8 +11,13 @@ class CoursesController extends AppController {
 		if ( $course_id > 0 ) {
 			// Save new course_id to session for further use
 			$this->Session->write('Course.course_id', $course_id);
+<<<<<<< HEAD
 		} else {
 			// No course_id in request, take id from session
+=======
+		} else { 
+			// No course_id in request, take course_id from session
+>>>>>>> 38d2f6e25f01fdac26f2a350f51575a3c53f951d
 			$course_id = $this->Session->read('Course.course_id') == null ? 0 : $this->Session->read('Course.course_id');
 		}
 
@@ -27,8 +32,8 @@ class CoursesController extends AppController {
 			$group_id = $this->Session->read('User.group_id') == null ? 0 : $this->Session->read('User.group_id');
 		}
 
-	//	debug($this->request);
-	//	debug($this->Session->read());
+		//debug($this->request);
+		//debug($this->Session->read());
 		//$course = $this->Course->kurssit($this->request->params['course_id']);
 
 		// Hope to find a better solution for this later - Joni

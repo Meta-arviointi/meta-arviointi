@@ -31,6 +31,16 @@ datepickerDefaults = {
 
 $(document).ready ->
 
+    $('.modal').hide()
+    $('.modal-close, .modal-overlay').click -> $(this).parents('.modal').fadeOut 100
+
+    $('.modal-link').each ->
+        link = $(this)
+        link.click ->
+            $('.modal').fadeIn 100
+            $('.modal-content').load link.attr('href')
+            false
+
     $('.collapsable').hide()
 
     $('.decollapse-toggle').click ->
