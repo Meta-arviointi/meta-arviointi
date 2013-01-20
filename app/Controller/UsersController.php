@@ -19,16 +19,39 @@ class UsersController extends AppController {
     }
 
     public function logout() {
+        $this->Session->delete('Course.course_id');
+        $this->Session->delete('User.group_id');
         $this->Session->setFlash(__('Kirjauduit ulos'));
         $this->redirect($this->Auth->logout());
     }
 
 
+    /**
+     * Perform operations after successful login.
+     * Such as selecting default group for user.
+     */
     public function start() {
-        //var_dump($this->Auth->user());
-        $course_id = $this->request->params['course_id'];
+        // Empty group_id just in case it's old session
+        $this->Session->delete('User.group_id');
+
+        // Read course_id from session
+        $course_id = $this->Session->read('Course.course_id');
         $is_admin = $this->Auth->user('is_admin');
-        /* Get user's group in current course */
+
+        /*
+         * Check if user is assigned to latest course.
+         * If not, get last course user is assigned, and set
+         * that course_id to session and proceed.
+         */
+        if ( !$this->assigned_to_course() ) {
+            $last_course = $this->User->get_last_course($this->Auth->user('id'));
+            if ( $last_course ) {
+                $course_id = $last_course['id'];
+                $this->Session->write('Course.course_id', $course_id);
+            }
+        }
+
+        /* Get user's group in selected course */
         $user = $this->User->Group->find('first', array(
             'conditions' => array(
                 'Group.user_id' => $this->Auth->user('id'),
@@ -39,17 +62,19 @@ class UsersController extends AppController {
                 )
             )
         );
+
+        // If present, set group_id to session
         if ( !empty($user['Group']) ) {
-            $this->redirect('/'.$course_id.'/students/index?group_id='.$user['Group']['id']);    
-        } else { // user has not a group in current course 
-            $this->redirect(array(
-                'controller' => 'students',
-                'action' => 'index'
-                )
-            );
+            $this->Session->write('User.group_id', $user['Group']['id']);
         }
-        
+        // Redirect to students index-view
+        $this->redirect(array(
+            'controller' => 'courses',
+            'action' => 'index'
+            )
+        );
     }
+
     public function index() {
         $this->User->recursive = 0;
         $this->set('users', $this->paginate());
@@ -109,4 +134,41 @@ class UsersController extends AppController {
         $this->redirect(array('action' => 'index'));
     }
 */
+    /**
+     * Is user assigned to given course?
+     * @return true if user is assigned to course
+     * and false if user is not assigned to course.
+     *
+     * If arguments (course_id and user_id) are empty, take
+     * default values from Session and Auth.
+     *
+     */
+    public function assigned_to_course($course_id = 0, $user_id = 0) {
+        if ( empty($course_id) )
+            $course_id = $this->Session->read('Course.course_id');
+        if ( empty($user_id) )
+            $user_id = $this->Auth->user('id');
+
+        // HABTM relationship between Course and User
+        $user_course = $this->User->find('first', array(
+             'conditions' => array(
+                 'User.id' => $user_id,
+                 ),
+             'contain' => array(
+                'Course' => array(
+                     'conditions' => array(
+                        'Course.id' => $course_id
+                        )
+                    )
+                )
+            )
+        );
+        // If 'Course' is empty, return false
+        // If 'Course' has data, return false
+        return !empty($user_course['Course']);
+    }
+
+    public function test($course_id) {
+        debug($this->User->get_last_course($course_id));
+    }
 }

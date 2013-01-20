@@ -24,6 +24,7 @@ Icon?
 Thumbs.db
 destop.ini
 ehthumbs.db
+doall.sh
 *.sublime-project
 *.sublime-workspace
 /nbproject/

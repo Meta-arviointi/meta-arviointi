@@ -13,9 +13,8 @@
 	<?php 
 	 /* DEBUG */
 	echo '<pre>';
-	// var_dump($students);
-	//var_dump($user_groups);
-	//var_dump($students[1]);
+//	debug($actions);
+//	debug($course_memberships);
 	echo '</pre>';
 
 	// Selection for assistent groups
@@ -45,7 +44,7 @@
 			echo '<tr>';
 			echo '<td>' . $action['ActionType']['name'] . '</td>';
 			echo '<td>' . $action['Exercise']['exercise_number'] . '</td>';
-			echo '<td>' . $this->Html->link($action['Student']['last_name'] . ', ' . $action['Student']['first_name'], array('action' => 'view', $action['Student']['id'])) . '</td>';
+			echo '<td>' . $this->Html->link($action['Student']['last_name'] . ', ' . $action['Student']['first_name'], array('controller' => 'course_memberships', 'action' => 'view', $course_memberships[$action['Student']['id']])) . '</td>';
 			echo '<td>' . $action['User']['name'] . '</td>';
 			echo '</tr>';
 		}

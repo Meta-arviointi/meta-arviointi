@@ -4,7 +4,7 @@
 
 	git clone git@github.com:Meta-arviointi/meta-arviointi.git
 
-Muista myös tämän jälkeen vaihtaa devel haaraan mikäli se ei siellä vielä ole:
+~~Muista myös tämän jälkeen vaihtaa devel haaraan mikäli se ei siellä vielä ole:~~
 
 	git checkout devel
 

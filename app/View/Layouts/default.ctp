@@ -11,10 +11,12 @@
 
 		echo $this->Html->css('/fonts/stylesheet');
 		echo $this->Html->css('1140');
+		echo $this->Html->css('smoothness/jquery-ui-1.9.2.custom.min');
 		echo $this->Less->import('meta');
 
 		echo $this->Html->script('css3-mediaqueries');
-		echo $this->Html->script('jquery-1.8.2.min');
+		echo $this->Html->script('jquery-1.9.0.min');
+		echo $this->Html->script('jquery-ui-1.9.2.custom.min');
 		echo $this->Coffee->import('application');
 	?>
 </head>
@@ -46,6 +48,16 @@
 					?>
 					<h1>Meta-arviointi</h1>
 				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal">
+		<div class="modal-overlay"></div>
+		<div class="modal-container">
+			<h1>Testimodaali</h1>
+			<a href="#" class="modal-close">Sulje</a>
+			<div class="modal-content">
 			</div>
 		</div>
 	</div>

@@ -13,7 +13,7 @@ class User extends AppModel {
 
     public $name = 'User';
 
-    public $hasMany = array('Group', 'ActionComment');
+    public $hasMany = array('Group', 'ActionComment', 'Action');
 
     public $hasAndBelongsToMany = array('Course');
 
@@ -36,5 +36,26 @@ class User extends AppModel {
         )
 
     );
+
+    public function get_last_course($user_id) {
+        // User_id must be passed
+        if ( !empty($user_id) ) {
+
+            $options = array(
+                'conditions' => array(
+                    'id' => $user_id),
+                'contain' => array(
+                    'Course' => array(
+                        'order' => 'starttime DESC')
+                    )
+            );
+            $user = $this->find('first', $options);
+            return $user['Course'][0];
+
+        } else { // Not valid user_id, return false
+            return false;
+        }
+
+    }
 }
 ?>

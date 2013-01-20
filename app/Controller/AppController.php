@@ -55,16 +55,15 @@ class AppController extends Controller {
     );
 
     public function beforeFilter() {
-        if($this->Auth->user()) {
-            if(!is_null($this->request->course_id)) {
-                $this->_course = $this->Course->findById($this->request->course_id);
-            }
-            if(!$this->request->course_id || !$this->_course) {
+        if ( $this->Auth->user() ) {
+            if ( !$this->Session->read('Course.course_id') ) {
                 $params = array(
                     'order' => array('Course.starttime DESC')
                 );
                 $this->_course = $this->Course->find('first', $params);
-                $this->redirect(array('course_id' => $this->_course['Course']['id']));
+                // write course_id to session
+                $this->Session->write('Course.course_id', $this->_course['Course']['id']);
+                //$this->redirect(array('course_id' => $this->_course['Course']['id']));
             }
         }
 //        $this->Auth->allow('*');
