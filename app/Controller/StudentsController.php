@@ -5,18 +5,18 @@ class StudentsController extends AppController {
 
 	public function add() {
 		if($this->request->is('post')) {
-			if(empty($this->data['Student']['file'])) {
+			if(empty($this->data['Student']['tmp_file'])) {
 				if($this->Student->save($this->request->data)) {
 					$this->redirect(array('action' => 'view', $this->Student->id));
 				}
 			} else {
-/*				foreach(
-					str_getcsv ( file_get_contents( $tmp_file ), $line = "\n" )
-					as $row )
-				        $csv[] = str_getcsv( $row, $delim = ',', $enc = '"' );
-
-				print_r( $csv );
-*/
+				$uploadfile = WWW_ROOT . 'files/' . basename($this->data['Student']['tmp_file']['name']);
+				if (move_uploaded_file($this->data['Student']['tmp_file']['tmp_name'], $uploadfile)) {
+					// file can now be opened from $uploadfile
+				}
+				else {
+					// FAILED
+				}
 			}
 		}
 	}
