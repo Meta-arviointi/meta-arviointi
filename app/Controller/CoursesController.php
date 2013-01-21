@@ -6,6 +6,23 @@ class CoursesController extends AppController {
      * Index method prints information about course and it's
      * attendees.
      */
+    public function admin_index() {
+
+        // Call Group-model to return groups with assistant names
+        // in given course ($course_id from Session)
+        $results = $this->Course->find('all');
+//print_r($results);
+        // Create array with 'Group.id' as key and 'User.name' as value
+        // NOTE: 'User.name' is virtual field defined in User-model
+        $course_groups = array();
+        foreach($results as $result) {
+            $course_groups[$result['Course']['id']] = $result['Course']['name'];
+        }
+print_r($course_groups);
+        // Set array to be used in drop-down selection
+        $this->set('course_groups', $course_groups);
+    }
+
     public function index($course_id = 0) {
         /* Check if course_id is requested in params */
         if ( $course_id > 0 ) {
