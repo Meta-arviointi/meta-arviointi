@@ -103,7 +103,8 @@ class CoursesController extends AppController {
         }
 
         // Call Group-model to return groups with assistant names
-        $results = $this->Course->Group->groups();
+        // in given course ($course_id from Session)
+        $results = $this->Course->Group->groups($course_id);
 
         // Create array with 'Group.id' as key and 'User.name' as value
         // NOTE: 'User.name' is virtual field defined in User-model
