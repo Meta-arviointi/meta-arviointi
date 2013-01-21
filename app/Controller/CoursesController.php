@@ -174,7 +174,18 @@ class CoursesController extends AppController {
             )
         );
         $this->set('course_memberships', $course_memberships);
+    }
 
+    public function add() {
+        if ($this->request->is('post')) {
+            $this->Course->create();
+            if ($this->Course->save($this->request->data)) {
+                $this->Session->setFlash(__('The course has been added'));
+                $this->redirect(array('action' => 'index'));
+            } else {
+                $this->Session->setFlash(__('The course could not be added. Please, try again.'));
+            }
+        }
     }
 }
 

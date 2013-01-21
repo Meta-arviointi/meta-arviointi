@@ -11,6 +11,10 @@
 	echo $this->Form->submit('Tallenna');
 	echo $this->Html->link('Peruuta', array('action' => 'index'));
 	echo $this->Form->end();
+	
+	echo $this->Form->create('Student', array('type' => 'file'));
+	echo $this->Form->file('tmp_file');
+	echo $this->Form->end('upload');
 	?>
 	</div>
 </div>
