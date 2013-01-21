@@ -104,4 +104,17 @@ class CourseMembershipsController extends AppController {
         }
 
     }
+
+    public function edit_comment($id) {
+        if($this->request->is('put')) {
+            if($this->CourseMembership->save($this->request->data)) {
+                $this->Session->setFlash(__('Kommentti tallennettu!'));
+                $this->redirect(array('action' => 'view', $id));
+            }
+            else $this->Session->setFlash('Ei onnistu!');
+        }
+        else {
+            $this->data = $this->CourseMembership->findById($id);
+        }
+    }
 }

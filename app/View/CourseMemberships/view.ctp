@@ -49,7 +49,17 @@
         <p>
             <?php echo $course_membership['Student']['email'] ?>
         </p>
-        <p>Kommentti: <?php echo empty($course_membership['CourseMembership']['comment']) ? '-' : $course_membership['CourseMembership']['comment'] ?></p>
+        <p>Kommentti: <?php echo empty($course_membership['CourseMembership']['comment']) ? '-' : $course_membership['CourseMembership']['comment'] ?>
+            <?php
+                echo $this->Html->link('('.__('Muokkaa').')',
+                    array(
+                        'action' => 'edit_comment', 
+                        $course_membership['CourseMembership']['id']
+                    ), 
+                    array('class' => 'modal-link')
+                )
+            ?>
+        </p>
 
     </div>
     <div class="threecol last">
