@@ -12,8 +12,10 @@ class StudentsController extends AppController {
 			} else {
 				$uploadfile = WWW_ROOT . 'files/' . basename($this->data['Student']['tmp_file']['name']);
 				if (move_uploaded_file($this->data['Student']['tmp_file']['tmp_name'], $uploadfile)) {
-//				$csvfile = fopen($this->data['Student']['file'], "r");
-					// file can now be opened from $uploadfile
+					$csvfile = fopen($uploadfile, "r");
+
+					fclose($csvfile);
+					unlink($uploadfile);
 				}
 				else {
 					// FAILED
