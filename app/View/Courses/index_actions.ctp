@@ -41,28 +41,24 @@
         </tr> --> */?>
         <?php
         foreach($actions as $action) {
-            // Check that Exercise is valid,
-            // $action['Exercise'] is empty if action doesn't belong to current course
-            if ( !empty($action['Exercise']) ) {
-                $action_title = null;
-                // If Action belongs to several Exercises
-                if ( count($action['Exercise']) > 1 ) {
-                    foreach($action['Exercise'] as $exercise) {
-                        $action_title = $action_title . 'H' . $exercise['exercise_number'] . ', ';
-                    }
-                    // Remove last two characters (',' and ' ')
-                    $action_title = substr($action_title, 0, -2);
-
-                } else { // only one exercise
-                        $action_title = 'H' . $action['Exercise'][0]['exercise_number'];
+            $action_title = null;
+            // If Action belongs to several Exercises
+            if ( count($action['Exercise']) > 1 ) {
+                foreach($action['Exercise'] as $exercise) {
+                    $action_title = $action_title . 'H' . $exercise['exercise_number'] . ', ';
                 }
-                echo '<tr>';
-                echo '<td>' . $action['ActionType']['name'] . '</td>';
-                echo '<td>' . $action_title . '</td>';
-                echo '<td>' . $this->Html->link($action['Student']['last_name'] . ', ' . $action['Student']['first_name'], array('controller' => 'course_memberships', 'action' => 'view', $course_memberships[$action['Student']['id']])) . '</td>';
-                echo '<td>' . $action['User']['name'] . '</td>';
-                echo '</tr>';
+                // Remove last two characters (',' and ' ')
+                $action_title = substr($action_title, 0, -2);
+
+            } else { // only one exercise
+                    $action_title = 'H' . $action['Exercise'][0]['exercise_number'];
             }
+            echo '<tr>';
+            echo '<td>' . $action['ActionType']['name'] . '</td>';
+            echo '<td>' . $action_title . '</td>';
+            echo '<td>' . $this->Html->link($action['Student']['last_name'] . ', ' . $action['Student']['first_name'], array('controller' => 'course_memberships', 'action' => 'view', $course_memberships[$action['Student']['id']])) . '</td>';
+            echo '<td>' . $action['User']['name'] . '</td>';
+            echo '</tr>';
         }
         ?>
     </table>

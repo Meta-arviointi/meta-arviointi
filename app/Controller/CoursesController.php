@@ -91,6 +91,16 @@ class CoursesController extends AppController {
             //debug($students);
         }
 
+        /*
+         * Remove elements that contain empty 'CourseMembership'
+         * (meaning students who don't belong to current course (course_id)).
+         * This way View don't need to handle empty array elements. 
+         */
+        foreach ($students as $index => $student) {
+            if ( empty($student['CourseMembership']) ) {
+                unset($students[$index]);
+            } 
+        }
 
         // Call Group-model to return groups with assistant names
         $results = $this->Course->Group->groups();
@@ -143,6 +153,16 @@ class CoursesController extends AppController {
                 )
              )
         );
+
+        /*
+         * Delete actions that don't belong to current course.
+         */
+        foreach ($actions as $index => $action) {
+            if ( empty($action['Exercise']) ) {
+                unset($actions[$index]);
+            }
+        }
+
         $this->set('actions', $actions);
         //debug($actions);
 
