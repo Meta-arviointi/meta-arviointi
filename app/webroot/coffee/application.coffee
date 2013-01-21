@@ -32,7 +32,9 @@ datepickerDefaults = {
 $(document).ready ->
 
     $('.modal').hide()
-    $('.modal-close, .modal-overlay').click -> $(this).parents('.modal').fadeOut 100
+    $('.modal-close, .modal-overlay').click -> 
+        $(this).parents('.modal').fadeOut 100
+        false
 
     $('.modal-link').each ->
         link = $(this)

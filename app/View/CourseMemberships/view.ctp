@@ -233,6 +233,12 @@
                 $action_title = $action_title .  ': ' . $action['ActionType']['name'];
 
                 echo '<div class="action">';
+                echo $this->Html->link(
+                    'Poista',
+                    array('controller' => 'actions', 'action' => 'delete', $action['Action']['id']),
+                    array('id' => 'delete-action'),
+                    __('Haluatko varmasti poistaa toimenpiteen?')
+                );
                 echo '<h3>' . $action_title . '</h3>';
                 if(!empty($action['Action']['deadline'])) echo '<p class="deadline">Aikaraja: '.date('d.m.Y H:i', strtotime($action['Action']['deadline'])).'</p>';
                 if(!empty($action['Action']['description'])) echo '<p class="comment">'.$action['Action']['description'].'</p>';
