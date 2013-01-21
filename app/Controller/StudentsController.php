@@ -10,13 +10,8 @@ class StudentsController extends AppController {
 					$this->redirect(array('action' => 'view', $this->Student->id));
 				}
 			} else {
-/*				foreach(
-					str_getcsv ( file_get_contents( $tmp_file ), $line = "\n" )
-					as $row )
-				        $csv[] = str_getcsv( $row, $delim = ',', $enc = '"' );
-
-				print_r( $csv );
-*/
+//				$file = 
+//				$csvfile = fopen($this->data['Student']['file'], "r");
 			}
 		}
 	}
