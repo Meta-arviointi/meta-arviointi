@@ -8,7 +8,7 @@ echo $this->Form->input('student_id', array('type' => 'hidden'));
 echo $this->Form->input('action_type_id', array('type' => 'hidden'));
 echo $this->Form->input('handled_id', array(
     'options' => array($this->Session->read('Auth.User.id') => __('Käsitelty')),
-    'empty' => array(0 => __('Ei käsitelty')),
+    'empty' => array(null => __('Ei käsitelty')),
     'default' => $this->data['Action']['handled_id']
     )
 );
@@ -27,7 +27,12 @@ if ( !empty($this->data['Action']['deadline']) ) {
     ));
 }
 
-echo 'Luotu: ' . date('d.m.Y H:i', strtotime($this->data['Action']['created']));
-echo 'Viimeksi muokattu: ' . date('d.m.Y H:i', strtotime($this->data['Action']['modified']));
+echo '<span class="timestamp">Luotu: ' . date('d.m.Y H:i', strtotime($this->data['Action']['created'])) 
+    . '</span>';
+echo '<br>';
+if ( !empty($this->data['Action']['modified']) ) {
+    echo '<span class="timestamp">Viimeksi muokattu: ' 
+        . date('d.m.Y H:i', strtotime($this->data['Action']['modified'])) . '</span>';   
+}
 echo $this->Form->end(__('Tallenna'));
 ?>

@@ -32,7 +32,8 @@ class CourseMembershipsController extends AppController {
                 ),
                 'conditions' => array(
                     'Action.student_id' => $course_membership['Student']['id']
-                )
+                ),
+                'order' => array('Action.created DESC')
             )
         );
 
