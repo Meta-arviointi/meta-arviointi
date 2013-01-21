@@ -18,7 +18,6 @@ class CourseMembershipsController extends AppController {
         $course_membership = $this->CourseMembership->findById($id);
 
         // get student's actions in selected course enrolment
-        // TODO: check complexity
         $student_actions = $this->CourseMembership->Course->Exercise->Action->find('all', array(
                 'contain' => array(
                     'Student',
@@ -36,6 +35,15 @@ class CourseMembershipsController extends AppController {
                 )
             )
         );
+
+        /*
+         * Delete actions that don't belong to current course.
+         */
+        foreach ($student_actions as $index => $action) {
+            if ( empty($action['Exercise']) ) {
+                unset($student_actions[$index]);
+            } 
+        }
 
         $exercises = $this->CourseMembership->Course->Exercise->find('list', array(
                 'conditions' => array(

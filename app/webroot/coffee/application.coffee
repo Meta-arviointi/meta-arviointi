@@ -70,4 +70,5 @@ $(document).ready ->
         $(this).parents('form').hide()
         false
 
+    $('input.datepicker').datepicker datepickerDefaults
     #$('#InputFieldId').datepicker datepickerDefaults

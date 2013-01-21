@@ -9,8 +9,13 @@
     </div>
 </div>
 <div class="row">
+<<<<<<< HEAD
+	<div class="twelvecol last">
+	<?php echo $this->Html->link('Lisää uusi opiskelija', array('action' => 'add', 'controller' => 'students'), array('class' => 'button', 'id' => 'add-student-link')); ?>
+=======
     <div class="twelvecol last">
     <?php echo $this->Html->link('Lisää uusi opiskelija', array('action' => 'add'), array('class' => 'button', 'id' => 'add-student-link')); ?>
+>>>>>>> 38d2f6e25f01fdac26f2a350f51575a3c53f951d
 
 
 
@@ -44,28 +49,25 @@
         </tr> -->
         <?php
         foreach($students as $student) {
-            // Print only students, who are members in current course
-            if ( !empty($student['CourseMembership']) ) {
-                echo '<tr>';
-                echo '<td>'.$this->Html->link($student['Student']['last_name'], 
-                    array('controller' => 'course_memberships', 'action' => 'view', $student['CourseMembership'][0]['id'])).'</td>';
-                echo '<td>'.$this->Html->link($student['Student']['first_name'], 
-                    array('controller' => 'course_memberships', 'action' => 'view', $student['CourseMembership'][0]['id'])).'</td>';
-                echo '<td>'.$student['Student']['student_number'].'</td>';
+            echo '<tr>';
+            echo '<td>'.$this->Html->link($student['Student']['last_name'], 
+                array('controller' => 'course_memberships', 'action' => 'view', $student['CourseMembership'][0]['id'])).'</td>';
+            echo '<td>'.$this->Html->link($student['Student']['first_name'], 
+                array('controller' => 'course_memberships', 'action' => 'view', $student['CourseMembership'][0]['id'])).'</td>';
+            echo '<td>'.$student['Student']['student_number'].'</td>';
 
-                /* If student belongs to a group, print assistant name */
-                if ( isset($student['Group'][0]['User']) ) {
-                    echo '<td>'.$student['Group'][0]['User']['name'].'</td>';
-                } else {
-                    /* If not in any group, leave cell empty */
-                    echo '<td></td>';
+            /* If student belongs to a group, print assistant name */
+            if ( isset($student['Group'][0]['User']) ) {
+                echo '<td>'.$student['Group'][0]['User']['name'].'</td>';
+            } else {
+                /* If not in any group, leave cell empty */
+                echo '<td></td>';
 
-                }
-                // Jos ei tietokantataulut ole vielä kunnossa kommentoi yo. if ja laita vain "Asseri Assistentti":
-                //echo '<td>Asseri Assistentti</td>';
-                echo '<td>'.count($student['Action']).'</td>';
-                echo '</tr>';
             }
+            // Jos ei tietokantataulut ole vielä kunnossa kommentoi yo. if ja laita vain "Asseri Assistentti":
+            //echo '<td>Asseri Assistentti</td>';
+            echo '<td>'.count($student['Action']).'</td>';
+            echo '</tr>';
         }
         ?>
     </table>
