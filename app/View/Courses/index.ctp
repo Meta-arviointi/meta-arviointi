@@ -9,15 +9,8 @@
     </div>
 </div>
 <div class="row">
-<<<<<<< HEAD
 	<div class="twelvecol last">
 	<?php echo $this->Html->link('Lisää uusi opiskelija', array('action' => 'add', 'controller' => 'students'), array('class' => 'button', 'id' => 'add-student-link')); ?>
-=======
-    <div class="twelvecol last">
-    <?php echo $this->Html->link('Lisää uusi opiskelija', array('action' => 'add'), array('class' => 'button', 'id' => 'add-student-link')); ?>
->>>>>>> 38d2f6e25f01fdac26f2a350f51575a3c53f951d
-
-
 
     <?php 
      /* DEBUG */
