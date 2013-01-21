@@ -2,9 +2,34 @@
      /* DEBUG */
     echo '<pre>';
     //var_dump($course_membership);
-    //    debug($this->request);
+      // debug($this->request);
     echo '</pre>';
 ?>
+<script type="text/javascript">
+    <?php /* Load review date for default option. */ ?>
+    $(document).ready(function() {
+        $.ajax({
+            type: 'GET',
+            url: '<?php echo $this->request->webroot ?>course_memberships/review_end/' + $('#extra-action-form #ExerciseId').val(),
+            success: function(data){
+                $('#review_date').html(data);
+            }
+        });
+    })
+
+    $(document).ready(function() {
+        <?php /* Load review date for selected option. */ ?>
+        $('#extra-action-form #ExerciseId').change(function() {
+            $.ajax({
+                type: 'GET',
+                url: '<?php echo $this->request->webroot ?>course_memberships/review_end/' + $(this).val(),
+                success: function(data){
+                    $('#review_date').html(data);
+                }
+            });
+        });
+    })
+</script>
 <div class="row">
     <div class="twelvecol last">
         <?php
@@ -47,6 +72,8 @@
             else {
                 echo 'Keskeyttänyt: ' . date('d.m.Y', strtotime($course_membership['CourseMembership']['quit_time']));
                 echo '<br>';
+                echo '(Merkinnyt: <em>'. $users[$course_membership['CourseMembership']['quit_id']] . '</em>)';
+                echo '<br>';
                 echo $this->Html->link(
                     'Peruuta keskeyttäminen', 
                     array(
@@ -86,7 +113,8 @@
             echo $this->Form->create('Action', array(
                 'class' => 'student-action-form', 
                 'id' => 'request-action-form', 
-                'url' => array('controller' => 'actions', 'action' => 'add_action')
+                'url' => array('controller' => 'actions', 'action' => 'add_action'),
+                'inputDefaults' => array('label' => false) // ilman tätä tulostuu jostain "Redirect" labeliksi
             ));
             echo $this->Form->input('redirect', array('type ' => 'hidden', 'default' => $course_membership['CourseMembership']['id']));
             echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $course_membership['Student']['id']));
@@ -161,18 +189,7 @@
             echo $this->Form->input('Exercise.id', array('label' => __('Harjoitus'), 'options' => $exercises));
             echo $this->Form->input('status', array('label' => __('Tila'), 'options' => array('0' => __('Ei käsitelty'), '1' => __('Käsitelty'))));
             $default_deadline = date('Y-m-d') . ' 16:00:00';
-            echo $this->Form->input('previous_deadline', array(
-                'type'          => 'datetime',
-                'label'         => __('Vanha aikaraja'), 
-                'default'       => $default_deadline, 
-                'timeFormat'    => 24, 
-                'dateFormat'    => 'DMY',
-                'interval'      => 15,
-                'minYear'       => date('Y'),
-                'maxYear'       => date('Y') + 1,
-                'monthNames'    => false,
-                'separator'     => '.'
-            ));
+            echo  __('Viimeinen arviointipäivä: ') . '<span id="review_date"></span>';
 
             $default_deadline = date('Y-m-d') . ' 16:00:00';
             $default_deadline = date('Y-m-d H:i:s', strtotime('+ 7 day', strtotime($default_deadline)));
@@ -216,6 +233,12 @@
                 $action_title = $action_title .  ': ' . $action['ActionType']['name'];
 
                 echo '<div class="action">';
+                echo $this->Html->link(
+                    'Poista',
+                    array('controller' => 'actions', 'action' => 'delete', $action['Action']['id']),
+                    array('id' => 'delete-action'),
+                    __('Haluatko varmasti poistaa toimenpiteen?')
+                );
                 echo '<h3>' . $action_title . '</h3>';
                 if(!empty($action['Action']['deadline'])) echo '<p class="deadline">Aikaraja: '.date('d.m.Y H:i', strtotime($action['Action']['deadline'])).'</p>';
                 if(!empty($action['Action']['description'])) echo '<p class="comment">'.$action['Action']['description'].'</p>';
