@@ -91,21 +91,4 @@ class ActionsController extends AppController {
 
         }
     }
-
-    public function test($id = 1) {
-        $action = $this->Action->find('first', array(
-                    'conditions' => array('Action.id' => $id),
-                    'contain' => array(
-                        'Student' => array(
-                            'CourseMembership' => array(
-                                'conditions' => array(
-                                    'CourseMembership.course_id' => $this->Session->read('Course.course_id')
-                                )
-                            )
-                        )
-                   )
-            )
-        );
-        debug($action);
-    }
 }
