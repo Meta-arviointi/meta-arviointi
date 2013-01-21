@@ -41,4 +41,18 @@ class ActionsController extends AppController {
             $this->Session->setFlash(__("Toimenpiteen ($id) poisto epäonnistui"));
         }
     }
+
+    public function edit($id) {
+        if($this->request->is('put')) {
+            if($this->Action->save($this->request->data)) {
+                $this->Session->setFlash(__('Kommentti tallennettu!'));
+                $this->redirect(array('action' => 'view', $id));
+            }
+            else $this->Session->setFlash('Ei onnistu!');
+        }
+        else {
+            $this->Action->contain(); // fetch only info about Action
+            $this->data = $this->Action->findById($id);
+        }
+    }
 }
