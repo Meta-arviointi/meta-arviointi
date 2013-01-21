@@ -53,6 +53,7 @@ class ActionsController extends AppController {
         else {
             $this->Action->contain(); // fetch only info about Action
             $this->data = $this->Action->findById($id);
+            
         }
     }
 }
