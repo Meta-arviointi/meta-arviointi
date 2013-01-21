@@ -290,6 +290,22 @@
     </div>
     <div class="sixcol last">
         <h2>Sähköposti</h2>
-        <p>To be done.</p>
+        <?php
+        echo '<div id="student-email-form-container">';
+
+            echo '<a href="#" id="student-email-form-link">Lähetä uusi sähköpostiviesti</a>';
+
+            // KORJAUSPYYNTÖ
+            echo $this->Form->create('Mail', array(
+                'class' => 'student-email-form', 
+                'id' => 'student-email-form', 
+                'url' => array('controller' => 'emails', 'action' => 'send'),
+                'inputDefaults' => array('label' => false) // ilman tätä tulostuu jostain "Redirect" labeliksi
+            ));
+            echo $this->Form->input('title', array('label' => __('Otsikko')));
+            echo $this->Form->input('content', array('label' => __('Viesti'), 'rows' => 10));
+            echo $this->Form->submit(__('Lähetä'), array('before' => '<a href="#" class="collapse-toggle cancel">' . __('Peruuta') . '</a>'));
+            echo $this->Form->end();
+        ?>
     </div>
 </div>

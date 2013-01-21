@@ -56,6 +56,7 @@ $(document).ready ->
     $('#StudentIndexFilters select').change ->
         $(this).parents('form').submit()
 
+    # Action form functionality
     $('.student-action-form').hide()
 
     $('#student-action-form-links a').on 'click', ->
@@ -67,6 +68,17 @@ $(document).ready ->
 
     $('.student-action-form a.cancel').on 'click', ->
         $('#student-action-form-links a').removeClass 'active'
+        $(this).parents('form').hide()
+        false
+
+    # Action form functionality
+    $('.student-email-form').hide()
+
+    $('#student-email-form-link').on 'click', ->
+        $('#student-email-form').show()
+        false
+
+    $('.student-email-form a.cancel').on 'click', ->
         $(this).parents('form').hide()
         false
 

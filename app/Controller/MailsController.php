@@ -1,7 +1,7 @@
 <?php
 App::uses('CakeEmail', 'Network/Email');
 
-class EmailController extends AppController {
+class MailsController extends AppController {
 
     public function index() {
     	echo "sending";
