@@ -89,7 +89,7 @@ class UsersController extends AppController {
         $this->set('user', $this->User->read(null, $id));
     }
 */
-    public function add() {
+    public function admin_add() {
         if ($this->request->is('post')) {
             $this->User->create();
             if ($this->User->save($this->request->data)) {

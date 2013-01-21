@@ -177,7 +177,7 @@ class CoursesController extends AppController {
         $this->set('course_memberships', $course_memberships);
     }
 
-    public function add() {
+    public function admin_add() {
         if ($this->request->is('post')) {
             $this->Course->create();
             if ($this->Course->save($this->request->data)) {

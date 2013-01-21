@@ -3,7 +3,7 @@ class StudentsController extends AppController {
 
 	public $name = 'Students';
 
-	public function add() {
+	public function admin_add() {
 		if($this->request->is('post')) {
 			if(empty($this->data['Student']['tmp_file'])) {
 				if($this->Student->save($this->request->data)) {
@@ -24,7 +24,7 @@ class StudentsController extends AppController {
 		}
 	}
 
-	public function edit($id) {
+	public function admin_edit($id) {
 		if($this->request->is('put')) {
 			if($this->Student->save($this->request->data)) {
 				$this->Session->setFlash('Tallennettu!');
@@ -37,12 +37,11 @@ class StudentsController extends AppController {
 		}
 	}
 
-	public function delete($id) {
+/*	public function delete($id) {
 		if($this->Student->delete($id)) {
 			$this->Session->setFlash('Poistettu!');
 		}
 		$this->redirect(array('action' => 'index'));
 	}
-
-
+*/
 }
