@@ -12,7 +12,7 @@ set format x "%Y-%m"
 set xlabel "Date"
 set xrange ["2012-09" : "2013-03"]
 set xtics nomirror rotate by -90
-set yrange [0 : 12]
+set yrange [0:]
 # Colours
 # 1=red 2=grn 3=blue
 
