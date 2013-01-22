@@ -55,10 +55,8 @@
 	<div class="modal">
 		<div class="modal-overlay"></div>
 		<div class="modal-container">
-			<h1>Testimodaali</h1>
+			<div class="modal-content"></div>
 			<a href="#" class="modal-close">Sulje</a>
-			<div class="modal-content">
-			</div>
 		</div>
 	</div>
 

@@ -345,6 +345,10 @@ textarea {
             }
         }
     }
+        
+    .toolbar {
+        float: right;
+    }
 }
 
 .note {
@@ -412,7 +416,9 @@ textarea {
         }
     }
     .modal-content {
-    
+        h1 {
+            margin-bottom: 0.5em;
+        }
     }
     .modal-overlay {
         position: absolute;
@@ -426,4 +432,56 @@ textarea {
 
 #delete-action {
     float: right;
+}
+
+#student-email-form-container {
+    background: #fff;
+    box-shadow: 0px 2px 5px rgba(77,91,96,0.1);
+    margin: 20px 0;
+    padding: 10px 20px;
+    border-radius: 5px;
+    .input {
+        border-bottom: 1px solid #f0f0f0;
+        padding: 5px 0;
+        label {
+            display: inline-block;
+            width: 25%;
+        }
+    }
+    input[type="text"] {
+        width: 95%;
+    }
+    textarea {
+        width: 95%;
+    }
+    .submit {
+        padding-top: 5px;
+        color: #b0b0b0;
+        font-size: 0.8em;
+        text-align: right;
+        .cancel {
+            float: left;
+            line-height: 30px;
+            color: #b0b0b0;
+        }
+        input {
+            margin-right: 0;
+        }
+    }
+    .decollapse-toggle {
+        display: block;
+        text-align: center;
+        text-shadow: none;
+        font-family: OpenSansBold;
+    }
+}
+
+#ActionEditForm {
+    .timestamp {
+        padding-top: 5px;
+            margin-top: 10px;
+            border-top: 1px solid #f0f0f0;
+            font-size: 0.9em;
+            text-align: right;
+    }
 }

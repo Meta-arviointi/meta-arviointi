@@ -7,14 +7,25 @@ class Group extends AppModel {
 	public $hasAndBelongsToMany = array('Student');
 
 	/**
-	 * Fetches all groups and assistant names.
-	 * @return all groups and their supervising assistant's name in array
+	 * Fetches groups and assistant names.
+	 * If $course_id is set, filter  by selected course.
+	 * If $course_id is not set, return all groups and assistants
+	 * @return groups and their supervising assistant's name in array
 	 */
-	public function groups() {
-		return $this->find('all', array(
-			'contain' => array('User')
-			)
-		);
+	public function groups($course_id = 0) {
+		if ( $course_id > 0 ) {
+			return $this->find('all', array(
+				'contain' => array('User'),
+				'conditions' => array('Group.course_id' => $course_id)
+				)
+			);
+		} else {
+			// Return all groups and assistants
+			return $this->find('all', array(
+				'contain' => array('User')
+				)
+			);
+		}
 
 	}
 }

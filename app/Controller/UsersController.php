@@ -11,7 +11,7 @@ class UsersController extends AppController {
     public function login() {
         if ($this->request->is('post')) {
             if ($this->Auth->login()) {
-                $this->redirect($this->Auth->redirect());
+                $this->redirect($this->Auth->loginRedirect);
             } else {
                 $this->Session->setFlash(__('Invalid username or password, try again'));
             }
@@ -31,6 +31,7 @@ class UsersController extends AppController {
      * Such as selecting default group for user.
      */
     public function start() {
+        
         // Empty group_id just in case it's old session
         $this->Session->delete('User.group_id');
 
@@ -88,7 +89,7 @@ class UsersController extends AppController {
         $this->set('user', $this->User->read(null, $id));
     }
 */
-    public function add() {
+    public function admin_add() {
         if ($this->request->is('post')) {
             $this->User->create();
             if ($this->User->save($this->request->data)) {

@@ -49,7 +49,17 @@
         <p>
             <?php echo $course_membership['Student']['email'] ?>
         </p>
-        <p>Kommentti: <?php echo empty($course_membership['CourseMembership']['comment']) ? '-' : $course_membership['CourseMembership']['comment'] ?></p>
+        <p>Kommentti: <?php echo empty($course_membership['CourseMembership']['comment']) ? '-' : $course_membership['CourseMembership']['comment'] ?>
+            <?php
+                echo $this->Html->link('('.__('Muokkaa').')',
+                    array(
+                        'action' => 'edit_comment', 
+                        $course_membership['CourseMembership']['id']
+                    ), 
+                    array('class' => 'modal-link')
+                )
+            ?>
+        </p>
 
     </div>
     <div class="threecol last">
@@ -213,76 +223,102 @@
 
         echo '</div>';
 
-        foreach($student_actions as $action) {
-            // Check that Exercise is valid
-            if ( !empty($action['Exercise']) ) {    
+        foreach($student_actions as $action) {   
 
-                $action_title = null;
+            $action_title = null;
 
-                // If Actions belongs to several Exercises
-                if ( count($action['Exercise']) > 1 ) {
-                    foreach($action['Exercise'] as $exercise) {
-                        $action_title = $action_title . 'H' . $exercise['exercise_number'] . ', ';
-                    }
-                    // Remove last two characters ',' and ' '
-                    $action_title = substr($action_title, 0, -2);
-                    
-                } else { // only one exercise
-                    $action_title = 'H' . $action['Exercise'][0]['exercise_number'];
+            // If Actions belongs to several Exercises
+            if ( count($action['Exercise']) > 1 ) {
+                foreach($action['Exercise'] as $exercise) {
+                    $action_title = $action_title . 'H' . $exercise['exercise_number'] . ', ';
                 }
-                $action_title = $action_title .  ': ' . $action['ActionType']['name'];
-
-                echo '<div class="action">';
-                echo $this->Html->link(
-                    'Poista',
-                    array('controller' => 'actions', 'action' => 'delete', $action['Action']['id']),
-                    array('id' => 'delete-action'),
-                    __('Haluatko varmasti poistaa toimenpiteen?')
-                );
-                echo '<h3>' . $action_title . '</h3>';
-                if(!empty($action['Action']['deadline'])) echo '<p class="deadline">Aikaraja: '.date('d.m.Y H:i', strtotime($action['Action']['deadline'])).'</p>';
-                if(!empty($action['Action']['description'])) echo '<p class="comment">'.$action['Action']['description'].'</p>';
-                echo '<div class="meta">';
-                echo '<span class="timestamp">'.date('d.m.Y H:i', strtotime($action['Action']['created'])).'</span> - ';
-                echo '<span class="by">' . $action['User']['name'] . '</span>';
-                echo '</div>';
-
-                echo '<div class="comments">';
-
-                // LIST COMMENTS
-                foreach($action['ActionComment'] as $comment) {
-                    echo '<div class="comment">';
-                    echo '<p>';
-                    echo '<strong>' . $comment['User']['name'] . ':</strong> ';
-                    echo $comment['comment'];
-                    echo '</p>';
-                    echo '<span class="timestamp">['.date('d.m.Y H:i', strtotime($comment['created'])).']</span>';
-                    echo '</div>';
-                }
-
-                // ADD A NEW COMMENT
-                echo $this->Form->create('ActionComment', array(
-                    'url' => array('controller' => 'actions', 'action' => 'add_action_comment'),
-                    'inputDefaults' => array(
-                        'label' => false
-                    )
-                ));
-                echo $this->Form->input('redirect', array('type' => 'hidden', 'default' => $course_membership['CourseMembership']['id']));
-                echo $this->Form->input('action_id', array('type' => 'hidden', 'default' => $action['Action']['id']));
-                echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
-                echo $this->Form->input('comment', array('rows' => 2));
-                echo $this->Form->submit(__('Lähetä kommentti'));
-                echo $this->Form->end();
-
-                echo '</div>';
-
-                echo '</div>';   
+                // Remove last two characters ',' and ' '
+                $action_title = substr($action_title, 0, -2);
+                
+            } else { // only one exercise
+                $action_title = 'H' . $action['Exercise'][0]['exercise_number'];
             }
+            $action_title = $action_title .  ': ' . $action['ActionType']['name'];
+
+            echo '<div class="action">';
+            echo '<div class="toolbar">';
+            echo $this->Html->link(__('Muokkaa'),
+                array(
+                    'controller' => 'actions',
+                    'action' => 'edit', 
+                    $action['Action']['id']
+                ), 
+                array(
+                    'class' => 'modal-link',
+                    'id' => 'edit-action'
+                )
+            );
+            echo $this->Html->link(
+                'Poista',
+                array('controller' => 'actions', 'action' => 'delete', $action['Action']['id']),
+                array('id' => 'delete-action'),
+                __('Haluatko varmasti poistaa toimenpiteen?')
+            );
+            echo '</div>';
+            echo '<h3>' . $action_title . '</h3>';
+            if(!empty($action['Action']['deadline'])) echo '<p class="deadline">Aikaraja: '.date('d.m.Y H:i', strtotime($action['Action']['deadline'])).'</p>';
+            if(!empty($action['Action']['description'])) echo '<p class="comment">'.$action['Action']['description'].'</p>';
+            echo '<div class="meta">';
+            echo '<span class="timestamp">'.date('d.m.Y H:i', strtotime($action['Action']['created'])).'</span> - ';
+            echo '<span class="by">' . $action['User']['name'] . '</span>';
+            echo '</div>';
+
+            echo '<div class="comments">';
+
+            // LIST COMMENTS
+            foreach($action['ActionComment'] as $comment) {
+                echo '<div class="comment">';
+                echo '<p>';
+                echo '<strong>' . $comment['User']['name'] . ':</strong> ';
+                echo $comment['comment'];
+                echo '</p>';
+                echo '<span class="timestamp">['.date('d.m.Y H:i', strtotime($comment['created'])).']</span>';
+                echo '</div>';
+            }
+
+            // ADD A NEW COMMENT
+            echo $this->Form->create('ActionComment', array(
+                'url' => array('controller' => 'actions', 'action' => 'add_action_comment'),
+                'inputDefaults' => array(
+                    'label' => false
+                )
+            ));
+            echo $this->Form->input('redirect', array('type' => 'hidden', 'default' => $course_membership['CourseMembership']['id']));
+            echo $this->Form->input('action_id', array('type' => 'hidden', 'default' => $action['Action']['id']));
+            echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
+            echo $this->Form->input('comment', array('rows' => 2));
+            echo $this->Form->submit(__('Lähetä kommentti'));
+            echo $this->Form->end();
+
+            echo '</div>';
+
+            echo '</div>';
         }
         ?>
     </div>
     <div class="sixcol last">
         <h2>Sähköposti</h2>
-        <p>To be done.</p>
+        <?php
+        echo '<div id="student-email-form-container">';
+
+            echo '<a href="#" id="student-email-form-link">Lähetä uusi sähköpostiviesti</a>';
+
+            // KORJAUSPYYNTÖ
+            echo $this->Form->create('Mail', array(
+                'class' => 'student-email-form', 
+                'id' => 'student-email-form', 
+                'url' => array('controller' => 'emails', 'action' => 'send'),
+                'inputDefaults' => array('label' => false) // ilman tätä tulostuu jostain "Redirect" labeliksi
+            ));
+            echo $this->Form->input('title', array('label' => __('Otsikko')));
+            echo $this->Form->input('content', array('label' => __('Viesti'), 'rows' => 10));
+            echo $this->Form->submit(__('Lähetä'), array('before' => '<a href="#" class="collapse-toggle cancel">' . __('Peruuta') . '</a>'));
+            echo $this->Form->end();
+        ?>
     </div>
 </div>

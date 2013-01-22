@@ -32,7 +32,9 @@ datepickerDefaults = {
 $(document).ready ->
 
     $('.modal').hide()
-    $('.modal-close, .modal-overlay').click -> $(this).parents('.modal').fadeOut 100
+    $('.modal-close, .modal-overlay').click -> 
+        $(this).parents('.modal').fadeOut 100
+        false
 
     $('.modal-link').each ->
         link = $(this)
@@ -54,6 +56,7 @@ $(document).ready ->
     $('#StudentIndexFilters select').change ->
         $(this).parents('form').submit()
 
+    # Action form functionality
     $('.student-action-form').hide()
 
     $('#student-action-form-links a').on 'click', ->
@@ -68,4 +71,16 @@ $(document).ready ->
         $(this).parents('form').hide()
         false
 
+    # Action form functionality
+    $('.student-email-form').hide()
+
+    $('#student-email-form-link').on 'click', ->
+        $('#student-email-form').show()
+        false
+
+    $('.student-email-form a.cancel').on 'click', ->
+        $(this).parents('form').hide()
+        false
+
+    $('input.datepicker').datepicker datepickerDefaults
     #$('#InputFieldId').datepicker datepickerDefaults

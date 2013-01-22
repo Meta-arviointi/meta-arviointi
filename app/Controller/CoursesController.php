@@ -6,6 +6,23 @@ class CoursesController extends AppController {
      * Index method prints information about course and it's
      * attendees.
      */
+    public function admin_index() {
+
+        // Call Group-model to return groups with assistant names
+        // in given course ($course_id from Session)
+        $results = $this->Course->find('all');
+//print_r($results);
+        // Create array with 'Group.id' as key and 'User.name' as value
+        // NOTE: 'User.name' is virtual field defined in User-model
+        $course_groups = array();
+        foreach($results as $result) {
+            $course_groups[$result['Course']['id']] = $result['Course']['name'];
+        }
+print_r($course_groups);
+        // Set array to be used in drop-down selection
+        $this->set('course_groups', $course_groups);
+    }
+
     public function index($course_id = 0) {
         /* Check if course_id is requested in params */
         if ( $course_id > 0 ) {
@@ -91,9 +108,20 @@ class CoursesController extends AppController {
             //debug($students);
         }
 
+        /*
+         * Remove elements that contain empty 'CourseMembership'
+         * (meaning students who don't belong to current course (course_id)).
+         * This way View don't need to handle empty array elements. 
+         */
+        foreach ($students as $index => $student) {
+            if ( empty($student['CourseMembership']) ) {
+                unset($students[$index]);
+            } 
+        }
 
         // Call Group-model to return groups with assistant names
-        $results = $this->Course->Group->groups();
+        // in given course ($course_id from Session)
+        $results = $this->Course->Group->groups($course_id);
 
         // Create array with 'Group.id' as key and 'User.name' as value
         // NOTE: 'User.name' is virtual field defined in User-model
@@ -143,6 +171,16 @@ class CoursesController extends AppController {
                 )
              )
         );
+
+        /*
+         * Delete actions that don't belong to current course.
+         */
+        foreach ($actions as $index => $action) {
+            if ( empty($action['Exercise']) ) {
+                unset($actions[$index]);
+            }
+        }
+
         $this->set('actions', $actions);
         //debug($actions);
 
@@ -154,7 +192,18 @@ class CoursesController extends AppController {
             )
         );
         $this->set('course_memberships', $course_memberships);
+    }
 
+    public function admin_add() {
+        if ($this->request->is('post')) {
+            $this->Course->create();
+            if ($this->Course->save($this->request->data)) {
+                $this->Session->setFlash(__('The course has been added'));
+                $this->redirect(array('action' => 'index'));
+            } else {
+                $this->Session->setFlash(__('The course could not be added. Please, try again.'));
+            }
+        }
     }
 }
 

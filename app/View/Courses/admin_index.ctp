@@ -10,7 +10,10 @@
 </div>
 <div class="row">
 	<div class="twelvecol last">
-	<?php echo $this->Html->link('Lisää uusi opiskelija', array('action' => 'add', 'controller' => 'students'), array('class' => 'button', 'id' => 'add-student-link')); ?>
+	<?php echo $this->Html->link('Lisää uusi kurssi', array('action' => 'add', 'controller' => 'students'), array('class' => 'button', 'id' => 'add-course-link')); ?>
+	<?php echo $this->Html->link('Lisää assistentti', array('action' => 'add', 'controller' => 'students'), array('class' => 'button', 'id' => 'add-user-link')); ?>
+	<?php echo $this->Html->link('Lisää opiskelija', array('action' => 'add', 'controller' => 'students'), array('class' => 'button', 'id' => 'add-student-link')); ?>
+	<?php echo $this->Html->link('Lisää opiskelijat CSV-tiedostosta', array('action' => 'add', 'controller' => 'students'), array('class' => 'button', 'id' => 'add-student_csv-link')); ?>
 
     <?php 
      /* DEBUG */
@@ -19,19 +22,18 @@
     echo '</pre>';
 
     // Selection for assistent groups
-    echo $this->Form->create(false, array('id' => 'StudentIndexFilters', 'type' => 'get'));
-    echo $this->Form->label('group', 'Vastuuryhmä');
-    echo $this->Form->select('group_id', $user_groups, array('empty' => array(0 => 'Kaikki'), 'default' => $group_id));
+    echo $this->Form->create(false, array('id' => 'course_group', 'type' => 'get'));
+    echo $this->Form->label('group', 'Kurssi');
+    echo $this->Form->select('course_id', array('empty' => array(0 => 'Kaikki kurssit'), 'default' => 0));
     echo $this->Form->end();
     ?>
 
     <table class="data-table">
         <tr>
-            <th><?php echo __('Sukunimi'); ?></th>
-            <th><?php echo __('Etunimi'); ?></th>
-            <th><?php echo __('Opiskelijanumero'); ?></th>
-            <th><?php echo __('Assistentti'); ?></th> <!-- TODO: Assistentti Paginator-sorttuas -->
-            <th><?php echo __('Toimenpiteitä'); ?></th>
+            <th><?php echo __('Kurssi'); ?></th>
+            <th><?php echo __('Alku pvm'); ?></th>
+            <th><?php echo __('Loppu pvm'); ?></th>
+            <th><?php echo __('tila'); ?></th>
         </tr>
         <!--<tr> paginaatio poistettu käytöstä (toistaiseksi)
             <th><?php echo $this->Paginator->sort('last_name', 'Sukunimi'); ?></th>
