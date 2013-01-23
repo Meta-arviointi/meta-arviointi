@@ -1,6 +1,6 @@
 # default configs for datepicker:
 
-datepickerDefaults = {
+window.datepickerDefaults = {
     dayNames: [
         'Sunnuntai', 
         'Maanantai', 
