@@ -44,6 +44,8 @@
 								array('id' => 'logout-link')
 							);
 							echo '</div>';
+
+							echo '<a href="#" id="mail-indicator">E-mail</a>';
 						} 
 					?>
 					<h1>Meta-arviointi</h1>
