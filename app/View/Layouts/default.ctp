@@ -45,7 +45,39 @@
 							);
 							echo '</div>';
 
-							echo '<a href="#" id="mail-indicator">E-mail</a>';
+							// Dummy data
+							$new_emails = array(
+								array(
+									'from' => 'Ossi Opiskelija',
+									'subject' => 'H3: Lisäaika',
+									'date' => '01.01.2013 15:30'
+								),
+								array(
+									'from' => 'Aarne Ahkera',
+									'subject' => 'Kysymyksiä',
+									'date' => '01.01.2013 15:30'
+								),
+								array(
+									'from' => 'Olli Oppilas',
+									'subject' => 'Arvostelun hylkäyksestä',
+									'date' => '01.01.2013 15:30'
+								)
+							);
+
+							echo '<div id="mail-indicator">';
+							echo '<a href="#">';
+							echo count($new_emails);
+							echo '</a>';
+							echo '<div id="new-email-notifications">';
+							foreach($new_emails as $msg) {
+								echo '<div class="email-notification">';
+								echo '<span class="from">' . $msg['from'] . '</span>';
+								echo '<span class="subject">' . $msg['subject'] . '</span>';
+								echo '<span class="timestamp">' . $msg['date'] . '</span>';
+								echo '</div>';
+							}
+							echo '</div>';
+							echo '</div>';
 						} 
 					?>
 					<h1>Meta-arviointi</h1>
