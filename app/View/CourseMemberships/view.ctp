@@ -319,6 +319,27 @@
             echo $this->Form->input('content', array('label' => __('Viesti'), 'rows' => 10));
             echo $this->Form->submit(__('Lähetä'), array('before' => '<a href="#" class="collapse-toggle cancel">' . __('Peruuta') . '</a>'));
             echo $this->Form->end();
+        echo '</div>';
         ?>
+        <div id="email-messages">
+        </div>
     </div>
 </div>
+
+<script>
+    var container = $('#email-messages');
+    $.ajax({
+        dataType: "json",
+        url:        'http://kallunki.org/email_json.php',
+        success:    function(data) {
+                        console.log('Messages loaded');
+                        $.each(data, function(key, msg) {
+                            container.append('<div class="email-message"><h3>'+msg.subject+'</h3><p>'+msg.body+'</p></div>');
+                        });
+                    },
+        error:      function(jqXHR, textStatus, errorThrown) {
+                        console.log(textStatus);
+                        console.log(errorThrown);
+                    }
+    });
+</script>
