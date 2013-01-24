@@ -249,14 +249,13 @@
                     $action['Action']['id']
                 ), 
                 array(
-                    'class' => 'modal-link',
-                    'id' => 'edit-action'
+                    'class' => 'modal-link edit-action',
                 )
             );
             echo $this->Html->link(
                 'Poista',
                 array('controller' => 'actions', 'action' => 'delete', $action['Action']['id']),
-                array('id' => 'delete-action'),
+                array('class' => 'delete-action'),
                 __('Haluatko varmasti poistaa toimenpiteen?')
             );
             echo '</div>';
@@ -277,7 +276,7 @@
                 echo '<strong>' . $comment['User']['name'] . ':</strong> ';
                 echo $comment['comment'];
                 echo '</p>';
-                echo '<span class="timestamp">['.date('d.m.Y H:i', strtotime($comment['created'])).']</span>';
+                echo '<span class="timestamp">'.date('d.m.Y H:i', strtotime($comment['created'])).'</span>';
                 echo '</div>';
             }
 

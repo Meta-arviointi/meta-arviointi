@@ -41,7 +41,7 @@
 							echo $this->Html->link(
 								__('Kirjaudu ulos'),
 								array('controller' => 'users', 'action' => 'logout', 'course_id' => false),
-								array('id' => 'logout-link')
+								array('id' => 'logout-link', 'class' => 'header-button')
 							);
 							echo '</div>';
 
@@ -65,16 +65,16 @@
 							);
 
 							echo '<div id="mail-indicator">';
-							echo '<a href="#">';
+							echo '<a href="#" class="header-button">';
 							echo count($new_emails);
 							echo '</a>';
 							echo '<div id="new-email-notifications">';
 							foreach($new_emails as $msg) {
-								echo '<div class="email-notification">';
+								echo '<a href="#" class="email-notification">';
 								echo '<span class="from">' . $msg['from'] . '</span>';
 								echo '<span class="subject">' . $msg['subject'] . '</span>';
 								echo '<span class="timestamp">' . $msg['date'] . '</span>';
-								echo '</div>';
+								echo '</a>';
 							}
 							echo '</div>';
 							echo '</div>';
