@@ -145,12 +145,26 @@ array(
             $user_groups[$result['Group']['id']] = $result['User']['name'];
         }
 
+        // Get all courses user has attended
+        // TODO: what if user isadmin?
+        $courses = $this->Course->User->user_courses($this->Auth->user('id'));
+
+        $users_courses = array();
+        // Iterate over courses and populate array ready to be used in 
+        // selection list in courses/index/-view
+        // format is Course.id as key and Course.name as value (like find('list'))
+        foreach($courses as $course) {
+            $users_courses[$course['id']] = $course['name'];
+        }
+
         // Set array to be used in drop-down selection
         $this->set('user_groups', $user_groups);
 
         $this->set('students', $students);
         // Group_id visible for view
         $this->set('group_id', $group_id);
+
+        $this->set('users_courses', $users_courses);
     }
 
     /**
@@ -171,8 +185,7 @@ array(
             )
         );*/
 
-        // TODO: add functionality where only actions of the selected course are taken,
-        // now it takes actions of all courses...
+
         $actions = $this->Course->Exercise->Action->find('all', array(
                 'contain' => array(
                     'Student',

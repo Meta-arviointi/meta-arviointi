@@ -1,6 +1,22 @@
 <div class="row">
     <div class="twelvecol last">
         <?php
+            echo $this->Form->create(false, array(
+                    'type' => 'get',
+                    'id' => 'UserCourseSelection',
+                    'url' => array(
+                        'controller' => 'courses',
+                        'action' => 'index'
+                    )
+                )
+            );
+            echo $this->Form->input(null, array(
+                    'options' => $users_courses,
+                    'default' => $this->Session->read('Course.course_id'),
+                    'label' => __('Kurssi'),
+                )
+            );
+            echo $this->Form->end();
             echo __('Opiskelijat');
             echo ' | ';
             echo $this->Html->link(__('Toimenpiteet'), array('action' => 'index_actions'));

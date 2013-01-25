@@ -170,6 +170,7 @@ class UsersController extends AppController {
     }
 
     public function test($course_id) {
-        debug($this->User->get_last_course($course_id));
+        //debug($this->User->get_last_course($course_id));
+        $this->User->user_courses($this->Auth->user('id'));
     }
 }

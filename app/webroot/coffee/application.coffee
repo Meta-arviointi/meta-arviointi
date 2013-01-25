@@ -56,6 +56,9 @@ $(document).ready ->
     $('#StudentIndexFilters select').change ->
         $(this).parents('form').submit()
 
+    $('#UserCourseSelection select').change ->
+        $(this).parents('form').submit()
+
     # Action form functionality
     $('.student-action-form').hide()
 
