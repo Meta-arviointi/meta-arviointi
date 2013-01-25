@@ -13,10 +13,15 @@
 		echo $this->Html->css('1140');
 		echo $this->Html->css('smoothness/jquery-ui-1.9.2.custom.min');
 		echo $this->Less->import('meta');
-
+	?>
+	<script>
+		window.baseUrl = '<?php echo $this->Html->url("/"); ?>';
+	</script>
+	<?php
 		echo $this->Html->script('css3-mediaqueries');
 		echo $this->Html->script('jquery-1.9.0.min');
 		echo $this->Html->script('jquery-ui-1.9.2.custom.min');
+		echo $this->Html->script('jquery.scrollTo.min');
 		echo $this->Coffee->import('application');
 	?>
 </head>

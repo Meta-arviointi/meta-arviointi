@@ -242,6 +242,13 @@
 
             echo '<div class="action">';
             echo '<div class="toolbar">';
+            echo $this->Html->link(__('Lähetä sähköposti'),
+                '#', 
+                array(
+                    'class' => 'email-action',
+                    'onClick' => 'javascript: window.emailAction('.$action['Action']['id'].'); return false;'
+                )
+            );
             echo $this->Html->link(__('Muokkaa'),
                 array(
                     'controller' => 'actions',

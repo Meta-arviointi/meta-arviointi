@@ -42,6 +42,11 @@ class ActionsController extends AppController {
         }
     }
 
+    public function get_email_template($id) {
+        $action = $this->Action->findById($id);
+        $this->set('action', $action);
+    }
+
     public function edit($id) {
         if($this->request->is('put')) {
             // Set modified to current time
