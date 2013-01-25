@@ -4,7 +4,7 @@
 
 -- Dumped from database version 9.2.0
 -- Dumped by pg_dump version 9.2.0
--- Started on 2013-01-13 22:05:57
+-- Started on 2013-01-25 20:06:36
 
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
@@ -24,7 +24,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- TOC entry 183 (class 1259 OID 83300)
+-- TOC entry 183 (class 1259 OID 83510)
 -- Name: action_comments; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -38,7 +38,7 @@ CREATE TABLE action_comments (
 
 
 --
--- TOC entry 182 (class 1259 OID 83298)
+-- TOC entry 182 (class 1259 OID 83508)
 -- Name: action_comments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -51,7 +51,7 @@ CREATE SEQUENCE action_comments_id_seq
 
 
 --
--- TOC entry 2064 (class 0 OID 0)
+-- TOC entry 2090 (class 0 OID 0)
 -- Dependencies: 182
 -- Name: action_comments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -60,7 +60,7 @@ ALTER SEQUENCE action_comments_id_seq OWNED BY action_comments.id;
 
 
 --
--- TOC entry 2065 (class 0 OID 0)
+-- TOC entry 2091 (class 0 OID 0)
 -- Dependencies: 182
 -- Name: action_comments_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -69,7 +69,7 @@ SELECT pg_catalog.setval('action_comments_id_seq', 4, true);
 
 
 --
--- TOC entry 179 (class 1259 OID 83263)
+-- TOC entry 179 (class 1259 OID 83470)
 -- Name: action_types; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -80,7 +80,7 @@ CREATE TABLE action_types (
 
 
 --
--- TOC entry 178 (class 1259 OID 83261)
+-- TOC entry 178 (class 1259 OID 83468)
 -- Name: action_types_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -93,7 +93,7 @@ CREATE SEQUENCE action_types_id_seq
 
 
 --
--- TOC entry 2066 (class 0 OID 0)
+-- TOC entry 2092 (class 0 OID 0)
 -- Dependencies: 178
 -- Name: action_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -102,16 +102,16 @@ ALTER SEQUENCE action_types_id_seq OWNED BY action_types.id;
 
 
 --
--- TOC entry 2067 (class 0 OID 0)
+-- TOC entry 2093 (class 0 OID 0)
 -- Dependencies: 178
 -- Name: action_types_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('action_types_id_seq', 4, true);
+SELECT pg_catalog.setval('action_types_id_seq', 5, true);
 
 
 --
--- TOC entry 181 (class 1259 OID 83271)
+-- TOC entry 181 (class 1259 OID 83478)
 -- Name: actions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -120,7 +120,7 @@ CREATE TABLE actions (
     user_id integer NOT NULL,
     student_id integer NOT NULL,
     action_type_id integer NOT NULL,
-    description character varying(255),
+    description text,
     created timestamp with time zone DEFAULT now() NOT NULL,
     modified timestamp with time zone,
     deadline timestamp with time zone,
@@ -130,7 +130,7 @@ CREATE TABLE actions (
 
 
 --
--- TOC entry 191 (class 1259 OID 83384)
+-- TOC entry 191 (class 1259 OID 83594)
 -- Name: actions_exercises; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -142,7 +142,7 @@ CREATE TABLE actions_exercises (
 
 
 --
--- TOC entry 190 (class 1259 OID 83382)
+-- TOC entry 190 (class 1259 OID 83592)
 -- Name: actions_exercises_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -155,7 +155,7 @@ CREATE SEQUENCE actions_exercises_id_seq
 
 
 --
--- TOC entry 2068 (class 0 OID 0)
+-- TOC entry 2094 (class 0 OID 0)
 -- Dependencies: 190
 -- Name: actions_exercises_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -164,7 +164,7 @@ ALTER SEQUENCE actions_exercises_id_seq OWNED BY actions_exercises.id;
 
 
 --
--- TOC entry 2069 (class 0 OID 0)
+-- TOC entry 2095 (class 0 OID 0)
 -- Dependencies: 190
 -- Name: actions_exercises_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -173,7 +173,7 @@ SELECT pg_catalog.setval('actions_exercises_id_seq', 6, true);
 
 
 --
--- TOC entry 180 (class 1259 OID 83269)
+-- TOC entry 180 (class 1259 OID 83476)
 -- Name: actions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -186,7 +186,7 @@ CREATE SEQUENCE actions_id_seq
 
 
 --
--- TOC entry 2070 (class 0 OID 0)
+-- TOC entry 2096 (class 0 OID 0)
 -- Dependencies: 180
 -- Name: actions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -195,7 +195,7 @@ ALTER SEQUENCE actions_id_seq OWNED BY actions.id;
 
 
 --
--- TOC entry 2071 (class 0 OID 0)
+-- TOC entry 2097 (class 0 OID 0)
 -- Dependencies: 180
 -- Name: actions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -204,7 +204,51 @@ SELECT pg_catalog.setval('actions_id_seq', 5, true);
 
 
 --
--- TOC entry 187 (class 1259 OID 83340)
+-- TOC entry 195 (class 1259 OID 83633)
+-- Name: chat_messages; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE chat_messages (
+    id integer NOT NULL,
+    user_id integer,
+    content text,
+    created timestamp with time zone
+);
+
+
+--
+-- TOC entry 194 (class 1259 OID 83631)
+-- Name: chat_messages_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE chat_messages_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 2098 (class 0 OID 0)
+-- Dependencies: 194
+-- Name: chat_messages_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE chat_messages_id_seq OWNED BY chat_messages.id;
+
+
+--
+-- TOC entry 2099 (class 0 OID 0)
+-- Dependencies: 194
+-- Name: chat_messages_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('chat_messages_id_seq', 1, false);
+
+
+--
+-- TOC entry 187 (class 1259 OID 83550)
 -- Name: course_memberships; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -219,7 +263,7 @@ CREATE TABLE course_memberships (
 
 
 --
--- TOC entry 186 (class 1259 OID 83338)
+-- TOC entry 186 (class 1259 OID 83548)
 -- Name: course_memberships_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -232,7 +276,7 @@ CREATE SEQUENCE course_memberships_id_seq
 
 
 --
--- TOC entry 2072 (class 0 OID 0)
+-- TOC entry 2100 (class 0 OID 0)
 -- Dependencies: 186
 -- Name: course_memberships_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -241,7 +285,7 @@ ALTER SEQUENCE course_memberships_id_seq OWNED BY course_memberships.id;
 
 
 --
--- TOC entry 2073 (class 0 OID 0)
+-- TOC entry 2101 (class 0 OID 0)
 -- Dependencies: 186
 -- Name: course_memberships_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -250,7 +294,7 @@ SELECT pg_catalog.setval('course_memberships_id_seq', 5, true);
 
 
 --
--- TOC entry 169 (class 1259 OID 83197)
+-- TOC entry 169 (class 1259 OID 83404)
 -- Name: courses; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -263,7 +307,7 @@ CREATE TABLE courses (
 
 
 --
--- TOC entry 168 (class 1259 OID 83195)
+-- TOC entry 168 (class 1259 OID 83402)
 -- Name: courses_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -276,7 +320,7 @@ CREATE SEQUENCE courses_id_seq
 
 
 --
--- TOC entry 2074 (class 0 OID 0)
+-- TOC entry 2102 (class 0 OID 0)
 -- Dependencies: 168
 -- Name: courses_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -285,7 +329,7 @@ ALTER SEQUENCE courses_id_seq OWNED BY courses.id;
 
 
 --
--- TOC entry 2075 (class 0 OID 0)
+-- TOC entry 2103 (class 0 OID 0)
 -- Dependencies: 168
 -- Name: courses_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -294,7 +338,7 @@ SELECT pg_catalog.setval('courses_id_seq', 2, true);
 
 
 --
--- TOC entry 189 (class 1259 OID 83366)
+-- TOC entry 189 (class 1259 OID 83576)
 -- Name: courses_users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -306,7 +350,7 @@ CREATE TABLE courses_users (
 
 
 --
--- TOC entry 188 (class 1259 OID 83364)
+-- TOC entry 188 (class 1259 OID 83574)
 -- Name: courses_users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -319,7 +363,7 @@ CREATE SEQUENCE courses_users_id_seq
 
 
 --
--- TOC entry 2076 (class 0 OID 0)
+-- TOC entry 2104 (class 0 OID 0)
 -- Dependencies: 188
 -- Name: courses_users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -328,7 +372,7 @@ ALTER SEQUENCE courses_users_id_seq OWNED BY courses_users.id;
 
 
 --
--- TOC entry 2077 (class 0 OID 0)
+-- TOC entry 2105 (class 0 OID 0)
 -- Dependencies: 188
 -- Name: courses_users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -337,7 +381,56 @@ SELECT pg_catalog.setval('courses_users_id_seq', 8, true);
 
 
 --
--- TOC entry 177 (class 1259 OID 83250)
+-- TOC entry 193 (class 1259 OID 83612)
+-- Name: email_messages; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE email_messages (
+    id integer NOT NULL,
+    sender character varying(255),
+    receiver character varying(255),
+    subject character varying(255),
+    content text,
+    student_id integer,
+    action_id integer,
+    sent_time timestamp with time zone,
+    read_time timestamp with time zone
+);
+
+
+--
+-- TOC entry 192 (class 1259 OID 83610)
+-- Name: email_messages_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE email_messages_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 2106 (class 0 OID 0)
+-- Dependencies: 192
+-- Name: email_messages_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE email_messages_id_seq OWNED BY email_messages.id;
+
+
+--
+-- TOC entry 2107 (class 0 OID 0)
+-- Dependencies: 192
+-- Name: email_messages_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('email_messages_id_seq', 1, false);
+
+
+--
+-- TOC entry 177 (class 1259 OID 83457)
 -- Name: exercises; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -354,7 +447,7 @@ CREATE TABLE exercises (
 
 
 --
--- TOC entry 176 (class 1259 OID 83248)
+-- TOC entry 176 (class 1259 OID 83455)
 -- Name: exercises_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -367,7 +460,7 @@ CREATE SEQUENCE exercises_id_seq
 
 
 --
--- TOC entry 2078 (class 0 OID 0)
+-- TOC entry 2108 (class 0 OID 0)
 -- Dependencies: 176
 -- Name: exercises_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -376,7 +469,7 @@ ALTER SEQUENCE exercises_id_seq OWNED BY exercises.id;
 
 
 --
--- TOC entry 2079 (class 0 OID 0)
+-- TOC entry 2109 (class 0 OID 0)
 -- Dependencies: 176
 -- Name: exercises_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -385,7 +478,7 @@ SELECT pg_catalog.setval('exercises_id_seq', 4, true);
 
 
 --
--- TOC entry 175 (class 1259 OID 83232)
+-- TOC entry 175 (class 1259 OID 83439)
 -- Name: groups; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -397,7 +490,7 @@ CREATE TABLE groups (
 
 
 --
--- TOC entry 174 (class 1259 OID 83230)
+-- TOC entry 174 (class 1259 OID 83437)
 -- Name: groups_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -410,7 +503,7 @@ CREATE SEQUENCE groups_id_seq
 
 
 --
--- TOC entry 2080 (class 0 OID 0)
+-- TOC entry 2110 (class 0 OID 0)
 -- Dependencies: 174
 -- Name: groups_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -419,7 +512,7 @@ ALTER SEQUENCE groups_id_seq OWNED BY groups.id;
 
 
 --
--- TOC entry 2081 (class 0 OID 0)
+-- TOC entry 2111 (class 0 OID 0)
 -- Dependencies: 174
 -- Name: groups_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -428,7 +521,7 @@ SELECT pg_catalog.setval('groups_id_seq', 3, true);
 
 
 --
--- TOC entry 185 (class 1259 OID 83322)
+-- TOC entry 185 (class 1259 OID 83532)
 -- Name: groups_students; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -440,7 +533,7 @@ CREATE TABLE groups_students (
 
 
 --
--- TOC entry 184 (class 1259 OID 83320)
+-- TOC entry 184 (class 1259 OID 83530)
 -- Name: groups_students_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -453,7 +546,7 @@ CREATE SEQUENCE groups_students_id_seq
 
 
 --
--- TOC entry 2082 (class 0 OID 0)
+-- TOC entry 2112 (class 0 OID 0)
 -- Dependencies: 184
 -- Name: groups_students_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -462,7 +555,7 @@ ALTER SEQUENCE groups_students_id_seq OWNED BY groups_students.id;
 
 
 --
--- TOC entry 2083 (class 0 OID 0)
+-- TOC entry 2113 (class 0 OID 0)
 -- Dependencies: 184
 -- Name: groups_students_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -471,7 +564,7 @@ SELECT pg_catalog.setval('groups_students_id_seq', 5, true);
 
 
 --
--- TOC entry 171 (class 1259 OID 83205)
+-- TOC entry 171 (class 1259 OID 83412)
 -- Name: students; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -485,7 +578,7 @@ CREATE TABLE students (
 
 
 --
--- TOC entry 170 (class 1259 OID 83203)
+-- TOC entry 170 (class 1259 OID 83410)
 -- Name: students_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -498,7 +591,7 @@ CREATE SEQUENCE students_id_seq
 
 
 --
--- TOC entry 2084 (class 0 OID 0)
+-- TOC entry 2114 (class 0 OID 0)
 -- Dependencies: 170
 -- Name: students_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -507,7 +600,7 @@ ALTER SEQUENCE students_id_seq OWNED BY students.id;
 
 
 --
--- TOC entry 2085 (class 0 OID 0)
+-- TOC entry 2115 (class 0 OID 0)
 -- Dependencies: 170
 -- Name: students_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -516,7 +609,7 @@ SELECT pg_catalog.setval('students_id_seq', 5, true);
 
 
 --
--- TOC entry 173 (class 1259 OID 83218)
+-- TOC entry 173 (class 1259 OID 83425)
 -- Name: users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -527,12 +620,13 @@ CREATE TABLE users (
     first_name character varying(255) NOT NULL,
     email character varying(255) NOT NULL,
     password character varying(50) NOT NULL,
-    is_admin boolean DEFAULT false NOT NULL
+    is_admin boolean DEFAULT false NOT NULL,
+    last_login timestamp with time zone
 );
 
 
 --
--- TOC entry 172 (class 1259 OID 83216)
+-- TOC entry 172 (class 1259 OID 83423)
 -- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -545,7 +639,7 @@ CREATE SEQUENCE users_id_seq
 
 
 --
--- TOC entry 2086 (class 0 OID 0)
+-- TOC entry 2116 (class 0 OID 0)
 -- Dependencies: 172
 -- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -554,7 +648,7 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 
 
 --
--- TOC entry 2087 (class 0 OID 0)
+-- TOC entry 2117 (class 0 OID 0)
 -- Dependencies: 172
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -563,7 +657,7 @@ SELECT pg_catalog.setval('users_id_seq', 4, true);
 
 
 --
--- TOC entry 1993 (class 2604 OID 83303)
+-- TOC entry 2008 (class 2604 OID 83513)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -571,7 +665,7 @@ ALTER TABLE ONLY action_comments ALTER COLUMN id SET DEFAULT nextval('action_com
 
 
 --
--- TOC entry 1990 (class 2604 OID 83266)
+-- TOC entry 2005 (class 2604 OID 83473)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -579,7 +673,7 @@ ALTER TABLE ONLY action_types ALTER COLUMN id SET DEFAULT nextval('action_types_
 
 
 --
--- TOC entry 1991 (class 2604 OID 83274)
+-- TOC entry 2006 (class 2604 OID 83481)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -587,7 +681,7 @@ ALTER TABLE ONLY actions ALTER COLUMN id SET DEFAULT nextval('actions_id_seq'::r
 
 
 --
--- TOC entry 1998 (class 2604 OID 83387)
+-- TOC entry 2013 (class 2604 OID 83597)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -595,7 +689,15 @@ ALTER TABLE ONLY actions_exercises ALTER COLUMN id SET DEFAULT nextval('actions_
 
 
 --
--- TOC entry 1996 (class 2604 OID 83343)
+-- TOC entry 2015 (class 2604 OID 83636)
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY chat_messages ALTER COLUMN id SET DEFAULT nextval('chat_messages_id_seq'::regclass);
+
+
+--
+-- TOC entry 2011 (class 2604 OID 83553)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -603,7 +705,7 @@ ALTER TABLE ONLY course_memberships ALTER COLUMN id SET DEFAULT nextval('course_
 
 
 --
--- TOC entry 1984 (class 2604 OID 83200)
+-- TOC entry 1999 (class 2604 OID 83407)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -611,7 +713,7 @@ ALTER TABLE ONLY courses ALTER COLUMN id SET DEFAULT nextval('courses_id_seq'::r
 
 
 --
--- TOC entry 1997 (class 2604 OID 83369)
+-- TOC entry 2012 (class 2604 OID 83579)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -619,7 +721,15 @@ ALTER TABLE ONLY courses_users ALTER COLUMN id SET DEFAULT nextval('courses_user
 
 
 --
--- TOC entry 1989 (class 2604 OID 83253)
+-- TOC entry 2014 (class 2604 OID 83615)
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY email_messages ALTER COLUMN id SET DEFAULT nextval('email_messages_id_seq'::regclass);
+
+
+--
+-- TOC entry 2004 (class 2604 OID 83460)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -627,7 +737,7 @@ ALTER TABLE ONLY exercises ALTER COLUMN id SET DEFAULT nextval('exercises_id_seq
 
 
 --
--- TOC entry 1988 (class 2604 OID 83235)
+-- TOC entry 2003 (class 2604 OID 83442)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -635,7 +745,7 @@ ALTER TABLE ONLY groups ALTER COLUMN id SET DEFAULT nextval('groups_id_seq'::reg
 
 
 --
--- TOC entry 1995 (class 2604 OID 83325)
+-- TOC entry 2010 (class 2604 OID 83535)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -643,7 +753,7 @@ ALTER TABLE ONLY groups_students ALTER COLUMN id SET DEFAULT nextval('groups_stu
 
 
 --
--- TOC entry 1985 (class 2604 OID 83208)
+-- TOC entry 2000 (class 2604 OID 83415)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -651,7 +761,7 @@ ALTER TABLE ONLY students ALTER COLUMN id SET DEFAULT nextval('students_id_seq':
 
 
 --
--- TOC entry 1986 (class 2604 OID 83221)
+-- TOC entry 2001 (class 2604 OID 83428)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -659,7 +769,7 @@ ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regcl
 
 
 --
--- TOC entry 2052 (class 0 OID 83300)
+-- TOC entry 2076 (class 0 OID 83510)
 -- Dependencies: 183
 -- Data for Name: action_comments; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -671,7 +781,7 @@ INSERT INTO action_comments VALUES (4, 5, 2, 'Tää on melko kärttyinen muutenkin!
 
 
 --
--- TOC entry 2050 (class 0 OID 83263)
+-- TOC entry 2074 (class 0 OID 83470)
 -- Dependencies: 179
 -- Data for Name: action_types; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -680,10 +790,11 @@ INSERT INTO action_types VALUES (1, 'Korjauspyyntö');
 INSERT INTO action_types VALUES (2, 'Hylkäys');
 INSERT INTO action_types VALUES (3, 'Huomautus');
 INSERT INTO action_types VALUES (4, 'Lisäaika');
+INSERT INTO action_types VALUES (5, 'Tekemättä');
 
 
 --
--- TOC entry 2051 (class 0 OID 83271)
+-- TOC entry 2075 (class 0 OID 83478)
 -- Dependencies: 181
 -- Data for Name: actions; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -692,11 +803,11 @@ INSERT INTO actions VALUES (1, 4, 4, 3, 'Arviointi voisi olla tarkempi', '2012-1
 INSERT INTO actions VALUES (2, 4, 4, 1, 'Epätarkka arvionti, parempi vaaditaan', '2012-11-22 12:03:26.42+02', NULL, '2013-02-10 00:00:00+02', NULL, NULL);
 INSERT INTO actions VALUES (3, 4, 4, 2, 'Ei tehnyt tehtävää huomautuksesta huolimatta', '2013-02-10 16:24:01+02', NULL, NULL, NULL, NULL);
 INSERT INTO actions VALUES (4, 2, 2, 4, 'Flunssassa, lisäaikaa annettu', '2012-11-22 12:03:26.42+02', '2013-01-10 22:22:00+02', '2013-01-14 23:00:00+02', NULL, NULL);
-INSERT INTO actions VALUES (5, 3, 5, 3, 'Rakentavampi arviointi olisi paikallaan', '2012-11-22 12:03:26.42+02', NULL, NULL, 3, '2013-01-13 22:02:46.326+02');
+INSERT INTO actions VALUES (5, 3, 5, 3, 'Rakentavampi arviointi olisi paikallaan', '2012-11-22 12:03:26.42+02', NULL, NULL, 3, '2013-01-25 20:05:30.165+02');
 
 
 --
--- TOC entry 2056 (class 0 OID 83384)
+-- TOC entry 2080 (class 0 OID 83594)
 -- Dependencies: 191
 -- Data for Name: actions_exercises; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -710,12 +821,20 @@ INSERT INTO actions_exercises VALUES (6, 5, 3);
 
 
 --
--- TOC entry 2054 (class 0 OID 83340)
+-- TOC entry 2082 (class 0 OID 83633)
+-- Dependencies: 195
+-- Data for Name: chat_messages; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+
+
+--
+-- TOC entry 2078 (class 0 OID 83550)
 -- Dependencies: 187
 -- Data for Name: course_memberships; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO course_memberships VALUES (1, 2, 1, 2, '2013-01-13 22:02:46.326+02', '');
+INSERT INTO course_memberships VALUES (1, 2, 1, 2, '2013-01-25 20:05:30.165+02', '');
 INSERT INTO course_memberships VALUES (2, 2, 2, NULL, NULL, '');
 INSERT INTO course_memberships VALUES (3, 2, 3, NULL, NULL, '');
 INSERT INTO course_memberships VALUES (4, 2, 4, NULL, NULL, '');
@@ -723,7 +842,7 @@ INSERT INTO course_memberships VALUES (5, 2, 5, NULL, NULL, 'Yksinhuoltaja sorsa
 
 
 --
--- TOC entry 2045 (class 0 OID 83197)
+-- TOC entry 2069 (class 0 OID 83404)
 -- Dependencies: 169
 -- Data for Name: courses; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -733,7 +852,7 @@ INSERT INTO courses VALUES (2, 'T3 S2012', '2012-10-21 00:00:00+03', '2013-02-28
 
 
 --
--- TOC entry 2055 (class 0 OID 83366)
+-- TOC entry 2079 (class 0 OID 83576)
 -- Dependencies: 189
 -- Data for Name: courses_users; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -749,7 +868,15 @@ INSERT INTO courses_users VALUES (8, 2, 4);
 
 
 --
--- TOC entry 2049 (class 0 OID 83250)
+-- TOC entry 2081 (class 0 OID 83612)
+-- Dependencies: 193
+-- Data for Name: email_messages; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+
+
+--
+-- TOC entry 2073 (class 0 OID 83457)
 -- Dependencies: 177
 -- Data for Name: exercises; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -761,7 +888,7 @@ INSERT INTO exercises VALUES (4, 2, 3, 'Kolmas harkka', '2013-02-15 00:00:00+02'
 
 
 --
--- TOC entry 2048 (class 0 OID 83232)
+-- TOC entry 2072 (class 0 OID 83439)
 -- Dependencies: 175
 -- Data for Name: groups; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -772,7 +899,7 @@ INSERT INTO groups VALUES (3, 2, 4);
 
 
 --
--- TOC entry 2053 (class 0 OID 83322)
+-- TOC entry 2077 (class 0 OID 83532)
 -- Dependencies: 185
 -- Data for Name: groups_students; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -785,7 +912,7 @@ INSERT INTO groups_students VALUES (5, 2, 5);
 
 
 --
--- TOC entry 2046 (class 0 OID 83205)
+-- TOC entry 2070 (class 0 OID 83412)
 -- Dependencies: 171
 -- Data for Name: students; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -798,19 +925,19 @@ INSERT INTO students VALUES (5, 26371, 'Sorsa', 'Pulla', 'pulla.sorsa@uta.fi');
 
 
 --
--- TOC entry 2047 (class 0 OID 83218)
+-- TOC entry 2071 (class 0 OID 83425)
 -- Dependencies: 173
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO users VALUES (1, '12345', 'Opettaja', 'Vastuu', 'vastuuope@uta.fi', 'ce192a5d433c20a11b143e63319f960f3a2361b8', true);
-INSERT INTO users VALUES (2, '23456', 'Assistentti', 'Asseri', 'asseri.assistentti@uta.fi', 'ce192a5d433c20a11b143e63319f960f3a2361b8', false);
-INSERT INTO users VALUES (3, '34567', 'Assistentti', 'Testi', 'testi.assistentti@uta.fi', 'ce192a5d433c20a11b143e63319f960f3a2361b8', false);
-INSERT INTO users VALUES (4, '45678', 'Auttaja', 'Aapo', 'aapo.auttaja@uta.fi', 'ce192a5d433c20a11b143e63319f960f3a2361b8', false);
+INSERT INTO users VALUES (1, '12345', 'Opettaja', 'Vastuu', 'vastuuope@uta.fi', 'ce192a5d433c20a11b143e63319f960f3a2361b8', true, NULL);
+INSERT INTO users VALUES (2, '23456', 'Assistentti', 'Asseri', 'asseri.assistentti@uta.fi', 'ce192a5d433c20a11b143e63319f960f3a2361b8', false, NULL);
+INSERT INTO users VALUES (3, '34567', 'Assistentti', 'Testi', 'testi.assistentti@uta.fi', 'ce192a5d433c20a11b143e63319f960f3a2361b8', false, NULL);
+INSERT INTO users VALUES (4, '45678', 'Auttaja', 'Aapo', 'aapo.auttaja@uta.fi', 'ce192a5d433c20a11b143e63319f960f3a2361b8', false, NULL);
 
 
 --
--- TOC entry 2018 (class 2606 OID 83309)
+-- TOC entry 2035 (class 2606 OID 83519)
 -- Name: action_comments_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -819,7 +946,7 @@ ALTER TABLE ONLY action_comments
 
 
 --
--- TOC entry 2014 (class 2606 OID 83268)
+-- TOC entry 2031 (class 2606 OID 83475)
 -- Name: action_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -828,7 +955,7 @@ ALTER TABLE ONLY action_types
 
 
 --
--- TOC entry 2026 (class 2606 OID 83389)
+-- TOC entry 2043 (class 2606 OID 83599)
 -- Name: actions_exercises_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -837,7 +964,7 @@ ALTER TABLE ONLY actions_exercises
 
 
 --
--- TOC entry 2016 (class 2606 OID 83277)
+-- TOC entry 2033 (class 2606 OID 83487)
 -- Name: actions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -846,7 +973,16 @@ ALTER TABLE ONLY actions
 
 
 --
--- TOC entry 2022 (class 2606 OID 83348)
+-- TOC entry 2047 (class 2606 OID 83641)
+-- Name: chat_messages_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY chat_messages
+    ADD CONSTRAINT chat_messages_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2039 (class 2606 OID 83558)
 -- Name: course_memberships_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -855,7 +991,7 @@ ALTER TABLE ONLY course_memberships
 
 
 --
--- TOC entry 2000 (class 2606 OID 83202)
+-- TOC entry 2017 (class 2606 OID 83409)
 -- Name: courses_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -864,7 +1000,7 @@ ALTER TABLE ONLY courses
 
 
 --
--- TOC entry 2024 (class 2606 OID 83371)
+-- TOC entry 2041 (class 2606 OID 83581)
 -- Name: courses_users_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -873,7 +1009,16 @@ ALTER TABLE ONLY courses_users
 
 
 --
--- TOC entry 2012 (class 2606 OID 83255)
+-- TOC entry 2045 (class 2606 OID 83620)
+-- Name: email_messages_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY email_messages
+    ADD CONSTRAINT email_messages_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2029 (class 2606 OID 83462)
 -- Name: exercises_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -882,7 +1027,7 @@ ALTER TABLE ONLY exercises
 
 
 --
--- TOC entry 2010 (class 2606 OID 83237)
+-- TOC entry 2027 (class 2606 OID 83444)
 -- Name: groups_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -891,7 +1036,7 @@ ALTER TABLE ONLY groups
 
 
 --
--- TOC entry 2020 (class 2606 OID 83327)
+-- TOC entry 2037 (class 2606 OID 83537)
 -- Name: groups_students_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -900,7 +1045,7 @@ ALTER TABLE ONLY groups_students
 
 
 --
--- TOC entry 2002 (class 2606 OID 83213)
+-- TOC entry 2019 (class 2606 OID 83420)
 -- Name: students_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -909,7 +1054,7 @@ ALTER TABLE ONLY students
 
 
 --
--- TOC entry 2004 (class 2606 OID 83215)
+-- TOC entry 2021 (class 2606 OID 83422)
 -- Name: students_student_number_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -918,7 +1063,7 @@ ALTER TABLE ONLY students
 
 
 --
--- TOC entry 2006 (class 2606 OID 83229)
+-- TOC entry 2023 (class 2606 OID 83436)
 -- Name: users_basic_user_account_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -927,7 +1072,7 @@ ALTER TABLE ONLY users
 
 
 --
--- TOC entry 2008 (class 2606 OID 83227)
+-- TOC entry 2025 (class 2606 OID 83434)
 -- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -936,7 +1081,7 @@ ALTER TABLE ONLY users
 
 
 --
--- TOC entry 2034 (class 2606 OID 83310)
+-- TOC entry 2055 (class 2606 OID 83520)
 -- Name: action_comments_action_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -945,7 +1090,7 @@ ALTER TABLE ONLY action_comments
 
 
 --
--- TOC entry 2035 (class 2606 OID 83315)
+-- TOC entry 2056 (class 2606 OID 83525)
 -- Name: action_comments_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -954,7 +1099,7 @@ ALTER TABLE ONLY action_comments
 
 
 --
--- TOC entry 2032 (class 2606 OID 83288)
+-- TOC entry 2053 (class 2606 OID 83498)
 -- Name: actions_action_type_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -963,7 +1108,7 @@ ALTER TABLE ONLY actions
 
 
 --
--- TOC entry 2043 (class 2606 OID 83390)
+-- TOC entry 2064 (class 2606 OID 83600)
 -- Name: actions_exercises_action_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -972,7 +1117,7 @@ ALTER TABLE ONLY actions_exercises
 
 
 --
--- TOC entry 2044 (class 2606 OID 83395)
+-- TOC entry 2065 (class 2606 OID 83605)
 -- Name: actions_exercises_exercise_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -981,7 +1126,7 @@ ALTER TABLE ONLY actions_exercises
 
 
 --
--- TOC entry 2033 (class 2606 OID 83293)
+-- TOC entry 2054 (class 2606 OID 83503)
 -- Name: actions_handled_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -990,7 +1135,7 @@ ALTER TABLE ONLY actions
 
 
 --
--- TOC entry 2031 (class 2606 OID 83283)
+-- TOC entry 2052 (class 2606 OID 83493)
 -- Name: actions_student_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -999,7 +1144,7 @@ ALTER TABLE ONLY actions
 
 
 --
--- TOC entry 2030 (class 2606 OID 83278)
+-- TOC entry 2051 (class 2606 OID 83488)
 -- Name: actions_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1008,7 +1153,16 @@ ALTER TABLE ONLY actions
 
 
 --
--- TOC entry 2038 (class 2606 OID 83349)
+-- TOC entry 2068 (class 2606 OID 83642)
+-- Name: chat_messages_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY chat_messages
+    ADD CONSTRAINT chat_messages_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id);
+
+
+--
+-- TOC entry 2059 (class 2606 OID 83559)
 -- Name: course_memberships_course_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1017,7 +1171,7 @@ ALTER TABLE ONLY course_memberships
 
 
 --
--- TOC entry 2040 (class 2606 OID 83359)
+-- TOC entry 2061 (class 2606 OID 83569)
 -- Name: course_memberships_quit_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1026,7 +1180,7 @@ ALTER TABLE ONLY course_memberships
 
 
 --
--- TOC entry 2039 (class 2606 OID 83354)
+-- TOC entry 2060 (class 2606 OID 83564)
 -- Name: course_memberships_student_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1035,7 +1189,7 @@ ALTER TABLE ONLY course_memberships
 
 
 --
--- TOC entry 2041 (class 2606 OID 83372)
+-- TOC entry 2062 (class 2606 OID 83582)
 -- Name: courses_users_course_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1044,7 +1198,7 @@ ALTER TABLE ONLY courses_users
 
 
 --
--- TOC entry 2042 (class 2606 OID 83377)
+-- TOC entry 2063 (class 2606 OID 83587)
 -- Name: courses_users_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1053,7 +1207,25 @@ ALTER TABLE ONLY courses_users
 
 
 --
--- TOC entry 2029 (class 2606 OID 83256)
+-- TOC entry 2067 (class 2606 OID 83626)
+-- Name: email_messages_action_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY email_messages
+    ADD CONSTRAINT email_messages_action_id_fkey FOREIGN KEY (action_id) REFERENCES actions(id);
+
+
+--
+-- TOC entry 2066 (class 2606 OID 83621)
+-- Name: email_messages_student_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY email_messages
+    ADD CONSTRAINT email_messages_student_id_fkey FOREIGN KEY (student_id) REFERENCES students(id);
+
+
+--
+-- TOC entry 2050 (class 2606 OID 83463)
 -- Name: exercises_course_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1062,7 +1234,7 @@ ALTER TABLE ONLY exercises
 
 
 --
--- TOC entry 2027 (class 2606 OID 83238)
+-- TOC entry 2048 (class 2606 OID 83445)
 -- Name: groups_course_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1071,7 +1243,7 @@ ALTER TABLE ONLY groups
 
 
 --
--- TOC entry 2036 (class 2606 OID 83328)
+-- TOC entry 2057 (class 2606 OID 83538)
 -- Name: groups_students_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1080,7 +1252,7 @@ ALTER TABLE ONLY groups_students
 
 
 --
--- TOC entry 2037 (class 2606 OID 83333)
+-- TOC entry 2058 (class 2606 OID 83543)
 -- Name: groups_students_student_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1089,7 +1261,7 @@ ALTER TABLE ONLY groups_students
 
 
 --
--- TOC entry 2028 (class 2606 OID 83243)
+-- TOC entry 2049 (class 2606 OID 83450)
 -- Name: groups_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1098,8 +1270,8 @@ ALTER TABLE ONLY groups
 
 
 --
--- TOC entry 2063 (class 0 OID 0)
--- Dependencies: 6
+-- TOC entry 2089 (class 0 OID 0)
+-- Dependencies: 5
 -- Name: public; Type: ACL; Schema: -; Owner: -
 --
 
@@ -1109,7 +1281,7 @@ GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
--- Completed on 2013-01-13 22:05:58
+-- Completed on 2013-01-25 20:06:36
 
 --
 -- PostgreSQL database dump complete
