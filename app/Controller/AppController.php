@@ -66,7 +66,47 @@ class AppController extends Controller {
                 //$this->redirect(array('course_id' => $this->_course['Course']['id']));
             }
         }
-//        $this->Auth->allow('*');
-//        $this->Auth->allow('add', 'logout');
+
+        //        $this->Auth->allow('*');
+        //        $this->Auth->allow('add', 'logout');
     }
+
+    public function beforeRender() {
+        // Get new email messages
+        // FIXME when the imap-functions are available!
+        $json_url = 'http://kallunki.org/email_json.php';
+        $ch = curl_init($json_url);
+        $options = array(
+            CURLOPT_RETURNTRANSFER => true,
+            //CURLOPT_HTTPHEADER => array('Content-type: application/json') ,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => array('secret_token' => 'm374arvioint1')
+        );
+        curl_setopt_array($ch, $options);
+        $results = json_decode(curl_exec($ch));
+        //print_r($results);
+
+
+        if(!empty($results)) {
+            $this->loadModel('EmailMessage');
+            foreach($results as $r) {
+                $this->EmailMessage->create();
+                $this->EmailMessage->set(array(
+                    'sender' => $r->from,
+                    'receiver' => $r->to,
+                    'subject' => $r->subject,
+                    'content' => $r->body,
+                    'sent_time' => date('Y-m-d H:i:sO', strtotime($r->date))
+                ));
+
+                $student = $this->EmailMessage->Student->findByEmail(strtolower($r->from));
+                if($student) {
+                    $this->EmailMessage->set('student_id', $student['Student']['id']);
+                }
+                $this->EmailMessage->save();
+            }
+        }
+    }
+
+
 }

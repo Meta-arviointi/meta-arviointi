@@ -15,6 +15,7 @@ class CourseMembershipsController extends AppController {
         $this->set('action_types', $this->ActionType->types());
 
         // Find selected CourseMembership data
+        $this->CourseMembership->recursive = 2;
         $course_membership = $this->CourseMembership->findById($id);
 
         // get student's actions in selected course enrolment

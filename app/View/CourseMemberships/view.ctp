@@ -328,24 +328,11 @@
         echo '</div>';
         ?>
         <div id="email-messages">
-        </div>
+            <?php 
+                foreach($course_membership['Student']['EmailMessage'] as $msg) {
+                    echo '<div class="email-message"><h3>'.$msg['subject'].'</h3><p>'.$msg['content'].'</p><div class="meta"><span class="timestamp">'.date('d.m.Y H:i:s', strtotime($msg['sent_time'])).'</span></div></div>';
+                }
+            ?>
+        </div> 
     </div>
 </div>
-
-<script>
-    var container = $('#email-messages');
-    $.ajax({
-        dataType: "json",
-        url:        'http://kallunki.org/email_json.php',
-        success:    function(data) {
-                        console.log('Messages loaded');
-                        $.each(data, function(key, msg) {
-                            container.append('<div class="email-message"><h3>'+msg.subject+'</h3><p>'+msg.body+'</p></div>');
-                        });
-                    },
-        error:      function(jqXHR, textStatus, errorThrown) {
-                        console.log(textStatus);
-                        console.log(errorThrown);
-                    }
-    });
-</script>
