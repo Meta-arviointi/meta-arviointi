@@ -55,7 +55,30 @@ class User extends AppModel {
         } else { // Not valid user_id, return false
             return false;
         }
+    }
 
+    /*
+     * Returns all courses that user with $user_id
+     * has attended.
+     */
+    public function user_courses($user_id) {
+        if ( !empty($user_id) ) {
+            $options = array(
+                'conditions' => array(
+                    'id' => $user_id
+                ),
+                'contain' => array(
+                    'Course' => array(
+                        'order' => 'starttime ASC'
+                    )
+                )
+            );
+
+            $user = $this->find('first',$options);
+            return $user['Course'];
+        } else {
+            return false;
+        }
     }
 }
 ?>

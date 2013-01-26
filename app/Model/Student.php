@@ -5,7 +5,8 @@ class Student extends AppModel {
 
 	public $hasMany = array(
         'Action' => array('order' => 'Action.created DESC'), 
-        'CourseMembership'
+        'CourseMembership',
+        'EmailMessage' => array('order' => 'EmailMessage.sent_time DESC')
     );
 	public $hasAndBelongsToMany = array('Group');
 

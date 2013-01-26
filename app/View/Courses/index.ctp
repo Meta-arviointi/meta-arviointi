@@ -1,6 +1,22 @@
 <div class="row">
     <div class="twelvecol last">
         <?php
+            echo $this->Form->create(false, array(
+                    'type' => 'get',
+                    'id' => 'UserCourseSelection',
+                    'url' => array(
+                        'controller' => 'courses',
+                        'action' => 'index'
+                    )
+                )
+            );
+            echo $this->Form->input(null, array(
+                    'options' => $users_courses,
+                    'default' => $this->Session->read('Course.course_id'),
+                    'label' => __('Kurssi'),
+                )
+            );
+            echo $this->Form->end();
             echo __('Opiskelijat');
             echo ' | ';
             echo $this->Html->link(__('Toimenpiteet'), array('action' => 'index_actions'));
@@ -21,12 +37,13 @@
     // Selection for assistent groups
     echo $this->Form->create(false, array('id' => 'StudentIndexFilters', 'type' => 'get'));
     echo $this->Form->label('group', 'Vastuuryhmä');
-    echo $this->Form->select('group_id', $user_groups, array('empty' => array(0 => 'Kaikki'), 'default' => $group_id));
+    echo $this->Form->select('group_id', $user_groups, array('div' => false, 'empty' => array(0 => 'Kaikki'), 'default' => $group_id));
+    echo $this->Form->input('filter', array('div' => false, 'label' => __('Suodata'), 'id' => 'TextFilterKeyword'));
     echo $this->Form->end();
     ?>
 
-    <table class="data-table">
-        <tr>
+    <table class="data-table" id="StudentsList">
+        <tr class="table-header">
             <th><?php echo __('Sukunimi'); ?></th>
             <th><?php echo __('Etunimi'); ?></th>
             <th><?php echo __('Opiskelijanumero'); ?></th>
@@ -42,7 +59,7 @@
         </tr> -->
         <?php
         foreach($students as $student) {
-            echo '<tr>';
+            echo '<tr class="table-content">';
             echo '<td>'.$this->Html->link($student['Student']['last_name'], 
                 array('controller' => 'course_memberships', 'action' => 'view', $student['CourseMembership'][0]['id'])).'</td>';
             echo '<td>'.$this->Html->link($student['Student']['first_name'], 
@@ -66,3 +83,9 @@
     </table>
     </div>
 </div>
+<script>
+    $('#TextFilterKeyword').keyup(function() {
+        $('#StudentsList tr.table-content').hide();
+        $('#StudentsList tr.table-content:has(td:contains('+$(this).val()+'))').show();
+    });
+</script>

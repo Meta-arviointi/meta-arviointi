@@ -42,7 +42,7 @@ class AppController extends Controller {
     public $components = array(
         'Session',
         'Auth' => array(
-            'loginAction' => array('controller' => 'users', 'action' => 'login', 'course_id' => false),
+            'loginAction' => array('controller' => 'users', 'action' => 'login', 'course_id' => false, 'admin' => false),
             'loginRedirect' => array('controller' => 'users', 'action' => 'start'),
             'logoutRedirect' => array('controller' => 'users', 'action' => 'login', 'course_id' => false),
             'authenticate' => array(
@@ -66,7 +66,83 @@ class AppController extends Controller {
                 //$this->redirect(array('course_id' => $this->_course['Course']['id']));
             }
         }
-//        $this->Auth->allow('*');
-//        $this->Auth->allow('add', 'logout');
+
+        //        $this->Auth->allow('*');
+        //        $this->Auth->allow('add', 'logout');
     }
+
+    public function beforeRender() {
+        // Get new email messages from IMAP and insert them to the database
+        // FIXME when the imap-functions are available!
+        if(function_exists('curl_init')) {
+            $json_url = 'http://kallunki.org/email_json.php';
+            $ch = curl_init($json_url);
+            $options = array(
+                CURLOPT_RETURNTRANSFER => true,
+                //CURLOPT_HTTPHEADER => array('Content-type: application/json') ,
+                CURLOPT_POST => true,
+                CURLOPT_POSTFIELDS => array('secret_token' => 'm374arvioint1')
+            );
+            curl_setopt_array($ch, $options);
+            $results = json_decode(curl_exec($ch));
+            //print_r($results);
+
+
+            if(!empty($results)) {
+                $this->loadModel('EmailMessage');
+                foreach($results as $r) {
+                    $this->EmailMessage->create();
+                    $this->EmailMessage->set(array(
+                        'sender' => $r->from,
+                        'receiver' => $r->to,
+                        'subject' => $r->subject,
+                        'content' => $r->body,
+                        'sent_time' => date('Y-m-d H:i:sO', strtotime($r->date))
+                    ));
+
+                    $student = $this->EmailMessage->Student->findByEmail(strtolower($r->from));
+                    if($student) {
+                        $this->EmailMessage->set('student_id', $student['Student']['id']);
+                    }
+                    $this->EmailMessage->save();
+                }
+            }
+        }
+
+        // Check for new messages in the database and pass notifications to the layout
+        if($this->Auth->user()) {
+            $this->loadModel('User');
+            $this->User->Behaviors->load('Containable');
+            //print_r($this->Auth->user('id'));
+            $user = $this->User->find('first', array(
+                'conditions' => array(
+                    'User.id' => $this->Auth->user('id')
+                ),
+                'contain' => array(
+                    'Group' => array(
+                        'Student' => array(
+                            'EmailMessage' => array(
+                                'conditions' => array(
+                                    'EmailMessage.read_time' => null
+                                )
+                            )
+                        )
+                    )
+                )
+            ));
+            $email_messages = array();
+            if(!empty($user) && !empty($user['Group'])) {
+                foreach($user['Group'] as $group) {
+                    foreach($group['Student'] as $student) {
+                        //echo $student['email'];
+                        //print_r($student['EmailMessage']);
+                        $email_messages = array_merge($email_messages, $student['EmailMessage']);
+                    }
+                }
+            }
+            $this->set('email_notifications', $email_messages);
+        }
+    }
+
+
 }
