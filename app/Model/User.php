@@ -57,7 +57,7 @@ class User extends AppModel {
         }
     }
 
-    /*
+    /**
      * Returns all courses that user with $user_id
      * has attended.
      */
@@ -76,6 +76,28 @@ class User extends AppModel {
 
             $user = $this->find('first',$options);
             return $user['Course'];
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Returns user's ($user_id) group in
+     * selected course ($course_id).
+     */
+    public function user_group($user_id, $course_id) {
+        // Check parameters validity
+        if ( !empty($user_id) && !empty($course_id) ) {
+            return $this->Group->find('first', array(
+                'conditions' => array(
+                    'Group.user_id' => $user_id,
+                    'Group.course_id' => $course_id
+                    ),
+                'contain' => array(
+                    'User'
+                    )
+                )
+            );
         } else {
             return false;
         }
