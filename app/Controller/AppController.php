@@ -72,7 +72,7 @@ class AppController extends Controller {
     }
 
     public function beforeRender() {
-        // Get new email messages
+        // Get new email messages from IMAP and insert them to the database
         // FIXME when the imap-functions are available!
         if(function_exists('curl_init')) {
             $json_url = 'http://kallunki.org/email_json.php';
@@ -107,6 +107,40 @@ class AppController extends Controller {
                     $this->EmailMessage->save();
                 }
             }
+        }
+
+        // Check for new messages in the database and pass notifications to the layout
+        if($this->Auth->user()) {
+            $this->loadModel('User');
+            $this->User->Behaviors->load('Containable');
+            //print_r($this->Auth->user('id'));
+            $user = $this->User->find('first', array(
+                'conditions' => array(
+                    'User.id' => $this->Auth->user('id')
+                ),
+                'contain' => array(
+                    'Group' => array(
+                        'Student' => array(
+                            'EmailMessage' => array(
+                                'conditions' => array(
+                                    'EmailMessage.read_time' => null
+                                )
+                            )
+                        )
+                    )
+                )
+            ));
+            $email_messages = array();
+            if(!empty($user) && !empty($user['Group'])) {
+                foreach($user['Group'] as $group) {
+                    foreach($group['Student'] as $student) {
+                        //echo $student['email'];
+                        //print_r($student['EmailMessage']);
+                        $email_messages = array_merge($email_messages, $student['EmailMessage']);
+                    }
+                }
+            }
+            $this->set('email_notifications', $email_messages);
         }
     }
 

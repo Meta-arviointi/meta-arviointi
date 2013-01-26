@@ -50,36 +50,19 @@
 							);
 							echo '</div>';
 
-							// Dummy data
-							$new_emails = array(
-								array(
-									'from' => 'Ossi Opiskelija',
-									'subject' => 'H3: Lisäaika',
-									'date' => '01.01.2013 15:30'
-								),
-								array(
-									'from' => 'Aarne Ahkera',
-									'subject' => 'Kysymyksiä',
-									'date' => '01.01.2013 15:30'
-								),
-								array(
-									'from' => 'Olli Oppilas',
-									'subject' => 'Arvostelun hylkäyksestä',
-									'date' => '01.01.2013 15:30'
-								)
-							);
-
 							echo '<div id="mail-indicator">';
 							echo '<a href="#" class="header-button">';
-							echo count($new_emails);
+							echo count($email_notifications);
 							echo '</a>';
 							echo '<div id="new-email-notifications">';
-							foreach($new_emails as $msg) {
-								echo '<a href="#" class="email-notification">';
-								echo '<span class="from">' . $msg['from'] . '</span>';
-								echo '<span class="subject">' . $msg['subject'] . '</span>';
-								echo '<span class="timestamp">' . $msg['date'] . '</span>';
-								echo '</a>';
+							if(!empty($email_notifications)) {
+								foreach($email_notifications as $msg) {
+									echo '<a href="#" class="email-notification">';
+									echo '<span class="from">' . $msg['sender'] . '</span>';
+									echo '<span class="subject">' . $msg['subject'] . '</span>';
+									echo '<span class="timestamp">' . $msg['sent_time'] . '</span>';
+									echo '</a>';
+								}
 							}
 							echo '</div>';
 							echo '</div>';
