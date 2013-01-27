@@ -3,14 +3,11 @@
         <?php
             echo $this->Form->create(false, array(
                     'type' => 'get',
-                    'id' => 'UserCourseSelection',
-                    'url' => array(
-                        'controller' => 'courses',
-                        'action' => 'index'
-                    )
+                    'action' => 'index_rdr',
+                    'id' => 'UserCourseSelection'
                 )
             );
-            echo $this->Form->input(null, array(
+            echo $this->Form->input('course_id', array(
                     'options' => $users_courses,
                     'default' => $this->Session->read('Course.course_id'),
                     'label' => __('Kurssi'),

@@ -58,7 +58,8 @@ class ActionsController extends AppController {
             } else { // if handled mark was removed, remove handled time
                 $this->request->data['Action']['handled_time'] = null;
             }
-            if($this->Action->save($this->request->data)) {
+            //debug($this->request->data);
+            if( $this->Action->save($this->request->data) ) {
                 $this->Session->setFlash(__('Toimenpide tallennettu!'));
 
                 /* Prepare for redirect.
@@ -87,12 +88,26 @@ class ActionsController extends AppController {
                         $action['Student']['CourseMembership'][0]['id']
                      )
                 );
+            } else {
+                $this->Session->setFlash('Ei onnistunut!');
             }
-            else $this->Session->setFlash('Ei onnistu!');
-        }
-        else {
-            $this->Action->contain(); // fetch only info about Action
+        } else {
+            $this->Action->contain('Exercise'); // include info about Exercise
             $this->data = $this->Action->findById($id);
+            $this->set('action_types', $this->Action->ActionType->find('list'));
+            $this->set('users', $this->Action->User->find('list', array(
+                        'fields' => array('User.name')
+                    )
+                )
+            );
+            $this->set('exercises', $this->Action->Exercise->find('list', array(
+                        'conditions' => array(
+                            'Exercise.course_id' => $this->data['Exercise'][0]['course_id']
+                        ),
+                        'fields' => array('Exercise.id', 'Exercise.exercise_string')
+                    )
+                )
+            );
 
         }
     }

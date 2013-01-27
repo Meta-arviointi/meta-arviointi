@@ -39,14 +39,29 @@ array(
     }
 
     public function index($course_id = 0) {
+        // Flag variable to indicate if course is changed
+        $course_changed = false;
+
         /* Check if course_id is requested in params */
         if ( $course_id > 0 ) {
+            // Check if course_id is changed from last request
+            if ( $course_id != $this->Session->read('Course.course_id') ) {
+                $course_changed = true;
+            }
             // Save new course_id to session for further use
             $this->Session->write('Course.course_id', $course_id);
         } else {
             // No course_id in request, take course_id from session
             $course_id = $this->Session->read('Course.course_id') == null ? 0 : $this->Session->read('Course.course_id');
         }
+
+        /* If course changed, update group_id to Session
+         * to match user's group in new course.
+         */
+        if ( $course_changed ) {
+            $this->set_new_group($this->Auth->user('id'), $course_id);
+        }
+
 
         $group_id = null;
         // Check if get-request has 'group_id'.
@@ -168,6 +183,32 @@ array(
     }
 
     /**
+     * Redirects to index-method.
+     * Function is called from select-list Forms.
+     * It takes $course_id from request and passes it to
+     * index-method (above).
+     */
+    public function index_rdr() {
+        // Init. variable to make sure it's not null at the end
+        $course_id = $this->Session->read('Course.course_id');
+        // Check if request is post
+        if ( $this->request->is('post') ) {
+            $course_id = $this->request->data['course_id'];
+        } else if ( $this->request->is('get') ) { // .. or get
+            $course_id = $this->request->query['course_id'];
+        }
+
+        // Redirect to index() with $course_id
+        $this->redirect(array(
+                'controller' => 'courses',
+                'action' => 'index',
+                $course_id
+            )
+        );
+
+    }
+
+    /**
      * List all actions
      */
     public function index_actions() {
@@ -231,6 +272,22 @@ array(
             } else {
                 $this->Session->setFlash(__('The course could not be added. Please, try again.'));
             }
+        }
+    }
+
+    /*
+     * After course_id is changed between requests,
+     * update user's new group_id (related to new course) to Session.
+     */
+    private function set_new_group($user_id, $course_id) {
+        $user = $this->Course->User->user_group($user_id, $course_id);
+        // If present, set group_id to session
+        if ( !empty($user['Group']) ) {
+            $this->Session->write('User.group_id', $user['Group']['id']);
+        } else {
+            // No Group assigned to user in current course.
+            // Delete group_id from session, so no old values remain.
+            $this->Session->delete('User.group_id');
         }
     }
 }

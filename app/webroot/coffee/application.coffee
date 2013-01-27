@@ -89,7 +89,7 @@ $(document).ready ->
     $('input.datepicker').datepicker datepickerDefaults
     #$('#InputFieldId').datepicker datepickerDefaults
 
-    $('#mail-indicator a').on 'click', ->
+    $('#mail-indicator > a').on 'click', ->
         $('#mail-indicator').toggleClass 'open'
         false
 
