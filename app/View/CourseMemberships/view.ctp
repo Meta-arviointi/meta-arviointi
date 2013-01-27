@@ -330,7 +330,29 @@
         <div id="email-messages">
             <?php 
                 foreach($course_membership['Student']['EmailMessage'] as $msg) {
-                    echo '<div class="email-message"><h3>'.$msg['subject'].'</h3><p>'.$msg['content'].'</p><div class="meta"><span class="timestamp">'.date('d.m.Y H:i:s', strtotime($msg['sent_time'])).'</span></div></div>';
+                    echo '<div class="email-message';
+                    if(empty($msg['read_time'])) echo ' not-read';
+                    echo '">';
+
+                    echo '<h3>'.$msg['subject'].'</h3>';
+                    echo '<p>'.$msg['content'].'</p>';
+
+                    echo '<div class="meta">';
+                    if(empty($msg['read_time'])) {
+                        echo $this->Html->link(
+                            __('Merkitse luetuksi'),
+                            array(
+                                'controller' => 'email_messages',
+                                'action' => 'mark_as_read', 
+                                $msg['id']
+                            ),
+                            array(
+                                'class' => 'button mark-as-read'
+                            )
+                        );
+                    }
+                    echo '<span class="timestamp">'.date('d.m.Y H:i:s', strtotime($msg['sent_time'])).'</span>';
+                    echo '</div></div>';
                 }
             ?>
         </div> 

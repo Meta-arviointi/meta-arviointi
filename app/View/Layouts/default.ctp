@@ -65,7 +65,7 @@
 									echo '<a href="'.$href.'" class="email-notification">';
 									echo '<span class="from">' . $msg['sender'] . '</span>';
 									echo '<span class="subject">' . $msg['subject'] . '</span>';
-									echo '<span class="timestamp">' . $msg['sent_time'] . '</span>';
+									echo '<span class="timestamp">' . date('d.m.Y H:i:s', strtotime($msg['sent_time'])) . '</span>';
 									echo '</a>';
 								}
 							}

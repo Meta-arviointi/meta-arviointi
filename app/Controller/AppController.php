@@ -139,7 +139,7 @@ class AppController extends Controller {
                     foreach($group['Student'] as $student) {
                         $membership = null;
                         foreach($student['CourseMembership'] as $cm) {
-                            if($membership == null || $cm['starttime'] > $membership['starttime']) {
+                            if($membership == null || strtotime($cm['starttime']) > strtotime($membership['starttime'])) {
                                 $membership = $cm;
                             }
                         }
