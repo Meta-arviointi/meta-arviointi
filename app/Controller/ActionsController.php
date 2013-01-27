@@ -91,8 +91,14 @@ class ActionsController extends AppController {
             else $this->Session->setFlash('Ei onnistu!');
         }
         else {
-            $this->Action->contain(); // fetch only info about Action
+            $this->Action->contain('Exercise'); // fetch only info about Action
             $this->data = $this->Action->findById($id);
+            $this->set('action_types', $this->Action->ActionType->find('list'));
+            $this->set('users', $this->Action->User->find('list', array(
+                        'fields' => array('User.name')
+                    )
+                )
+            );
 
         }
     }
