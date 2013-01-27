@@ -93,6 +93,34 @@ $(document).ready ->
         $('#mail-indicator').toggleClass 'open'
         false
 
+    chat = $('#chat')
+    chat_viewport = chat.find('.chat-viewport')
+    chat_messages = chat_viewport.find('.chat-messages')
+    chat_input = $('#chat-input')
+
+    chat_scroll_bottom = ->
+        chat_viewport.scrollTop(chat_messages.height() - chat_viewport.height())
+        return
+
+    $('#chat-toggle').on 'click', ->
+        chat.toggleClass 'open'
+        chat_scroll_bottom()
+        if chat.hasClass 'open'
+            chat_input.focus()
+        else
+            chat_input.blur()
+        false
+
+    chat_input.keyup (e) ->
+        if e.keyCode == 13
+            msg = chat_input.val()
+            chat_input.val('')
+            chat_messages.append('<div class="chat-message">
+                    <span class="user">Asseri Assistentti</span>
+                    <p class="chat-message-content">'+msg+'</p>
+                </div>')
+            chat_scroll_bottom()
+
     $(window).on 'click', ->
         $('#mail-indicator').removeClass 'open'
 

@@ -621,3 +621,90 @@ textarea {
     }
 }
 
+#chat {
+    background: #c2dce2;
+    position: fixed;
+    bottom: -270px;
+    -webkit-transition: bottom 200ms ease-in-out;
+    -moz-transition: bottom 200ms ease-in-out;
+    transition: bottom 200ms ease-in-out;
+    right: 10px;
+    width: 200px;
+    height: 300px;
+    .box-shadows(0px, 2px, 15px, rgba(77,91,96,0.1));
+    .chat-header {
+        position: relative;
+        padding: 0 10px;
+        height: 30px;
+        background: #465257 url('../img/header-back.png') repeat-x left -5px;
+        border-bottom: 1px solid #2f373a;
+        .box-shadows(0px, 0px, 5px, rgba(77,91,96,0.1));
+        text-shadow: -1px -1px 0px #2f373a;
+        color: #e6edee;
+        font-size: 16px;
+        line-height: 28px;
+        font-family: 'OpenSansSemibold';
+        color: #e6edee;
+    }
+    .chat-viewport {
+        background: #fff;
+        height: 230px;
+        padding: 0;
+        overflow: -moz-scrollbars-vertical;
+        -ms-overflow-y: scroll;
+        overflow-y: scroll;
+        word-wrap: break-word;
+        font-size: 13px;
+        border-bottom: 1px solid #e0e0e0;
+        .chat-messages {
+            .chat-message {
+                padding: 5px 5px 5px 10px;
+                border-top: 1px solid #f0f0f0;
+                .user {
+                    color: #75949f;
+                    font-family: 'OpenSansSemibold', sans-serif;
+                    font-size: 12px;
+                    line-height: 12px;
+                }
+                .chat-message-content {
+                    line-height: 15px;
+                    margin: 0;
+                    padding: 0;
+                }
+            }
+        }
+    }
+    &.open {
+        bottom: 0px;
+        #chat-toggle {
+            background-position: 0px -14px;
+        }
+    }
+}
+
+#chat-toggle {
+    position: absolute;
+    opacity: 0.5;
+    top: 9px;
+    right: 9px;
+    width: 15px;
+    height: 12px;
+    background: transparent url('../img/chat-toggle-icon.png') no-repeat 0px 0px;
+    -webkit-transition: opacity 200ms ease-in-out;
+    -moz-transition: opacity 200ms ease-in-out;
+    transition: opacity 200ms ease-in-out;
+    &:hover {
+        opacity: 1;
+    }
+}
+
+#chat-input {
+    background: #fff;
+    .box-shadows-inset(0px, 0px, 3px, #c0c0c0);
+    margin: 5px;
+    font-size: 13px;
+    padding: 4px;
+    border: 1px solid #e0e0e0;
+    width: 180px;
+}
+

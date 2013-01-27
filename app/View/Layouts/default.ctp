@@ -79,6 +79,42 @@
 		</div>
 	</div>
 
+	<div id="chat">
+		<div class="chat-header">
+			<a href="#" id="chat-toggle"></a>
+			Chat
+		</div>
+		<div class="chat-viewport">
+			<div class="chat-messages">
+				<div class="chat-message">
+					<span class="user">Asseri Assistentti</span>
+					<p class="chat-message-content">Lorem ipsum dolor sit amet foo bar baz.</p>
+				</div>
+				<div class="chat-message">
+					<span class="user">Asseri Assistentti</span>
+					<p class="chat-message-content">Lorem ipsum dolor sit amet foo bar baz.</p>
+				</div>
+				<div class="chat-message">
+					<span class="user">Asseri Assistentti</span>
+					<p class="chat-message-content">Lorem ipsum dolor sit amet foo bar baz.</p>
+				</div>
+				<div class="chat-message">
+					<span class="user">Asseri Assistentti</span>
+					<p class="chat-message-content">Lorem ipsum dolor sit amet foo bar baz.</p>
+				</div>
+				<div class="chat-message">
+					<span class="user">Asseri Assistentti</span>
+					<p class="chat-message-content">Lorem ipsum dolor sit amet foo bar baz.</p>
+				</div>
+				<div class="chat-message">
+					<span class="user">Asseri Assistentti</span>
+					<p class="chat-message-content">Lorem ipsum dolor sit amet foo bar baz.</p>
+				</div>
+			</div>
+		</div>
+		<input type="text" name="chat-input" id="chat-input">
+	</div>
+
 	<div class="modal">
 		<div class="modal-overlay"></div>
 		<div class="modal-container">
