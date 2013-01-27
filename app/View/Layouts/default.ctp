@@ -13,10 +13,15 @@
 		echo $this->Html->css('1140');
 		echo $this->Html->css('smoothness/jquery-ui-1.9.2.custom.min');
 		echo $this->Less->import('meta');
-
+	?>
+	<script>
+		window.baseUrl = '<?php echo $this->Html->url("/"); ?>';
+	</script>
+	<?php
 		echo $this->Html->script('css3-mediaqueries');
 		echo $this->Html->script('jquery-1.9.0.min');
 		echo $this->Html->script('jquery-ui-1.9.2.custom.min');
+		echo $this->Html->script('jquery.scrollTo.min');
 		echo $this->Coffee->import('application');
 	?>
 </head>
@@ -41,8 +46,30 @@
 							echo $this->Html->link(
 								__('Kirjaudu ulos'),
 								array('controller' => 'users', 'action' => 'logout', 'course_id' => false),
-								array('id' => 'logout-link')
+								array('id' => 'logout-link', 'class' => 'header-button')
 							);
+							echo '</div>';
+
+							echo '<div id="mail-indicator">';
+							echo '<a href="#" class="header-button">';
+							echo count($email_notifications);
+							echo '</a>';
+							echo '<div id="new-email-notifications">';
+							if(!empty($email_notifications)) {
+								foreach($email_notifications as $msg) {
+									$href = $this->Html->url(array(
+										'controller' 	=> 'CourseMemberships',
+										'action' 		=> 'view',
+										$msg['course_membership_id']
+									));
+									echo '<a href="'.$href.'" class="email-notification">';
+									echo '<span class="from">' . $msg['sender'] . '</span>';
+									echo '<span class="subject">' . $msg['subject'] . '</span>';
+									echo '<span class="timestamp">' . date('d.m.Y H:i:s', strtotime($msg['sent_time'])) . '</span>';
+									echo '</a>';
+								}
+							}
+							echo '</div>';
 							echo '</div>';
 						} 
 					?>

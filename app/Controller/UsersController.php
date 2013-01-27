@@ -53,17 +53,7 @@ class UsersController extends AppController {
         }
 
         /* Get user's group in selected course */
-        $user = $this->User->Group->find('first', array(
-            'conditions' => array(
-                'Group.user_id' => $this->Auth->user('id'),
-                'Group.course_id' => $course_id
-                ),
-            'contain' => array(
-                'User',
-                )
-            )
-        );
-
+        $user = $this->User->user_group($this->Auth->user('id'), $course_id);
         // If present, set group_id to session
         if ( !empty($user['Group']) ) {
             $this->Session->write('User.group_id', $user['Group']['id']);
@@ -170,6 +160,7 @@ class UsersController extends AppController {
     }
 
     public function test($course_id) {
-        debug($this->User->get_last_course($course_id));
+        //debug($this->User->get_last_course($course_id));
+        $this->User->user_courses($this->Auth->user('id'));
     }
 }

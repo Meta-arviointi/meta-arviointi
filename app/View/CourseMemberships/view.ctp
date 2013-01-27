@@ -242,6 +242,13 @@
 
             echo '<div class="action">';
             echo '<div class="toolbar">';
+            echo $this->Html->link(__('Lähetä sähköposti'),
+                '#', 
+                array(
+                    'class' => 'email-action',
+                    'onClick' => 'javascript: window.emailAction('.$action['Action']['id'].'); return false;'
+                )
+            );
             echo $this->Html->link(__('Muokkaa'),
                 array(
                     'controller' => 'actions',
@@ -249,14 +256,13 @@
                     $action['Action']['id']
                 ), 
                 array(
-                    'class' => 'modal-link',
-                    'id' => 'edit-action'
+                    'class' => 'modal-link edit-action',
                 )
             );
             echo $this->Html->link(
                 'Poista',
                 array('controller' => 'actions', 'action' => 'delete', $action['Action']['id']),
-                array('id' => 'delete-action'),
+                array('class' => 'delete-action'),
                 __('Haluatko varmasti poistaa toimenpiteen?')
             );
             echo '</div>';
@@ -277,7 +283,7 @@
                 echo '<strong>' . $comment['User']['name'] . ':</strong> ';
                 echo $comment['comment'];
                 echo '</p>';
-                echo '<span class="timestamp">['.date('d.m.Y H:i', strtotime($comment['created'])).']</span>';
+                echo '<span class="timestamp">'.date('d.m.Y H:i', strtotime($comment['created'])).'</span>';
                 echo '</div>';
             }
 
@@ -319,6 +325,36 @@
             echo $this->Form->input('content', array('label' => __('Viesti'), 'rows' => 10));
             echo $this->Form->submit(__('Lähetä'), array('before' => '<a href="#" class="collapse-toggle cancel">' . __('Peruuta') . '</a>'));
             echo $this->Form->end();
+        echo '</div>';
         ?>
+        <div id="email-messages">
+            <?php 
+                foreach($course_membership['Student']['EmailMessage'] as $msg) {
+                    echo '<div class="email-message';
+                    if(empty($msg['read_time'])) echo ' not-read';
+                    echo '">';
+
+                    echo '<h3>'.$msg['subject'].'</h3>';
+                    echo '<p>'.$msg['content'].'</p>';
+
+                    echo '<div class="meta">';
+                    if(empty($msg['read_time'])) {
+                        echo $this->Html->link(
+                            __('Merkitse luetuksi'),
+                            array(
+                                'controller' => 'email_messages',
+                                'action' => 'mark_as_read', 
+                                $msg['id']
+                            ),
+                            array(
+                                'class' => 'button mark-as-read'
+                            )
+                        );
+                    }
+                    echo '<span class="timestamp">'.date('d.m.Y H:i:s', strtotime($msg['sent_time'])).'</span>';
+                    echo '</div></div>';
+                }
+            ?>
+        </div> 
     </div>
 </div>

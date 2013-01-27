@@ -1,6 +1,6 @@
 # default configs for datepicker:
 
-datepickerDefaults = {
+window.datepickerDefaults = {
     dayNames: [
         'Sunnuntai', 
         'Maanantai', 
@@ -30,6 +30,7 @@ datepickerDefaults = {
 }
 
 $(document).ready ->
+    $.scrollTo 0
 
     $('.modal').hide()
     $('.modal-close, .modal-overlay').click -> 
@@ -56,6 +57,9 @@ $(document).ready ->
     $('#StudentIndexFilters select').change ->
         $(this).parents('form').submit()
 
+    $('#UserCourseSelection select').change ->
+        $(this).parents('form').submit()
+
     # Action form functionality
     $('.student-action-form').hide()
 
@@ -72,15 +76,37 @@ $(document).ready ->
         false
 
     # Action form functionality
-    $('.student-email-form').hide()
+    $('#student-email-form').hide()
 
     $('#student-email-form-link').on 'click', ->
         $('#student-email-form').show()
         false
 
-    $('.student-email-form a.cancel').on 'click', ->
+    $('#student-email-form a.cancel').on 'click', ->
         $(this).parents('form').hide()
         false
 
     $('input.datepicker').datepicker datepickerDefaults
     #$('#InputFieldId').datepicker datepickerDefaults
+
+    $('#mail-indicator > a').on 'click', ->
+        $('#mail-indicator').toggleClass 'open'
+        false
+
+    $(window).on 'click', ->
+        $('#mail-indicator').removeClass 'open'
+
+    studentEmailFormContainer = $('#student-email-form-container')
+    window.emailAction = (actionID) ->
+        $('#student-email-form').show()
+        $.scrollTo studentEmailFormContainer, 500, {offset: {top: -120}}
+        $.ajax
+            dataType: "json"
+            url: window.baseUrl + 'actions/get_email_template/' + actionID + '.json'
+            success: (data) ->
+                $('#MailTitle').val data.title
+                $('#MailContent').val data.content
+            error: (qXHR, textStatus, errorThrown) ->
+                alert errorThrown
+        false
+

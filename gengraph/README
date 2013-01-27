@@ -4,6 +4,9 @@
 
 ### Usage
 $ cd meta-arviointi
-$ ln -s gengraph/doall.sh .
-$ ./doall.sh
+$ ln -s gengraph/gen_*.sh .
+$ ./gen_author_stats.sh
+$ ./gen_committrend.sh
+
+Adore lovely graphics
 

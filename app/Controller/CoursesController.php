@@ -8,30 +8,60 @@ class CoursesController extends AppController {
      */
     public function admin_index() {
 
-        // Call Group-model to return groups with assistant names
-        // in given course ($course_id from Session)
-        $results = $this->Course->find('all');
-//print_r($results);
+/*
+array(
+    'conditions' => array('Model.field' => $thisValue), //array of conditions
+    'recursive' => 1, //int
+    'fields' => array('Model.field1', 'DISTINCT Model.field2'), //array of field names
+    'order' => array('Model.created', 'Model.field3 DESC'), //string or array defining order
+    'group' => array('Model.field'), //fields to GROUP BY
+    'limit' => n, //int
+    'page' => n, //int
+    'offset' => n, //int
+    'callbacks' => true //other possible values are false, 'before', 'after'
+)*/
+        $params = array(
+	        'order' => array('Course.endtime DESC'),
+		'fields' => array('Course.id', 'Course.name', 'Course.starttime', 'Course.endtime')
+        );
+                $this->_course = $this->Course->find('first', $params);
+
+	$courses = $this->Course->find('all', $params);
         // Create array with 'Group.id' as key and 'User.name' as value
         // NOTE: 'User.name' is virtual field defined in User-model
         $course_groups = array();
-        foreach($results as $result) {
-            $course_groups[$result['Course']['id']] = $result['Course']['name'];
+        foreach($courses as $course) {
+            $course_groups[$course['Course']['id']] = $course['Course']['name'];
         }
-print_r($course_groups);
         // Set array to be used in drop-down selection
+	$this->set('courses', $courses);
         $this->set('course_groups', $course_groups);
     }
 
     public function index($course_id = 0) {
+        // Flag variable to indicate if course is changed
+        $course_changed = false;
+
         /* Check if course_id is requested in params */
         if ( $course_id > 0 ) {
+            // Check if course_id is changed from last request
+            if ( $course_id != $this->Session->read('Course.course_id') ) {
+                $course_changed = true;
+            }
             // Save new course_id to session for further use
             $this->Session->write('Course.course_id', $course_id);
         } else {
             // No course_id in request, take course_id from session
             $course_id = $this->Session->read('Course.course_id') == null ? 0 : $this->Session->read('Course.course_id');
         }
+
+        /* If course changed, update group_id to Session
+         * to match user's group in new course.
+         */
+        if ( $course_changed ) {
+            $this->set_new_group($this->Auth->user('id'), $course_id);
+        }
+
 
         $group_id = null;
         // Check if get-request has 'group_id'.
@@ -130,12 +160,52 @@ print_r($course_groups);
             $user_groups[$result['Group']['id']] = $result['User']['name'];
         }
 
+        // Get all courses user has attended
+        // TODO: what if user isadmin?
+        $courses = $this->Course->User->user_courses($this->Auth->user('id'));
+
+        $users_courses = array();
+        // Iterate over courses and populate array ready to be used in 
+        // selection list in courses/index/-view
+        // format is Course.id as key and Course.name as value (like find('list'))
+        foreach($courses as $course) {
+            $users_courses[$course['id']] = $course['name'];
+        }
+
         // Set array to be used in drop-down selection
         $this->set('user_groups', $user_groups);
 
         $this->set('students', $students);
         // Group_id visible for view
         $this->set('group_id', $group_id);
+
+        $this->set('users_courses', $users_courses);
+    }
+
+    /**
+     * Redirects to index-method.
+     * Function is called from select-list Forms.
+     * It takes $course_id from request and passes it to
+     * index-method (above).
+     */
+    public function index_rdr() {
+        // Init. variable to make sure it's not null at the end
+        $course_id = $this->Session->read('Course.course_id');
+        // Check if request is post
+        if ( $this->request->is('post') ) {
+            $course_id = $this->request->data['course_id'];
+        } else if ( $this->request->is('get') ) { // .. or get
+            $course_id = $this->request->query['course_id'];
+        }
+
+        // Redirect to index() with $course_id
+        $this->redirect(array(
+                'controller' => 'courses',
+                'action' => 'index',
+                $course_id
+            )
+        );
+
     }
 
     /**
@@ -156,8 +226,7 @@ print_r($course_groups);
             )
         );*/
 
-        // TODO: add functionality where only actions of the selected course are taken,
-        // now it takes actions of all courses...
+
         $actions = $this->Course->Exercise->Action->find('all', array(
                 'contain' => array(
                     'Student',
@@ -203,6 +272,22 @@ print_r($course_groups);
             } else {
                 $this->Session->setFlash(__('The course could not be added. Please, try again.'));
             }
+        }
+    }
+
+    /*
+     * After course_id is changed between requests,
+     * update user's new group_id (related to new course) to Session.
+     */
+    private function set_new_group($user_id, $course_id) {
+        $user = $this->Course->User->user_group($user_id, $course_id);
+        // If present, set group_id to session
+        if ( !empty($user['Group']) ) {
+            $this->Session->write('User.group_id', $user['Group']['id']);
+        } else {
+            // No Group assigned to user in current course.
+            // Delete group_id from session, so no old values remain.
+            $this->Session->delete('User.group_id');
         }
     }
 }
