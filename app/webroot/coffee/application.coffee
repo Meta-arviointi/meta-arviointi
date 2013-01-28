@@ -102,23 +102,62 @@ $(document).ready ->
         chat_viewport.scrollTop(chat_messages.height() - chat_viewport.height())
         return
 
+    chat_scroll_bottom()
+
     $('#chat-toggle').on 'click', ->
         chat.toggleClass 'open'
         chat_scroll_bottom()
+        state = 'closed'
         if chat.hasClass 'open'
+            st = $(window).scrollTop()
             chat_input.focus()
+            $(window).scrollTop(st)
+            state = 'open'
         else
             chat_input.blur()
+        $.ajax
+            type: "POST",
+            dataType: "json"
+            url: window.baseUrl + 'chat_messages/set_chat_window_state'
+            data: {chat_window_state: state}
         false
+
+    chat_refresh = ->
+        last_id = chat_messages.children().last().attr('data-msg-id')
+        $.ajax
+            dataType: "json"
+            url: window.baseUrl + 'chat_messages/get_recent/' + last_id + '.json'
+            success: (data) ->
+                for msg in data
+                    chat_messages.append('<div class="chat-message" data-msg-id="' + msg.id + '">
+                        <span class="user">' + msg.user + '</span>
+                        <p class="chat-message-content">' + msg.content + '</p>
+                    </div>')
+                chat_scroll_bottom()
+                return
+            error: (qXHR, textStatus, errorThrown) ->
+                alert errorThrown
+                return
+        return
+
+    setInterval chat_refresh, 5000
 
     chat_input.keyup (e) ->
         if e.keyCode == 13
             msg = chat_input.val()
             chat_input.val('')
-            chat_messages.append('<div class="chat-message">
-                    <span class="user">Asseri Assistentti</span>
-                    <p class="chat-message-content">'+msg+'</p>
-                </div>')
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: window.baseUrl + 'chat_messages/send',
+                data: {msg: msg},
+                success: ->
+                    chat_refresh()
+                    return
+                error: (qXHR, textStatus, errorThrown) ->
+                    alert errorThrown
+                    return
+            })
             chat_scroll_bottom()
 
     $(window).on 'click', ->
@@ -134,7 +173,9 @@ $(document).ready ->
             success: (data) ->
                 $('#MailTitle').val data.title
                 $('#MailContent').val data.content
+                return
             error: (qXHR, textStatus, errorThrown) ->
                 alert errorThrown
+                return
         false
 

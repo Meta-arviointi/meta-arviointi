@@ -79,37 +79,19 @@
 		</div>
 	</div>
 
-	<div id="chat">
+	<div id="chat" class="<?php echo $this->Session->read('Chat.window_state'); ?>">
 		<div class="chat-header">
 			<a href="#" id="chat-toggle"></a>
 			Chat
 		</div>
 		<div class="chat-viewport">
 			<div class="chat-messages">
-				<div class="chat-message">
-					<span class="user">Asseri Assistentti</span>
-					<p class="chat-message-content">Lorem ipsum dolor sit amet foo bar baz.</p>
-				</div>
-				<div class="chat-message">
-					<span class="user">Asseri Assistentti</span>
-					<p class="chat-message-content">Lorem ipsum dolor sit amet foo bar baz.</p>
-				</div>
-				<div class="chat-message">
-					<span class="user">Asseri Assistentti</span>
-					<p class="chat-message-content">Lorem ipsum dolor sit amet foo bar baz.</p>
-				</div>
-				<div class="chat-message">
-					<span class="user">Asseri Assistentti</span>
-					<p class="chat-message-content">Lorem ipsum dolor sit amet foo bar baz.</p>
-				</div>
-				<div class="chat-message">
-					<span class="user">Asseri Assistentti</span>
-					<p class="chat-message-content">Lorem ipsum dolor sit amet foo bar baz.</p>
-				</div>
-				<div class="chat-message">
-					<span class="user">Asseri Assistentti</span>
-					<p class="chat-message-content">Lorem ipsum dolor sit amet foo bar baz.</p>
-				</div>
+				<?php foreach($chat_messages as $msg) {
+					echo '<div class="chat-message" data-msg-id="'.$msg['ChatMessage']['id'].'">';
+					echo '<span class="user">'.$msg['User']['first_name'].' '.$msg['User']['last_name'].'</span>';
+					echo '<p class="chat-message-content">'.$msg['ChatMessage']['content'].'</p>';
+					echo '</div>';
+				} ?>
 			</div>
 		</div>
 		<input type="text" name="chat-input" id="chat-input">

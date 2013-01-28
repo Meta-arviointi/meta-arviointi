@@ -109,8 +109,8 @@ class AppController extends Controller {
             }
         }
 
-        // Check for new messages in the database and pass notifications to the layout
         if($this->Auth->user()) {
+            // Check for new messages in the database and pass notifications to the layout
             $this->loadModel('User');
             $this->User->Behaviors->load('Containable');
             //print_r($this->Auth->user('id'));
@@ -151,6 +151,16 @@ class AppController extends Controller {
                 }
             }
             $this->set('email_notifications', $email_messages);
+
+
+            //Check for chat messages 
+            $this->loadModel('ChatMessage');
+            $chat_messages = $this->ChatMessage->find('all', array(
+                'order' => 'ChatMessage.id DESC',
+                'limit' => 10
+            ));
+            $chat_messages = array_reverse($chat_messages);
+            $this->set('chat_messages', $chat_messages);
         }
     }
 
