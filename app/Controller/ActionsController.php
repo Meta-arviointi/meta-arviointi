@@ -6,14 +6,40 @@ class ActionsController extends AppController {
     public function add_action() {
         if($this->request->is('post')) {
             //debug($this->request->data);
+            //$deadline_date = $this->request->data['Action']['deadline_date'];
+
+            //$deadline_time = $this->request->data['Action']['deadline_time'];
+            //$test = date('Y-m-d H:i:sO',)
             if($this->Action->save($this->request->data)) {
-                $this->redirect(array(
-                    'controller' => 'course_memberships',
-                    'action' => 'view',
-                    // parameter value comes from POST data
-                    $this->request->data['Action']['redirect']
+                // Get ID of new saved Action
+                $id = $this->Action->id; 
+                $this->Session->setFlash(__("Uusi toimenpide (id: $id) tallennettu!"));
+
+                /* Prepare for redirect.
+                 * Get CourseMembership.id of the
+                 * just saved action, so redirect is possible
+                 * to course_memberships/view/$id
+                 */
+                $action = $this->Action->find('first', array(
+                        'conditions' => array('Action.id' => $id),
+                        'contain' => array(
+                            'Student' => array(
+                                'CourseMembership' => array(
+                                    'conditions' => array(
+                                        'CourseMembership.course_id' => $this->Session->read('Course.course_id')
+                                    )
+                                )
+                            )
+                        )
                     )
                 );
+
+                $this->redirect(array(
+                        'controller' => 'course_memberships',
+                        'action' => 'view',
+                        $action['Student']['CourseMembership'][0]['id']
+                     )
+                );            
             }
         }
     }

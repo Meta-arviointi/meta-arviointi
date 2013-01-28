@@ -120,103 +120,38 @@
 
 
             // KORJAUSPYYNTÖ
-            echo $this->Form->create('Action', array(
-                'class' => 'student-action-form', 
-                'id' => 'request-action-form', 
-                'url' => array('controller' => 'actions', 'action' => 'add_action'),
-                'inputDefaults' => array('label' => false) // ilman tätä tulostuu jostain "Redirect" labeliksi
-            ));
-            echo $this->Form->input('redirect', array('type ' => 'hidden', 'default' => $course_membership['CourseMembership']['id']));
-            echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $course_membership['Student']['id']));
-            echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
-            echo $this->Form->input('action_type_id', array('type' => 'hidden', 'default' => '1'));
-            echo $this->Form->input('Exercise.id', array('label' => __('Harjoitus'), 'options' => $exercises));
-            echo $this->Form->input('status', array('label' => __('Tila'), 'options' => array('0' => __('Ei käsitelty'), '1' => __('Käsitelty'))));
-            $default_deadline = date('Y-m-d') . ' 16:00:00';
-            $default_deadline = date('Y-m-d H:i:s', strtotime('+ 7 day', strtotime($default_deadline)));
-            echo $this->Form->input('deadline', array(
-                'label'         => __('Aikaraja'), 
-                'default'       => $default_deadline, 
-                'timeFormat'    => 24, 
-                'dateFormat'    => 'DMY',
-                'interval'      => 15,
-                'minYear'       => date('Y'),
-                'maxYear'       => date('Y') + 1,
-                'monthNames'    => false,
-                'separator'     => '.'
-            ));
-            echo $this->Form->input('description', array('label' => false, 'rows' => 3));
-            echo $this->Form->submit(__('Lisää'), array('before' => '<a href="#" class="collapse-toggle cancel">' . __('Peruuta') . '</a>'));
-            echo $this->Form->end();
-
+            echo $this->element('action-request-form', array(
+                    'course_membership' => $course_membership,
+                    'exercises' => $exercises,
+                    'print_handled' => false
+                )
+            );
 
 
             // HUOMAUTUS
-            echo $this->Form->create('Action', array(
-                'class' => 'student-action-form', 
-                'id' => 'notice-action-form', 
-                'url' => array('controller' => 'actions', 'action' => 'add_action')
-            ));
-            echo $this->Form->input('redirect', array('type' => 'hidden', 'default' => $course_membership['CourseMembership']['id']));
-            echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $course_membership['Student']['id']));
-            echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
-            echo $this->Form->input('action_type_id', array('type' => 'hidden', 'default' => '3'));
-            echo $this->Form->input('Exercise.id', array('label' => __('Harjoitus'), 'options' => $exercises));
-            echo $this->Form->input('status', array('label' => __('Tila'), 'options' => array('0' => __('Ei käsitelty'), '1' => __('Käsitelty'))));
-            echo $this->Form->input('description', array('label' => false, 'rows' => 3));
-            echo $this->Form->submit(__('Lisää'), array('before' => '<a href="#" class="collapse-toggle cancel">' . __('Peruuta') . '</a>'));
-            echo $this->Form->end();
-
+            echo $this->element('action-notice-form', array(
+                    'course_membership' => $course_membership,
+                    'exercises' => $exercises,
+                    'print_handled' => false
+                )
+            );
 
             // HYLKÄYS
-            echo $this->Form->create('Action', array(
-                'class' => 'student-action-form', 
-                'id' => 'reject-action-form', 
-                'url' => array('controller' => 'actions', 'action' => 'add_action')
-            ));
-            echo $this->Form->input('redirect', array('type' => 'hidden', 'default' => $course_membership['CourseMembership']['id']));
-            echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $course_membership['Student']['id']));
-            echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
-            echo $this->Form->input('action_type_id', array('type' => 'hidden', 'default' => '2'));
-            echo $this->Form->input('Exercise.id', array('label' => __('Harjoitus'), 'options' => $exercises));
-            echo $this->Form->input('status', array('label' => __('Tila'), 'options' => array('0' => __('Ei käsitelty'), '1' => __('Käsitelty'))));
-            echo $this->Form->input('description', array('label' => false, 'rows' => 3));
-            echo $this->Form->submit(__('Lisää'), array('before' => '<a href="#" class="collapse-toggle cancel">' . __('Peruuta') . '</a>'));
-            echo $this->Form->end();
-
+            echo $this->element('action-reject-form', array(
+                    'course_membership' => $course_membership,
+                    'exercises' => $exercises,
+                    'print_handled' => false
+                )
+            );
 
 
             // LISÄAIKA
-            echo $this->Form->create('Action', array(
-                'class' => 'student-action-form', 
-                'id' => 'extra-action-form', 
-                'url' => array('controller' => 'actions', 'action' => 'add_action')
-            ));
-            echo $this->Form->input('redirect', array('type' => 'hidden', 'default' => $course_membership['CourseMembership']['id']));
-            echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $course_membership['Student']['id']));
-            echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
-            echo $this->Form->input('action_type_id', array('type' => 'hidden', 'default' => '4'));
-            echo $this->Form->input('Exercise.id', array('label' => __('Harjoitus'), 'options' => $exercises));
-            echo $this->Form->input('status', array('label' => __('Tila'), 'options' => array('0' => __('Ei käsitelty'), '1' => __('Käsitelty'))));
-            $default_deadline = date('Y-m-d') . ' 16:00:00';
-            echo  __('Viimeinen arviointipäivä: ') . '<span id="review_date"></span>';
-
-            $default_deadline = date('Y-m-d') . ' 16:00:00';
-            $default_deadline = date('Y-m-d H:i:s', strtotime('+ 7 day', strtotime($default_deadline)));
-            echo $this->Form->input('deadline', array(
-                'label'         => __('Uusi aikaraja'), 
-                'default'       => $default_deadline, 
-                'timeFormat'    => 24, 
-                'dateFormat'    => 'DMY',
-                'interval'      => 15,
-                'minYear'       => date('Y'),
-                'maxYear'       => date('Y') + 1,
-                'monthNames'    => false,
-                'separator'     => '.'
-            ));
-            echo $this->Form->input('description', array('label' => false, 'rows' => 3));
-            echo $this->Form->submit(__('Lisää'), array('before' => '<a href="#" class="collapse-toggle cancel">' . __('Peruuta') . '</a>'));
-            echo $this->Form->end();
+            echo $this->element('action-extra-form', array(
+                    'course_membership' => $course_membership,
+                    'exercises' => $exercises,
+                    'print_handled' => false
+                )
+            );
 
 
 
