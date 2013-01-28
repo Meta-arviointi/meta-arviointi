@@ -267,6 +267,11 @@
             );
             echo '</div>';
             echo '<h3>' . $action_title . '</h3>';
+            if ( !empty($action['Action']['handled_id']) ) {
+                echo '<div class="meta"><span>(' . __('Käsitellyt') . ': ' . 
+                    $users[$action['Action']['handled_id']] . ' - ' .
+                    date('j.n.Y G:i', strtotime($action['Action']['handled_time'])) . ')</span></div>';
+            }
             if(!empty($action['Action']['deadline'])) echo '<p class="deadline">Aikaraja: '.date('d.m.Y H:i', strtotime($action['Action']['deadline'])).'</p>';
             if(!empty($action['Action']['description'])) echo '<p class="comment">'.$action['Action']['description'].'</p>';
             echo '<div class="meta">';
