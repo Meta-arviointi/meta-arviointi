@@ -42,7 +42,11 @@
 					<?php
 						if($this->Session->read('Auth.User')) {
 							echo '<div id="login-details">';
-							echo '<span class="logged-user">' . $this->Session->read('Auth.User.name') . '</span>';
+							echo $this->Html->link(
+								$this->Session->read('Auth.User.name'),
+								array('controller' => 'users', 'action' => 'my_profile'),
+								array('id' => 'my-profile-link', 'class' => 'header-button')
+							);
 							echo $this->Html->link(
 								__('Kirjaudu ulos'),
 								array('controller' => 'users', 'action' => 'logout', 'course_id' => false),
