@@ -123,6 +123,7 @@ $(document).ready ->
 
     chat_refresh = ->
         last_id = chat_messages.children().last().attr('data-msg-id')
+        last_id = 0 if !last_id?
         $.ajax
             dataType: "json"
             url: window.baseUrl + 'chat_messages/get_recent/' + last_id + '.json'
