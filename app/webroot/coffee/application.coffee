@@ -30,6 +30,7 @@ window.datepickerDefaults = {
 }
 
 $(document).ready ->
+    $.scrollTo 0
 
     $('.modal').hide()
     $('.modal-close, .modal-overlay').click -> 
@@ -56,6 +57,9 @@ $(document).ready ->
     $('#StudentIndexFilters select').change ->
         $(this).parents('form').submit()
 
+    $('#UserCourseSelection select').change ->
+        $(this).parents('form').submit()
+
     # Action form functionality
     $('.student-action-form').hide()
 
@@ -72,15 +76,108 @@ $(document).ready ->
         false
 
     # Action form functionality
-    $('.student-email-form').hide()
+    $('#student-email-form').hide()
 
     $('#student-email-form-link').on 'click', ->
         $('#student-email-form').show()
         false
 
-    $('.student-email-form a.cancel').on 'click', ->
+    $('#student-email-form a.cancel').on 'click', ->
         $(this).parents('form').hide()
         false
 
     $('input.datepicker').datepicker datepickerDefaults
     #$('#InputFieldId').datepicker datepickerDefaults
+
+    $('#mail-indicator > a').on 'click', ->
+        $('#mail-indicator').toggleClass 'open'
+        false
+
+    chat = $('#chat')
+    if chat[0]
+        chat_viewport = chat.find('.chat-viewport')
+        chat_messages = chat_viewport.find('.chat-messages')
+        chat_input = $('#chat-input')
+
+        chat_scroll_bottom = ->
+            chat_viewport.scrollTop(chat_messages.height() - chat_viewport.height())
+            return
+        chat_scroll_bottom()
+
+        $('#chat-toggle').on 'click', ->
+            chat.toggleClass 'open'
+            chat_scroll_bottom()
+            state = 'closed'
+            if chat.hasClass 'open'
+                st = $(window).scrollTop()
+                chat_input.focus()
+                $(window).scrollTop(st)
+                state = 'open'
+            else
+                chat_input.blur()
+            $.ajax
+                type: "POST",
+                dataType: "json"
+                url: window.baseUrl + 'chat_messages/set_chat_window_state'
+                data: {chat_window_state: state}
+            false
+
+        chat_refresh = ->
+            last_id = chat_messages.children().last().attr('data-msg-id')
+            last_id = 0 if !last_id?
+            $.ajax
+                dataType: "json"
+                url: window.baseUrl + 'chat_messages/get_recent/' + last_id + '.json'
+                success: (data) ->
+                    for msg in data
+                        chat_messages.append('<div class="chat-message" data-msg-id="' + msg.id + '">
+                            <span class="user">' + msg.user + '</span>
+                            <p class="chat-message-content">' + msg.content + '</p>
+                        </div>')
+                    if(Math.abs(chat_viewport.scrollTop() - (chat_messages.height() - chat_viewport.height())) < 50)
+                        chat_scroll_bottom()
+                    return
+                error: (qXHR, textStatus, errorThrown) ->
+                    #alert errorThrown
+                    return
+            return
+
+        setInterval chat_refresh, 5000
+
+        chat_input.keyup (e) ->
+            if e.keyCode == 13
+                msg = chat_input.val()
+                chat_input.val('')
+                $.ajax({
+                    type: "POST",
+                    dataType: 'json',
+                    url: window.baseUrl + 'chat_messages/send',
+                    data: {msg: msg},
+                    success: ->
+                        chat_refresh()
+                        return
+                    error: (qXHR, textStatus, errorThrown) ->
+                        alert errorThrown
+                        return
+                })
+                chat_scroll_bottom()
+
+    $(window).on 'click', ->
+        $('#mail-indicator').removeClass 'open'
+
+    studentEmailFormContainer = $('#student-email-form-container')
+    window.emailAction = (actionID) ->
+        $('#student-email-form').show()
+        $.scrollTo studentEmailFormContainer, 500, {offset: {top: -120}}
+        $.ajax
+            dataType: "json"
+            url: window.baseUrl + 'actions/get_email_template/' + actionID + '.json'
+            success: (data) ->
+                $('#MailTitle').val data.title
+                $('#MailContent').val data.content
+                return
+            error: (qXHR, textStatus, errorThrown) ->
+                alert errorThrown
+                return
+        false
+
