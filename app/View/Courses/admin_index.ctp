@@ -45,18 +45,20 @@
                 array('controller' => 'course', 'action' => 'view', $course['Course']['id'])).'</td>';
             echo '<td>'.$this->Html->link($this->Time->Format('d-m-Y', $course['Course']['endtime']), 
                 array('controller' => 'course', 'action' => 'view', $course['Course']['id'])).'</td>';
-            echo '<td>'.$course['Course']['id'].'</td>';
+            if (strtotime($course['Course']['starttime']) > time()) {
+                echo '<td>Tulossa</td>';
+            }
+	    if (strtotime($course['Course']['endtime']) < time()) {
+                echo '<td>Päättynyt</td>';
+            }
+            if (strtotime($course['Course']['starttime']) < time() && strtotime($course['Course']['endtime']) > time()) {
+                echo '<td>Käynnissä</td>';
+            }
 
-            /* If student belongs to a group, print assistant name */
-//            if ( isset($student['Group'][0]['User']) ) {
-//                echo '<td>'.$student['Group'][0]['User']['name'].'</td>';
-//            } else {
-                /* If not in any group, leave cell empty */
-//                echo '<td></td>';
-//            }
-            echo '</tr>';
         }
         ?>
     </table>
+Assistentit<br/>
+Opiskelijat<br/>
     </div>
 </div>

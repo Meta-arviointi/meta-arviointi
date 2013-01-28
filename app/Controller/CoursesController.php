@@ -24,8 +24,6 @@ array(
 	        'order' => array('Course.endtime DESC'),
 		'fields' => array('Course.id', 'Course.name', 'Course.starttime', 'Course.endtime')
         );
-                $this->_course = $this->Course->find('first', $params);
-
 	$courses = $this->Course->find('all', $params);
         // Create array with 'Group.id' as key and 'User.name' as value
         // NOTE: 'User.name' is virtual field defined in User-model
