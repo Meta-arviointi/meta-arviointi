@@ -133,7 +133,8 @@ $(document).ready ->
                         <span class="user">' + msg.user + '</span>
                         <p class="chat-message-content">' + msg.content + '</p>
                     </div>')
-                chat_scroll_bottom()
+                if(Math.abs(chat_viewport.scrollTop() - (chat_messages.height() - chat_viewport.height())) < 50)
+                    chat_scroll_bottom()
                 return
             error: (qXHR, textStatus, errorThrown) ->
                 alert errorThrown
