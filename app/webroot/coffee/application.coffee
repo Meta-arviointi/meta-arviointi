@@ -101,7 +101,6 @@ $(document).ready ->
     chat_scroll_bottom = ->
         chat_viewport.scrollTop(chat_messages.height() - chat_viewport.height())
         return
-
     chat_scroll_bottom()
 
     $('#chat-toggle').on 'click', ->
