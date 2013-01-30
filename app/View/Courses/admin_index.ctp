@@ -9,12 +9,7 @@
     </div>
 </div>
 <div class="row">
-	<div class="twelvecol last">
-	<?php echo $this->Html->link('Lisää uusi kurssi', array('action' => 'admin_add', 'controller' => 'courses'), array('class' => 'modal-link', 'id' => 'add-course-link')); ?>
-	<?php echo $this->Html->link('Lisää assistentti', array('action' => 'add', 'controller' => 'students'), array('class' => 'button', 'id' => 'add-user-link')); ?>
-	<?php echo $this->Html->link('Lisää opiskelija', array('action' => 'add', 'controller' => 'students'), array('class' => 'button', 'id' => 'add-student-link')); ?>
-	<?php echo $this->Html->link('Lisää opiskelijat CSV-tiedostosta', array('action' => 'add', 'controller' => 'students'), array('class' => 'button', 'id' => 'add-student_csv-link')); ?>
-
+    <div class="twelvecol last">
     <?php 
      /* DEBUG */
     echo '<pre>';
@@ -58,7 +53,6 @@
         }
         ?>
     </table>
-Assistentit<br/>
-Opiskelijat<br/>
+    <?php echo $this->Html->link('Lisää uusi kurssi', array('action' => 'admin_add', 'controller' => 'courses'), array('class' => 'modal-link', 'id' => 'add-course-link')); ?>
     </div>
 </div>

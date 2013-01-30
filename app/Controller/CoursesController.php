@@ -265,10 +265,10 @@ array(
         if ($this->request->is('post')) {
             $this->Course->create();
             if ($this->Course->save($this->request->data)) {
-                $this->Session->setFlash(__('The course has been added'));
+                $this->Session->setFlash(__('Kurssi lisätty'));
                 $this->redirect(array('action' => 'index'));
             } else {
-                $this->Session->setFlash(__('The course could not be added. Please, try again.'));
+                $this->Session->setFlash(__('Kurssia ei voitu lisätä. Ole hyvä ja yritä myöhemmin uudestaan.'));
             }
         }
     }
