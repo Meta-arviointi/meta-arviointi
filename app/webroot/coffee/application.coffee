@@ -98,6 +98,7 @@ $(document).ready ->
         chat_viewport = chat.find('.chat-viewport')
         chat_messages = chat_viewport.find('.chat-messages')
         chat_input = $('#chat-input')
+        chat_refreshing = false
 
         chat_scroll_bottom = ->
             chat_viewport.scrollTop(chat_messages.height() - chat_viewport.height())
@@ -123,23 +124,27 @@ $(document).ready ->
             false
 
         chat_refresh = ->
-            last_id = chat_messages.children().last().attr('data-msg-id')
-            last_id = 0 if !last_id?
-            $.ajax
-                dataType: "json"
-                url: window.baseUrl + 'chat_messages/get_recent/' + last_id + '.json'
-                success: (data) ->
-                    for msg in data
-                        chat_messages.append('<div class="chat-message" data-msg-id="' + msg.id + '">
-                            <span class="user">' + msg.user + '</span>
-                            <p class="chat-message-content">' + msg.content + '</p>
-                        </div>')
-                    if(Math.abs(chat_viewport.scrollTop() - (chat_messages.height() - chat_viewport.height())) < 50)
-                        chat_scroll_bottom()
-                    return
-                error: (qXHR, textStatus, errorThrown) ->
-                    #alert errorThrown
-                    return
+            if not chat_refreshing
+                chat_refreshing = true
+                last_id = chat_messages.children().last().attr('data-msg-id')
+                last_id = 0 if !last_id?
+                $.ajax
+                    dataType: "json"
+                    url: window.baseUrl + 'chat_messages/get_recent/' + last_id + '.json'
+                    success: (data) ->
+                        chat_refreshing = false
+                        for msg in data
+                            chat_messages.append('<div class="chat-message" data-msg-id="' + msg.id + '">
+                                <span class="user">' + msg.user + '</span>
+                                <p class="chat-message-content">' + msg.content + '</p>
+                            </div>')
+                        if(Math.abs(chat_viewport.scrollTop() - (chat_messages.height() - chat_viewport.height())) < 50)
+                            chat_scroll_bottom()
+                        return
+                    error: (qXHR, textStatus, errorThrown) ->
+                        chat_refreshing = false
+                        #alert errorThrown
+                        return
             return
 
         setInterval chat_refresh, 5000
