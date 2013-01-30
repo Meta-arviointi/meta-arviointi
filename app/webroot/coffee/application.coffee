@@ -101,7 +101,7 @@ $(document).ready ->
         chat_refreshing = false
 
         chat_scroll_bottom = ->
-            chat_viewport.scrollTop(chat_messages.height() - chat_viewport.height())
+            chat_viewport.scrollTo 'max', 500
             return
         chat_scroll_bottom()
 
@@ -134,11 +134,14 @@ $(document).ready ->
                     success: (data) ->
                         chat_refreshing = false
                         for msg in data
-                            chat_messages.append('<div class="chat-message" data-msg-id="' + msg.id + '">
-                                <span class="user">' + msg.user + '</span>
-                                <p class="chat-message-content">' + msg.content + '</p>
-                            </div>')
-                        if(Math.abs(chat_viewport.scrollTop() - (chat_messages.height() - chat_viewport.height())) < 50)
+                            if chat_messages.children('.chat-message[data-msg-id="'+msg.id+'"]').length == 0
+                                chat_messages.append('<div class="chat-message" data-msg-id="' + msg.id + '">
+                                    <span class="user">' + msg.user + '</span>
+                                    <p class="chat-message-content">' + msg.content + '</p>
+                                </div>')
+                        console.log Math.abs(chat_viewport.scrollTop() - (chat_messages.height() - chat_viewport.height()))
+                        if(Math.abs(chat_viewport.scrollTop() - (chat_messages.height() - chat_viewport.height())) < 100)
+                            console.log 'scroll required'
                             chat_scroll_bottom()
                         return
                     error: (qXHR, textStatus, errorThrown) ->
