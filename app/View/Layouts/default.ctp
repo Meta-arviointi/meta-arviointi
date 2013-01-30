@@ -49,7 +49,7 @@
 							);
 							echo $this->Html->link(
 								__('Kirjaudu ulos'),
-								array('controller' => 'users', 'action' => 'logout', 'course_id' => false),
+								array('admin' => false, 'controller' => 'users', 'action' => 'logout', 'course_id' => false),
 								array('id' => 'logout-link', 'class' => 'header-button')
 							);
 							echo '</div>';
