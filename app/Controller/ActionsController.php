@@ -6,10 +6,23 @@ class ActionsController extends AppController {
     public function add_action() {
         if($this->request->is('post')) {
             //debug($this->request->data);
-            //$deadline_date = $this->request->data['Action']['deadline_date'];
 
-            //$deadline_time = $this->request->data['Action']['deadline_time'];
-            //$test = date('Y-m-d H:i:sO',)
+            // Convert date and time from Datepicker to match database timestamp format
+            // ie. '06.02.2013 00:15' converts to '2013-02-06 00:15:00+0200'
+            $deadline_date = $this->request->data['Action']['deadline_date'];
+            $deadline_time = $this->request->data['Action']['deadline_time'];
+
+            // 'dd.mm.yyyy hh:mm'
+            $deadline_string = $deadline_date . ' ' . $deadline_time['hour'] . ':' . $deadline_time['min'];
+
+            $deadline = date_create_from_format('d.m.Y H:i', $deadline_string);
+            $deadline_dbstring = date_format($deadline, 'Y-m-d H:i:sO');
+
+            // Set value for saving and unset unnecessary variables
+            $this->request->data['Action']['deadline'] = $deadline_dbstring;
+            unset($this->request->data['Action']['deadline_date']);
+            unset($this->request->data['Action']['deadline_time']);
+
             if($this->Action->save($this->request->data)) {
                 // Get ID of new saved Action
                 $id = $this->Action->id; 
@@ -75,8 +88,8 @@ class ActionsController extends AppController {
 
     public function edit($id) {
         if($this->request->is('put')) {
-            // Set modified to current time
-            $this->request->data['Action']['modified'] = date('Y-m-d H:i:sO');
+            // CakePHP automagically updates modified-field
+            //$this->request->data['Action']['modified'] = date('Y-m-d H:i:sO');
 
             // If marked as handled, set handled_time to current time
             if ( $this->request->data['Action']['handled_id'] ) {

@@ -277,3 +277,5 @@ Cache::config('_cake_model_', array(
 	'serialize' => ($engine === 'File'),
 	'duration' => $duration
 ));
+
+date_default_timezone_set('Europe/Helsinki');
