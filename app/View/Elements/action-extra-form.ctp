@@ -27,7 +27,7 @@ if ( $print_handled ) {
 
 echo  __('Viimeinen arviointipäivä: ') . '<span id="review_date"></span>';
 
-$default_deadline_date = date('Y-m-d', strtotime('+ 7 day', strtotime(date('Y-m-d'))));
+$default_deadline_date = date('d.m.Y', strtotime('+ 7 day', strtotime(date('d.m.Y'))));
 echo $this->Form->input('deadline_date', array(
     'label'         => __('Uusi aikaraja'),
     'class'         => 'datepicker',
@@ -35,7 +35,7 @@ echo $this->Form->input('deadline_date', array(
     'default'       => $default_deadline_date
 ));
 echo $this->Form->input('deadline_time', array(
-        'label'         => false,
+        'label'         => __('Kello'),
         'type'          => 'time',
         'timeFormat'    => 24,
         'interval'      => 15,

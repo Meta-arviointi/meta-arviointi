@@ -71,9 +71,7 @@
                 echo '<td></td>';
 
             }
-            // Jos ei tietokantataulut ole vielä kunnossa kommentoi yo. if ja laita vain "Asseri Assistentti":
-            //echo '<td>Asseri Assistentti</td>';
-            echo '<td>'.count($student['Action']).'</td>';
+            echo '<td>'.(isset($student['Action']) ? count($student['Action']) : 0).'</td>';
             echo '</tr>';
         }
         ?>
