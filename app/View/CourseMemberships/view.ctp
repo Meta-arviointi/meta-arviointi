@@ -6,28 +6,20 @@
     echo '</pre>';
 ?>
 <script type="text/javascript">
-    <?php /* Load review date for default option. */ ?>
     $(document).ready(function() {
-        $.ajax({
-            type: 'GET',
-            url: '<?php echo $this->request->webroot ?>course_memberships/review_end/' + $('#extra-action-form #ExerciseId').val(),
-            success: function(data){
-                $('#review_date').html(data);
-            }
-        });
-    })
-
-    $(document).ready(function() {
-        <?php /* Load review date for selected option. */ ?>
-        $('#extra-action-form #ExerciseId').change(function() {
-            $.ajax({
-                type: 'GET',
-                url: '<?php echo $this->request->webroot ?>course_memberships/review_end/' + $(this).val(),
-                success: function(data){
-                    $('#review_date').html(data);
+        $('.student-action-form').each(function() {
+            var formToHandle = this;
+            $(formToHandle).on("submit", function() {
+                var n = $(formToHandle).find('input[type="checkbox"]:checked').length;
+                if ( n == 0 ) {
+                    alert('<?php echo __("Valitse ainakin yksi harjoitus")?>');
+                    return false;
+                } else {
+                    return true;
                 }
-            });
-        });
+            })
+        })
+
     })
 </script>
 <div class="row">
