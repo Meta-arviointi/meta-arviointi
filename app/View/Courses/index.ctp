@@ -23,8 +23,6 @@
 </div>
 <div class="row">
 	<div class="twelvecol last">
-	<?php echo $this->Html->link('Lisää uusi opiskelija', array('action' => 'add', 'controller' => 'students'), array('class' => 'button', 'id' => 'add-student-link')); ?>
-
     <?php 
      /* DEBUG */
     echo '<pre>';
@@ -44,16 +42,9 @@
             <th><?php echo __('Sukunimi'); ?></th>
             <th><?php echo __('Etunimi'); ?></th>
             <th><?php echo __('Opiskelijanumero'); ?></th>
-            <th><?php echo __('Assistentti'); ?></th> <!-- TODO: Assistentti Paginator-sorttuas -->
+            <th><?php echo __('Assistentti'); ?></th> <?php /* TODO sorttuas */ ?>
             <th><?php echo __('Toimenpiteitä'); ?></th>
         </tr>
-        <!--<tr> paginaatio poistettu käytöstä (toistaiseksi)
-            <th><?php echo $this->Paginator->sort('last_name', 'Sukunimi'); ?></th>
-            <th><?php echo $this->Paginator->sort('first_name', 'Etunimi'); ?></th>
-            <th><?php echo $this->Paginator->sort('student_number', 'Opiskelijanumero'); ?></th>
-            <th>Assistentti</th>
-            <th>Toimenpiteitä</th>
-        </tr> -->
         <?php
         foreach($students as $student) {
             echo '<tr class="table-content">';
@@ -68,7 +59,7 @@
                 echo '<td>'.$student['Group'][0]['User']['name'].'</td>';
             } else {
                 /* If not in any group, leave cell empty */
-                echo '<td></td>';
+                echo '<td><em>' . __('(ei määritelty)') .'</em></td>';
 
             }
             echo '<td>'.(isset($student['Action']) ? count($student['Action']) : 0).'</td>';

@@ -101,12 +101,18 @@
         <?php
         echo '<div id="add-action-form-container">';
 
+
             echo '<div id="student-action-form-links">';
-            echo '<strong>Lisää: </strong>';
-            echo '<a href="#" data-action-type="request">Korjauspyyntö</a>';
-            echo '<a href="#" data-action-type="notice">Huomautus</a>';
-            echo '<a href="#" data-action-type="reject">Hylkäys</a>';
-            echo '<a href="#" data-action-type="extra">Lisäaika</a>';
+            if ( !empty($exercises) ) {
+                echo '<strong>Lisää: </strong>';
+                echo '<a href="#" data-action-type="request">Korjauspyyntö</a>';
+                echo '<a href="#" data-action-type="notice">Huomautus</a>';
+                echo '<a href="#" data-action-type="reject">Hylkäys</a>';
+                echo '<a href="#" data-action-type="extra">Lisäaika</a>';    
+            } else {
+                echo '<strong>' . __('Harjoituksia ei saatavilla, toimenpiteitä ei voi lisätä') . '</strong>';
+            }
+            
             echo '</div>';
 
 
