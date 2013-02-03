@@ -24,8 +24,6 @@ array(
 	        'order' => array('Course.endtime DESC'),
 		'fields' => array('Course.id', 'Course.name', 'Course.starttime', 'Course.endtime')
         );
-                $this->_course = $this->Course->find('first', $params);
-
 	$courses = $this->Course->find('all', $params);
         // Create array with 'Group.id' as key and 'User.name' as value
         // NOTE: 'User.name' is virtual field defined in User-model
@@ -76,78 +74,71 @@ array(
 
         //debug($this->request);
         //debug($this->Session->read());
-        //$course = $this->Course->kurssit($this->request->params['course_id']);
-
-        // Hope to find a better solution for this later - Joni
-        if ( $group_id > 0 ) {
-            /*
-             * Joins tables students, groups_students and groups
-             * using find and use group_id as condition.
-             */
-            $options['joins'] = array(
-                array('table' => 'groups_students',
-                    'alias' => 'GroupStudent',
-                    'type' => 'inner',
-                    'conditions' => array(
-                        'Student.id = GroupStudent.student_id')
-                ),
-                array('table' => 'groups',
-                    'alias' => 'Group',
-                    'type' => 'inner',
-                    'conditions' => array(
-                        'Group.id = GroupStudent.group_id')
-                )
-            );
-            $options['conditions'] = array(
-                'Group.id = ' . $group_id,
-                'Group.course_id = ' . $course_id,
-            );
-
-            $options['contain'] = array(
-                'Action',
-                'CourseMembership' => array(
-                    'conditions' => array(
-                        'CourseMembership.course_id =' => $course_id)
-                    ),
-                'Group' => array(
-                    'User' => array(
-                            'fields' => 'name'
-                    )
-                )
-            );
-
-            $students = $this->Course->CourseMembership->Student->find('all', $options);
-        //  debug($students);
-
-        } else {
-            // No group_id, show all Students
-            $students = $this->Course->CourseMembership->Student->find('all', array(
+        $order = array('Student.last_name' => 'ASC');
+        $students = $this->Course->CourseMembership->Student->find('all', array(
                 'contain' => array(
                     'Group' => array(
+                        'conditions' =>
+                            ($group_id > 0 ? // if
+                                array(
+                                    'Group.course_id' => $course_id,
+                                    'Group.id' => $group_id
+                                    )
+                                : array('Group.course_id' => $course_id) // else
+                            )
+                        ,
                         'User' => array(
                             'fields' => 'name'
-                            )
-                        ),
-                    'Action',
+                        )
+                     ),
                     'CourseMembership' => array(
                             'conditions' => array('CourseMembership.course_id' => $course_id)
-                        )
                     )
-                )
-            );
-            //debug($students);
-        }
+                ),
+                'order' => $order
+            )
+        );
 
         /*
-         * Remove elements that contain empty 'CourseMembership'
-         * (meaning students who don't belong to current course (course_id)).
-         * This way View don't need to handle empty array elements. 
+         * Delete students that don't belong to current course.
+         * Delete also if student don't belong to selected group.
+         * If $group_id = 0, show also students who don't have group.
+         * ['Group'] or ['CourseMembership'] is empty array.
          */
         foreach ($students as $index => $student) {
             if ( empty($student['CourseMembership']) ) {
                 unset($students[$index]);
-            } 
+            } else if ( $group_id > 0 && empty($student['Group']) ) {
+                unset($students[$index]);
+            }
         }
+
+        // Loop to fetch all actions related to one student
+        foreach ($students as &$student) {
+            $student_actions = $this->Course->Exercise->Action->find('all', array(
+                    'conditions' => array(
+                        'Action.student_id' => $student['Student']['id']
+                    ),
+                    'contain' => array(
+                        'Exercise' => array(
+                            'conditions' => array('Exercise.course_id' => $course_id)
+                        )
+                    )
+                )
+            );
+            // Remove unnecessary depth from arrays that resulted
+            // from call to find('all'), and add actions to
+            // $student['Action'] -array
+            foreach ($student_actions as $action) {
+                // Check that action belongs to exercise
+                // that belongs to current course
+                if ( !empty($action['Exercise']) ) {
+                    $student['Action'][] = $action['Action'];
+                }
+            }
+        }
+
+        //debug($students);
 
         // Call Group-model to return groups with assistant names
         // in given course ($course_id from Session)
@@ -267,10 +258,10 @@ array(
         if ($this->request->is('post')) {
             $this->Course->create();
             if ($this->Course->save($this->request->data)) {
-                $this->Session->setFlash(__('The course has been added'));
+                $this->Session->setFlash(__('Kurssi lisätty'));
                 $this->redirect(array('action' => 'index'));
             } else {
-                $this->Session->setFlash(__('The course could not be added. Please, try again.'));
+                $this->Session->setFlash(__('Kurssia ei voitu lisätä. Ole hyvä ja yritä myöhemmin uudestaan.'));
             }
         }
     }

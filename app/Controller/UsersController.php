@@ -11,6 +11,8 @@ class UsersController extends AppController {
     public function login() {
         if ($this->request->is('post')) {
             if ($this->Auth->login()) {
+                $this->User->id = $this->Auth->user('id');
+                $this->User->saveField('last_login', date('Y-m-d H:i:sO'));
                 $this->redirect($this->Auth->loginRedirect);
             } else {
                 $this->Session->setFlash(__('Invalid username or password, try again'));
@@ -31,7 +33,7 @@ class UsersController extends AppController {
      * Such as selecting default group for user.
      */
     public function start() {
-        
+
         // Empty group_id just in case it's old session
         $this->Session->delete('User.group_id');
 
@@ -66,10 +68,39 @@ class UsersController extends AppController {
         );
     }
 
-    public function index() {
+//    public function index() {
+//        $this->User->recursive = 0;
+//        $this->set('users', $this->paginate());
+//    }
+
+    public function admin_index() {
         $this->User->recursive = 0;
         $this->set('users', $this->paginate());
+
+        $params = array(
+                'order' => array('Course.endtime DESC'),
+                'fields' => array('Course.id', 'Course.name', 'Course.starttime', 'Course.endtime')
+        );
+        $courses = $this->Course->find('all', $params);
+        // Create array with 'Group.id' as key and 'User.name' as value
+        // NOTE: 'User.name' is virtual field defined in User-model
+        $course_groups = array();
+        foreach($courses as $course) {
+            $course_groups[$course['Course']['id']] = $course['Course']['name'];
+        }
+        // Set array to be used in drop-down selection
+        $this->set('course_groups', $course_groups);
+
+	$params = array(
+		'order' => array('User.last_name ASC'),
+		'fields' => array('User.last_name', 'User.first_name', 'User.email'),
+                'contain' => array('Course' => array('fields' => array('Course.id', 'Course.name')))
+	);
+	$users = $this->User->find('all', $params);
+	$this->set('users', $users);
+
     }
+
 /*
     public function view($id = null) {
         $this->User->id = $id;

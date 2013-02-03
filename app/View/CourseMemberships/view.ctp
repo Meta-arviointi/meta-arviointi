@@ -6,28 +6,20 @@
     echo '</pre>';
 ?>
 <script type="text/javascript">
-    <?php /* Load review date for default option. */ ?>
     $(document).ready(function() {
-        $.ajax({
-            type: 'GET',
-            url: '<?php echo $this->request->webroot ?>course_memberships/review_end/' + $('#extra-action-form #ExerciseId').val(),
-            success: function(data){
-                $('#review_date').html(data);
-            }
-        });
-    })
-
-    $(document).ready(function() {
-        <?php /* Load review date for selected option. */ ?>
-        $('#extra-action-form #ExerciseId').change(function() {
-            $.ajax({
-                type: 'GET',
-                url: '<?php echo $this->request->webroot ?>course_memberships/review_end/' + $(this).val(),
-                success: function(data){
-                    $('#review_date').html(data);
+        $('.student-action-form').each(function() {
+            var formToHandle = this;
+            $(formToHandle).on("submit", function() {
+                var n = $(formToHandle).find('input[type="checkbox"]:checked').length;
+                if ( n == 0 ) {
+                    alert('<?php echo __("Valitse ainakin yksi harjoitus")?>');
+                    return false;
+                } else {
+                    return true;
                 }
-            });
-        });
+            })
+        })
+
     })
 </script>
 <div class="row">
@@ -109,114 +101,55 @@
         <?php
         echo '<div id="add-action-form-container">';
 
+
             echo '<div id="student-action-form-links">';
-            echo '<strong>Lisää: </strong>';
-            echo '<a href="#" data-action-type="request">Korjauspyyntö</a>';
-            echo '<a href="#" data-action-type="notice">Huomautus</a>';
-            echo '<a href="#" data-action-type="reject">Hylkäys</a>';
-            echo '<a href="#" data-action-type="extra">Lisäaika</a>';
+            if ( !empty($exercises) ) {
+                echo '<strong>Lisää: </strong>';
+                echo '<a href="#" data-action-type="request">Korjauspyyntö</a>';
+                echo '<a href="#" data-action-type="notice">Huomautus</a>';
+                echo '<a href="#" data-action-type="reject">Hylkäys</a>';
+                echo '<a href="#" data-action-type="extra">Lisäaika</a>';    
+            } else {
+                echo '<strong>' . __('Harjoituksia ei saatavilla, toimenpiteitä ei voi lisätä') . '</strong>';
+            }
+            
             echo '</div>';
 
 
 
             // KORJAUSPYYNTÖ
-            echo $this->Form->create('Action', array(
-                'class' => 'student-action-form', 
-                'id' => 'request-action-form', 
-                'url' => array('controller' => 'actions', 'action' => 'add_action'),
-                'inputDefaults' => array('label' => false) // ilman tätä tulostuu jostain "Redirect" labeliksi
-            ));
-            echo $this->Form->input('redirect', array('type ' => 'hidden', 'default' => $course_membership['CourseMembership']['id']));
-            echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $course_membership['Student']['id']));
-            echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
-            echo $this->Form->input('action_type_id', array('type' => 'hidden', 'default' => '1'));
-            echo $this->Form->input('Exercise.id', array('label' => __('Harjoitus'), 'options' => $exercises));
-            echo $this->Form->input('status', array('label' => __('Tila'), 'options' => array('0' => __('Ei käsitelty'), '1' => __('Käsitelty'))));
-            $default_deadline = date('Y-m-d') . ' 16:00:00';
-            $default_deadline = date('Y-m-d H:i:s', strtotime('+ 7 day', strtotime($default_deadline)));
-            echo $this->Form->input('deadline', array(
-                'label'         => __('Aikaraja'), 
-                'default'       => $default_deadline, 
-                'timeFormat'    => 24, 
-                'dateFormat'    => 'DMY',
-                'interval'      => 15,
-                'minYear'       => date('Y'),
-                'maxYear'       => date('Y') + 1,
-                'monthNames'    => false,
-                'separator'     => '.'
-            ));
-            echo $this->Form->input('description', array('label' => false, 'rows' => 3));
-            echo $this->Form->submit(__('Lisää'), array('before' => '<a href="#" class="collapse-toggle cancel">' . __('Peruuta') . '</a>'));
-            echo $this->Form->end();
-
+            echo $this->element('action-request-form', array(
+                    'course_membership' => $course_membership,
+                    'exercises' => $exercises,
+                    'print_handled' => false
+                )
+            );
 
 
             // HUOMAUTUS
-            echo $this->Form->create('Action', array(
-                'class' => 'student-action-form', 
-                'id' => 'notice-action-form', 
-                'url' => array('controller' => 'actions', 'action' => 'add_action')
-            ));
-            echo $this->Form->input('redirect', array('type' => 'hidden', 'default' => $course_membership['CourseMembership']['id']));
-            echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $course_membership['Student']['id']));
-            echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
-            echo $this->Form->input('action_type_id', array('type' => 'hidden', 'default' => '3'));
-            echo $this->Form->input('Exercise.id', array('label' => __('Harjoitus'), 'options' => $exercises));
-            echo $this->Form->input('status', array('label' => __('Tila'), 'options' => array('0' => __('Ei käsitelty'), '1' => __('Käsitelty'))));
-            echo $this->Form->input('description', array('label' => false, 'rows' => 3));
-            echo $this->Form->submit(__('Lisää'), array('before' => '<a href="#" class="collapse-toggle cancel">' . __('Peruuta') . '</a>'));
-            echo $this->Form->end();
-
+            echo $this->element('action-notice-form', array(
+                    'course_membership' => $course_membership,
+                    'exercises' => $exercises,
+                    'print_handled' => false
+                )
+            );
 
             // HYLKÄYS
-            echo $this->Form->create('Action', array(
-                'class' => 'student-action-form', 
-                'id' => 'reject-action-form', 
-                'url' => array('controller' => 'actions', 'action' => 'add_action')
-            ));
-            echo $this->Form->input('redirect', array('type' => 'hidden', 'default' => $course_membership['CourseMembership']['id']));
-            echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $course_membership['Student']['id']));
-            echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
-            echo $this->Form->input('action_type_id', array('type' => 'hidden', 'default' => '2'));
-            echo $this->Form->input('Exercise.id', array('label' => __('Harjoitus'), 'options' => $exercises));
-            echo $this->Form->input('status', array('label' => __('Tila'), 'options' => array('0' => __('Ei käsitelty'), '1' => __('Käsitelty'))));
-            echo $this->Form->input('description', array('label' => false, 'rows' => 3));
-            echo $this->Form->submit(__('Lisää'), array('before' => '<a href="#" class="collapse-toggle cancel">' . __('Peruuta') . '</a>'));
-            echo $this->Form->end();
-
+            echo $this->element('action-reject-form', array(
+                    'course_membership' => $course_membership,
+                    'exercises' => $exercises,
+                    'print_handled' => false
+                )
+            );
 
 
             // LISÄAIKA
-            echo $this->Form->create('Action', array(
-                'class' => 'student-action-form', 
-                'id' => 'extra-action-form', 
-                'url' => array('controller' => 'actions', 'action' => 'add_action')
-            ));
-            echo $this->Form->input('redirect', array('type' => 'hidden', 'default' => $course_membership['CourseMembership']['id']));
-            echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $course_membership['Student']['id']));
-            echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
-            echo $this->Form->input('action_type_id', array('type' => 'hidden', 'default' => '4'));
-            echo $this->Form->input('Exercise.id', array('label' => __('Harjoitus'), 'options' => $exercises));
-            echo $this->Form->input('status', array('label' => __('Tila'), 'options' => array('0' => __('Ei käsitelty'), '1' => __('Käsitelty'))));
-            $default_deadline = date('Y-m-d') . ' 16:00:00';
-            echo  __('Viimeinen arviointipäivä: ') . '<span id="review_date"></span>';
-
-            $default_deadline = date('Y-m-d') . ' 16:00:00';
-            $default_deadline = date('Y-m-d H:i:s', strtotime('+ 7 day', strtotime($default_deadline)));
-            echo $this->Form->input('deadline', array(
-                'label'         => __('Uusi aikaraja'), 
-                'default'       => $default_deadline, 
-                'timeFormat'    => 24, 
-                'dateFormat'    => 'DMY',
-                'interval'      => 15,
-                'minYear'       => date('Y'),
-                'maxYear'       => date('Y') + 1,
-                'monthNames'    => false,
-                'separator'     => '.'
-            ));
-            echo $this->Form->input('description', array('label' => false, 'rows' => 3));
-            echo $this->Form->submit(__('Lisää'), array('before' => '<a href="#" class="collapse-toggle cancel">' . __('Peruuta') . '</a>'));
-            echo $this->Form->end();
+            echo $this->element('action-extra-form', array(
+                    'course_membership' => $course_membership,
+                    'exercises' => $exercises,
+                    'print_handled' => false
+                )
+            );
 
 
 
@@ -267,6 +200,11 @@
             );
             echo '</div>';
             echo '<h3>' . $action_title . '</h3>';
+            if ( !empty($action['Action']['handled_id']) ) {
+                echo '<div class="meta"><span>(' . __('Käsitellyt') . ': ' . 
+                    $users[$action['Action']['handled_id']] . ' - ' .
+                    date('j.n.Y G:i', strtotime($action['Action']['handled_time'])) . ')</span></div>';
+            }
             if(!empty($action['Action']['deadline'])) echo '<p class="deadline">Aikaraja: '.date('d.m.Y H:i', strtotime($action['Action']['deadline'])).'</p>';
             if(!empty($action['Action']['description'])) echo '<p class="comment">'.$action['Action']['description'].'</p>';
             echo '<div class="meta">';

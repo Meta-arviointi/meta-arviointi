@@ -32,7 +32,7 @@ echo $this->Form->checkbox('handled_id', array(
         $this->Session->read('Auth.User.id') : $action['handled_id']
     )
 );
-if ( !empty($this->data['Action']['handled_id']) ) {
+if ( !empty($action['handled_id']) ) {
     echo '<div class="meta"><span>(' . __('Käsitellyt') . ': ' . $users[$action['handled_id']] . ' - ' 
         . date('j.n.Y G:i', strtotime($action['handled_time'])) . ')</span></div>';
 }
@@ -47,7 +47,7 @@ echo $this->Form->input('description', array(
         'label' => __('Selite')
     )
 );
-if ( !empty($this->data['Action']['deadline']) ) {
+if ( !empty($action['deadline']) ) {
     echo $this->Form->input('deadline', array(
         'label'         => __('Aikaraja'), 
         'default'       => date('d.m.Y H:i', strtotime($action['deadline'])),
@@ -64,7 +64,7 @@ if ( !empty($this->data['Action']['deadline']) ) {
 echo '<span class="timestamp">Luotu: ' . date('j.n.Y G:i', strtotime($action['created'])) 
     . '</span>';
 echo '<br>';
-if ( !empty($this->data['Action']['modified']) ) {
+if ( $action['modified'] != $action['created'] ) {
     echo '<span class="timestamp">Viimeksi muokattu: ' 
         . date('j.n.Y G:i', strtotime($action['modified'])) . '</span>';
 }

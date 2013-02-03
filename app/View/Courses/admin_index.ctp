@@ -9,12 +9,7 @@
     </div>
 </div>
 <div class="row">
-	<div class="twelvecol last">
-	<?php echo $this->Html->link('Lisää uusi kurssi', array('action' => 'admin_add', 'controller' => 'courses'), array('class' => 'modal-link', 'id' => 'add-course-link')); ?>
-	<?php echo $this->Html->link('Lisää assistentti', array('action' => 'add', 'controller' => 'students'), array('class' => 'button', 'id' => 'add-user-link')); ?>
-	<?php echo $this->Html->link('Lisää opiskelija', array('action' => 'add', 'controller' => 'students'), array('class' => 'button', 'id' => 'add-student-link')); ?>
-	<?php echo $this->Html->link('Lisää opiskelijat CSV-tiedostosta', array('action' => 'add', 'controller' => 'students'), array('class' => 'button', 'id' => 'add-student_csv-link')); ?>
-
+    <div class="twelvecol last">
     <?php 
      /* DEBUG */
     echo '<pre>';
@@ -45,18 +40,19 @@
                 array('controller' => 'course', 'action' => 'view', $course['Course']['id'])).'</td>';
             echo '<td>'.$this->Html->link($this->Time->Format('d-m-Y', $course['Course']['endtime']), 
                 array('controller' => 'course', 'action' => 'view', $course['Course']['id'])).'</td>';
-            echo '<td>'.$course['Course']['id'].'</td>';
+            if (strtotime($course['Course']['starttime']) > time()) {
+                echo '<td>Tulossa</td>';
+            }
+	    if (strtotime($course['Course']['endtime']) < time()) {
+                echo '<td>Päättynyt</td>';
+            }
+            if (strtotime($course['Course']['starttime']) < time() && strtotime($course['Course']['endtime']) > time()) {
+                echo '<td>Käynnissä</td>';
+            }
 
-            /* If student belongs to a group, print assistant name */
-//            if ( isset($student['Group'][0]['User']) ) {
-//                echo '<td>'.$student['Group'][0]['User']['name'].'</td>';
-//            } else {
-                /* If not in any group, leave cell empty */
-//                echo '<td></td>';
-//            }
-            echo '</tr>';
         }
         ?>
     </table>
+    <?php echo $this->Html->link('Lisää uusi kurssi', array('action' => 'admin_add', 'controller' => 'courses'), array('class' => 'modal-link', 'id' => 'add-course-link')); ?>
     </div>
 </div>

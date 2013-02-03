@@ -93,6 +93,83 @@ $(document).ready ->
         $('#mail-indicator').toggleClass 'open'
         false
 
+    chat = $('#chat')
+    if chat[0]
+        chat_viewport = chat.find('.chat-viewport')
+        chat_messages = chat_viewport.find('.chat-messages')
+        chat_input = $('#chat-input')
+        chat_refreshing = false
+
+        chat_scroll_bottom = ->
+            chat_viewport.scrollTo 'max', 500
+            return
+        chat_scroll_bottom()
+
+        $('#chat-toggle').on 'click', ->
+            chat.toggleClass 'open'
+            chat_scroll_bottom()
+            state = 'closed'
+            if chat.hasClass 'open'
+                st = $(window).scrollTop()
+                chat_input.focus()
+                $(window).scrollTop(st)
+                state = 'open'
+            else
+                chat_input.blur()
+            $.ajax
+                type: "POST",
+                dataType: "json"
+                url: window.baseUrl + 'chat_messages/set_chat_window_state'
+                data: {chat_window_state: state}
+            false
+
+        chat_refresh = ->
+            if not chat_refreshing
+                chat_refreshing = true
+                last_id = chat_messages.children().last().attr('data-msg-id')
+                last_id = 0 if !last_id?
+                $.ajax
+                    dataType: "json"
+                    url: window.baseUrl + 'chat_messages/get_recent/' + last_id + '.json'
+                    success: (data) ->
+                        chat_refreshing = false
+                        for msg in data
+                            if chat_messages.children('.chat-message[data-msg-id="'+msg.id+'"]').length == 0
+                                chat_messages.append('<div class="chat-message" data-msg-id="' + msg.id + '">
+                                    <span class="user">' + msg.user + '</span>
+                                    <p class="chat-message-content">' + msg.content + '</p>
+                                </div>')
+                        console.log Math.abs(chat_viewport.scrollTop() - (chat_messages.height() - chat_viewport.height()))
+                        if(Math.abs(chat_viewport.scrollTop() - (chat_messages.height() - chat_viewport.height())) < 100)
+                            console.log 'scroll required'
+                            chat_scroll_bottom()
+                        return
+                    error: (qXHR, textStatus, errorThrown) ->
+                        chat_refreshing = false
+                        #alert errorThrown
+                        return
+            return
+
+        setInterval chat_refresh, 5000
+
+        chat_input.keyup (e) ->
+            if e.keyCode == 13
+                msg = chat_input.val()
+                chat_input.val('')
+                $.ajax({
+                    type: "POST",
+                    dataType: 'json',
+                    url: window.baseUrl + 'chat_messages/send',
+                    data: {msg: msg},
+                    success: ->
+                        chat_refresh()
+                        return
+                    error: (qXHR, textStatus, errorThrown) ->
+                        alert errorThrown
+                        return
+                })
+                chat_scroll_bottom()
+
     $(window).on 'click', ->
         $('#mail-indicator').removeClass 'open'
 
@@ -106,7 +183,9 @@ $(document).ready ->
             success: (data) ->
                 $('#MailTitle').val data.title
                 $('#MailContent').val data.content
+                return
             error: (qXHR, textStatus, errorThrown) ->
                 alert errorThrown
+                return
         false
 
