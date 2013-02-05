@@ -4,7 +4,7 @@ class ActionsController extends AppController {
 
 
     public function add_action() {
-        if($this->request->is('post')) {
+        if($this->request->is('post') || $this->request->is('put') ) {
             //debug($this->request->data);
 
             // Convert date and time from Datepicker to match database timestamp format
@@ -28,8 +28,9 @@ class ActionsController extends AppController {
             }
 
             if($this->Action->save($this->request->data)) {
-                // Get ID of new saved Action
-                $id = $this->Action->id; 
+                // Set ID of new saved Action or edited Action
+                empty($this->request->data['Action']['id'])
+                    ? $id = $this->Action->id : $id = $this->request->data['Action']['id'];
                 $this->Session->setFlash(__("Uusi toimenpide (id: $id) tallennettu!"));
 
                 /* Prepare for redirect.
@@ -151,7 +152,49 @@ class ActionsController extends AppController {
                     )
                 )
             );
+        }
+    }
 
+
+    public function edit_test($id, $action_type_id = 0) {
+        $this->Action->contain(array('Exercise', 'Student')); // include info about Exercise
+        $action_data = $this->Action->findById($id);
+        $this->set('action_data', $action_data);
+        $this->set('action_types', $this->Action->ActionType->find('list'));
+        $this->set('users', $this->Action->User->find('list', array(
+                'fields' => array('User.name')
+            )
+        )
+        );
+        $this->set('exercises', $this->Action->Exercise->find('list', array(
+                    'conditions' => array(
+                        'Exercise.course_id' => $action_data['Exercise'][0]['course_id']
+                    ),
+                    'fields' => array('Exercise.id', 'Exercise.exercise_string')
+                )
+            )
+        );
+
+        $action_exercises = $action_data['Exercise'];
+        $list_action_exercises = null;
+
+        // Check if action belongs to multiple action_exercises
+        // and list the ID's. ID's are used in checboxes below.
+        if ( count($action_exercises) > 1 ) {
+            foreach($action_exercises as $exercise) {
+                $list_action_exercises[] = $exercise['id'];
+            }
+        } else { // only one exercise
+            $list_action_exercises = $action_exercises[0]['id'];
+        }
+        $this->set('list_action_exercises', $list_action_exercises);
+
+        if( $this->RequestHandler->isAjax() ) {
+            if ( $action_type_id > 0 ) {
+                $this->set('action_type_id', $action_type_id);
+                $this->set('print_handled', true);
+                $this->render('/Elements/generic-action-form');
+            }
         }
     }
 }
