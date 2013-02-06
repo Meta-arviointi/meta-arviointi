@@ -13,9 +13,9 @@
     <?php 
      /* DEBUG */
     echo '<pre>';
-//foreach($students_list as $student) {
-//debug($student);
-//}
+foreach($students_list as $student) {
+debug($student);
+}
     //debug($students);
     echo '</pre>';
 

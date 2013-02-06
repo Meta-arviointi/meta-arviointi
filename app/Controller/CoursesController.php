@@ -60,6 +60,8 @@ array(
     $course_groups = array();
     $exercise_list = array();
     $users_list = array();
+    $groups = array();
+    $quitcount = '0';
 
     foreach($courses as $course) {
         $course_groups[$course['Course']['id']] = $course['Course']['name'];
@@ -73,22 +75,32 @@ array(
         }
     }
 
-    foreach($students as $index => $stuff) {
-        if (empty($stuff['CourseMembership'])) {
-            unset($students[$index]);
-        } 
-    }
-        // Set array to be used in drop-down selection
 	if ($cid > 0) {
-		$this->set('single_course', 'true');
-                $this->set('scount', count($students));
-                $this->set('acount', count($users_list));
-                $this->set('quitcount', 'hardcode 0');
-                $this->set('actioncount', 'hardcode 0');
-                $this->set('exercise_list', $exercise_list);
-                $this->set('users_list', $users_list);
-                $this->set('students_list', $students);
+        foreach($students as $index => $stuff) {
+            if (empty($stuff['CourseMembership'])) {
+                unset($students[$index]);
+            } else {
+                foreach($stuff['CourseMembership'] as $coursem) {
+                    if ($coursem['quit_id'] > '0') {
+                        $quitcount++;
+                    }
+                }
+/*                foreach($stuff['Group'] as $grouploop) {
+                    $groups($grouploop['GroupsStudent']['group_id'] =++);
+                    print_r($groups);
+                }
+*/            }
         }
+		$this->set('single_course', 'true');
+        $this->set('scount', count($students));
+        $this->set('acount', count($users_list));
+        $this->set('quitcount', $quitcount);
+        $this->set('actioncount', 'hardcode 0');
+        $this->set('exercise_list', $exercise_list);
+        $this->set('users_list', $users_list);
+        $this->set('students_list', $students);
+    }
+
 	$this->set('courses', $courses);
         $this->set('course_groups', $course_groups);
     }
