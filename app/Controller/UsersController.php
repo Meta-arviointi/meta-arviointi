@@ -91,14 +91,14 @@ class UsersController extends AppController {
         // Set array to be used in drop-down selection
         $this->set('course_groups', $course_groups);
 
-	$params = array(
-		'order' => array('User.last_name ASC'),
-		'fields' => array('User.last_name', 'User.first_name', 'User.email'),
-                'contain' => array('Course' => array('fields' => array('Course.id', 'Course.name'), 'order' => array('Course.id DESC')))
-	);
-	$users = $this->User->find('all', $params);
-	$this->set('users', $users);
-
+	    $params = array(
+		    'order' => array('User.last_name ASC'),
+		    'fields' => array('User.last_name', 'User.first_name', 'User.email'),
+                'contain' => array('Course' => array('fields' => array('Course.id', 'Course.name'), 'order' => array('Course.id DESC'))
+            )
+	    );
+	    $users = $this->User->find('all', $params);
+	    $this->set('users', $users);
     }
 
 /*
