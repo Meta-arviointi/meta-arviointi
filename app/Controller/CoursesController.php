@@ -100,14 +100,17 @@ array(
         );
 
         /*
-         * Delete students that don't belong to current course
-         * or to selected group.
+         * Delete students that don't belong to current course.
+         * Delete also if student don't belong to selected group.
+         * If $group_id = 0, show also students who don't have group.
          * ['Group'] or ['CourseMembership'] is empty array.
          */
         foreach ($students as $index => $student) {
-            if ( empty($student['Group']) || empty($student['CourseMembership']) ) {
+            if ( empty($student['CourseMembership']) ) {
                 unset($students[$index]);
-            } 
+            } else if ( $group_id > 0 && empty($student['Group']) ) {
+                unset($students[$index]);
+            }
         }
 
         // Loop to fetch all actions related to one student

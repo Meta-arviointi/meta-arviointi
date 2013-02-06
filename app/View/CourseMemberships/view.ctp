@@ -1,33 +1,25 @@
 <?php 
      /* DEBUG */
     echo '<pre>';
-    //var_dump($course_membership);
+    //debug($course_membership);
       // debug($this->request);
     echo '</pre>';
 ?>
 <script type="text/javascript">
-    <?php /* Load review date for default option. */ ?>
     $(document).ready(function() {
-        $.ajax({
-            type: 'GET',
-            url: '<?php echo $this->request->webroot ?>course_memberships/review_end/' + $('#extra-action-form #ExerciseId').val(),
-            success: function(data){
-                $('#review_date').html(data);
-            }
-        });
-    })
-
-    $(document).ready(function() {
-        <?php /* Load review date for selected option. */ ?>
-        $('#extra-action-form #ExerciseId').change(function() {
-            $.ajax({
-                type: 'GET',
-                url: '<?php echo $this->request->webroot ?>course_memberships/review_end/' + $(this).val(),
-                success: function(data){
-                    $('#review_date').html(data);
+        $('.student-action-form').each(function() {
+            var formToHandle = this;
+            $(formToHandle).on("submit", function() {
+                var n = $(formToHandle).find('input[type="checkbox"]:checked').length;
+                if ( n == 0 ) {
+                    alert('<?php echo __("Valitse ainakin yksi harjoitus")?>');
+                    return false;
+                } else {
+                    return true;
                 }
-            });
-        });
+            })
+        })
+
     })
 </script>
 <div class="row">
@@ -109,12 +101,18 @@
         <?php
         echo '<div id="add-action-form-container">';
 
+
             echo '<div id="student-action-form-links">';
-            echo '<strong>Lisää: </strong>';
-            echo '<a href="#" data-action-type="request">Korjauspyyntö</a>';
-            echo '<a href="#" data-action-type="notice">Huomautus</a>';
-            echo '<a href="#" data-action-type="reject">Hylkäys</a>';
-            echo '<a href="#" data-action-type="extra">Lisäaika</a>';
+            if ( !empty($exercises) ) {
+                echo '<strong>Lisää: </strong>';
+                echo '<a href="#" data-action-type="request">Korjauspyyntö</a>';
+                echo '<a href="#" data-action-type="notice">Huomautus</a>';
+                echo '<a href="#" data-action-type="reject">Hylkäys</a>';
+                echo '<a href="#" data-action-type="extra">Lisäaika</a>';    
+            } else {
+                echo '<strong>' . __('Harjoituksia ei saatavilla, toimenpiteitä ei voi lisätä') . '</strong>';
+            }
+            
             echo '</div>';
 
 
@@ -177,6 +175,16 @@
 
             echo '<div class="action">';
             echo '<div class="toolbar">';
+            echo $this->Html->link(__('Muokkaa test'),
+                array(
+                    'controller' => 'actions',
+                    'action' => 'edit_test',
+                    $action['Action']['id']
+                ),
+                array(
+                    'class' => 'modal-link edit-action',
+                )
+            );
             echo $this->Html->link(__('Lähetä sähköposti'),
                 '#', 
                 array(

@@ -1,6 +1,6 @@
-<h2>Muokkaa toimenpidettä</h2>
-<h3><?php echo $action_types[$this->data['Action']['action_type_id']]; ?></h3>
-<?php
+<?php echo '<div id="action-edit">';
+echo '<h2>Muokkaa toimenpidettä</h2>';
+echo $action_types[$this->data['Action']['action_type_id']];
 //debug($this->data);
 //debug($exercises);
 
@@ -69,3 +69,4 @@ if ( $action['modified'] != $action['created'] ) {
         . date('j.n.Y G:i', strtotime($action['modified'])) . '</span>';
 }
 echo $this->Form->end(__('Tallenna'));
+echo '</div>';
