@@ -57,22 +57,32 @@ array(
 	$courses = $this->Course->find('all', $params);
         // Create array with 'Group.id' as key and 'User.name' as value
         // NOTE: 'User.name' is virtual field defined in User-model
-        $course_groups = array();
-        $exercise_list = array();
-        $users_list = array();
-        $students_list = array();
+    $course_groups = array();
+    $exercise_list = array();
+    $users_list = array();
 
-        foreach($courses as $course) {
-            $course_groups[$course['Course']['id']] = $course['Course']['name'];
-            $exercise_list = $course['Exercise'];
-            $users_list = $course['User'];
-            $students_list = $course['CourseMembership'];
+    foreach($courses as $course) {
+        $course_groups[$course['Course']['id']] = $course['Course']['name'];
+        $exercise_list = $course['Exercise'];
+        $users_list = $course['User'];
+    }
+
+    foreach($users_list as $index => $stuff) {
+        if ($stuff['is_admin'] == '1') { 
+            unset($users_list[$index]);
         }
+    }
+
+    foreach($students as $index => $stuff) {
+        if (empty($stuff['CourseMembership'])) {
+            unset($students[$index]);
+        } 
+    }
         // Set array to be used in drop-down selection
 	if ($cid > 0) {
 		$this->set('single_course', 'true');
-                $this->set('scount', count($students_list));
-                $this->set('acount', count($users_list)-1);
+                $this->set('scount', count($students));
+                $this->set('acount', count($users_list));
                 $this->set('quitcount', 'hardcode 0');
                 $this->set('actioncount', 'hardcode 0');
                 $this->set('exercise_list', $exercise_list);
