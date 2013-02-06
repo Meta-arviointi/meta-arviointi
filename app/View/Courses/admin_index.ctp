@@ -29,9 +29,9 @@
             echo ' ';
             echo 'Assistenttien lukumäärä: '. $acount;
             echo '<br/>';
-            echo 'Keskeyttäneitä: y';
+            echo 'Keskeyttäneitä: '. $quitcount;
             echo ' ';
-            echo 'Annettuja toimenpiteitä: w';
+            echo 'Annettuja toimenpiteitä: '. $actioncount;
 
             echo '<br/>';
             echo '[lisää tiedot csv nappi 8-p]';
