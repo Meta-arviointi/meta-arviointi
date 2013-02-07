@@ -85,11 +85,16 @@ array(
                         $quitcount++;
                     }
                 }
-/*                foreach($stuff['Group'] as $grouploop) {
-                    $groups($grouploop['GroupsStudent']['group_id'] =++);
+                foreach($stuff['Group'] as $grouploop) {
+                    $uid = $grouploop['user_id'];
+                    if (isset($groups[$uid])) {
+                        $groups[$uid]++;
+                    } else {
+                        $groups[$uid] = '1';
+                    }
                     print_r($groups);
                 }
-*/            }
+            }
         }
 		$this->set('single_course', 'true');
         $this->set('scount', count($students));
@@ -99,6 +104,7 @@ array(
         $this->set('exercise_list', $exercise_list);
         $this->set('users_list', $users_list);
         $this->set('students_list', $students);
+        $this->set('groups', $groups);
     }
 
 	$this->set('courses', $courses);

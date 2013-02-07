@@ -80,7 +80,11 @@ echo '<br/>';
                 echo '<tr>';
                 echo '<td>'. $assari['first_name'] .' '. $assari['last_name']. '</td>';
                 echo '<td>'. $assari['email'] .'</td>';
-                echo '<td>[calculate students somehow]</td>';
+                if (isset($groups[$assari['id']])) {
+                    echo '<td>'. $groups[$assari['id']] .'</td>';
+                } else {
+                    echo '<td>0</td>';
+                }
             }
         }
 
