@@ -28,7 +28,7 @@ if ( $print_handled ) {
 $default_deadline_date = date('d.m.Y', strtotime('+ 7 day', strtotime(date('d.m.Y'))));
 echo $this->Form->input('deadline_date', array(
     'label'         => __('Uusi aikaraja'),
-    'class'         => 'datepicker',
+    'class'         => 'datetimepicker',
     'type'          => 'text',
     'default'       => $default_deadline_date
 ));
