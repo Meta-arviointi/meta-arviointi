@@ -20,7 +20,7 @@
     echo '</pre>';
 
     if (isset($single_course)) {
-	foreach($courses as $course) {
+	    foreach($courses as $course) {
             echo $course['Course']['name'];
             echo ' ';
             echo $this->Time->Format('d-m-Y', $course['Course']['starttime']) .'-'. $this->Time->Format('d-m-Y', $course['Course']['endtime']);
@@ -44,19 +44,27 @@ echo '<br/>';
             echo '<table class="data-table">';
             echo '    <tr>';
             echo '        <th>'. __('Harjoituskerta') .'</th>';
-            echo '        <th>'. __('Tehtävä') .'</th>';
-            echo '        <th>'. __('Arviointi') .'</th>';
+            echo '        <th colspan="2">'. __('Tehtävä') .'</th>';
+            echo '        <th colspan="2">'. __('Arviointi') .'</th>';
             echo '    </tr>';
+            echo '    <tr>';
+            echo '        <th></th>';
+            echo '        <th>'. __('Aukeaa') .'</th>';
+            echo '        <th>'. __('Palautus') .'</th>';
+            echo '        <th>'. __('Aukeaa') .'</th>';
+            echo '        <th>'. __('Palautus') .'</th>';
+            echo '    </tr>';
+
 
         foreach($exercise_list as $exercise) {
 //            echo '<td>'.$this->Html->link($exercise['exercise_string'], 
 //                array('controller' => 'courses', 'action' => 'index', $course['Course']['id'])).'</td>';
             echo '<tr>';
             echo '<td>'. $exercise['exercise_string'] .'</td>';
-            echo '<td>Tehtävä aukeaa '. $this->Time->Format('d-m-Y', $exercise['starttime']) .'<br />';
-            echo 'Tehtävän palautuspäivä '. $this->Time->Format('d-m-Y', $exercise['endtime']) .'</td>';
-            echo '<td>Arviointi aukeaa '. $this->Time->Format('d-m-Y', $exercise['review_starttime']) .'<br />';
-            echo 'Arvioinnin palautuspäivä '. $this->Time->Format('d-m-Y', $exercise['review_endtime']) .'</td>';
+            echo '<td>'. $this->Time->Format('d-m-Y', $exercise['starttime']) .'</td>';
+            echo '<td>'. $this->Time->Format('d-m-Y, h:m', $exercise['endtime']) .'</td>';
+            echo '<td>'. $this->Time->Format('d-m-Y', $exercise['review_starttime']) .'</td>';
+            echo '<td>'. $this->Time->Format('d-m-Y, h:m', $exercise['review_endtime']) .'</td>';
         }
 
             echo '</table>';
@@ -65,7 +73,7 @@ echo '<br/>';
 
 echo '<br/>';
 echo '<br/>';
-            echo 'Assistentit';
+            echo $this->Html->link('Assistentit', array('action' => 'admin_index', 'controller' => 'users'));
             echo '<table class="data-table">';
             echo '    <tr>';
             echo '        <th>'. __('Nimi') .'</th>';
@@ -75,10 +83,8 @@ echo '<br/>';
 
         foreach($users_list as $assari) {
             if ($assari['is_admin'] != 'false') { 
-//            echo '<td>'.$this->Html->link($exercise['exercise_string'], 
-//                array('controller' => 'courses', 'action' => 'index', $course['Course']['id'])).'</td>';
                 echo '<tr>';
-                echo '<td>'. $assari['first_name'] .' '. $assari['last_name']. '</td>';
+                echo '<td>'. $this->Html->link($assari['first_name'] .' '. $assari['last_name'], array('controller' => 'users', 'action' => 'view', $assari['id'])). '</td>';
                 echo '<td>'. $assari['email'] .'</td>';
                 if (isset($groups[$assari['id']])) {
                     echo '<td>'. $groups[$assari['id']] .'</td>';
@@ -87,7 +93,6 @@ echo '<br/>';
                 }
             }
         }
-
             echo '</table>';
             echo '[lisää assistentti]';
 //            echo $this->Html->link('Lisää harjoitus', array('action' => 'admin_add', 'controller' => 'courses'), array('class' => 'modal-link', 'id' => 'add-course-link'));

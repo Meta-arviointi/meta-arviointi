@@ -43,7 +43,7 @@
 	    echo '<td>';
             foreach($user['Course'] as $userc) {
                 echo $this->Html->link($userc['name'].'<br />',
-                array('controller' => 'user', 'action' => 'view', $userc['id']),
+                array('controller' => 'courses', 'action' => 'admin_index', $userc['id']),
                 array('escape' => false));
             }
             echo '</td>';

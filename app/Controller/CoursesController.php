@@ -92,7 +92,6 @@ array(
                     } else {
                         $groups[$uid] = '1';
                     }
-                    print_r($groups);
                 }
             }
         }
