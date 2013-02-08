@@ -65,26 +65,15 @@ if ( ($action['action_type_id'] == 1 || (isset($action_type_id) && $action_type_
     $deadline = isset($action['deadline']);
 
     $default_deadline_date = $deadline ? 
-        date('d.m.Y', strtotime($action['deadline'])) : // if
-            date('d.m.Y', strtotime('+ 7 day', strtotime(date('d.m.Y')))); // else
-    echo $this->Form->input('deadline_date', array(
+        date('d.m.Y H:i', strtotime($action['deadline'])) : // if deadline already set
+            date('d.m.Y H:i', strtotime('+ 7 day', strtotime(date('d.m.Y H:i')))); // else = today + 7 days
+    echo $this->Form->input('deadline', array(
         'label'         => __('Aikaraja'),
-        'id'            => 'action-deadline-date',
-        'class'         => 'datepicker',
+        'id'            => 'action-deadline',
+        'class'         => 'datetimepicker',
         'type'          => 'text',
         'default'       => $default_deadline_date
     ));
-    echo $this->Form->input('deadline_time', array(
-            'label'         => __('Kello'),
-            'type'          => 'time',
-            'timeFormat'    => 24,
-            'interval'      => 15,
-            'separator'     => ':',
-            'selected'       => isset($deadline) ? 
-                date('H:i:s', strtotime($action['deadline'])) :
-                    '00:00:00'
-        )
-    );
 }
 
 echo $this->Form->input('description', array('label' => false, 'rows' => 3, 'default' => $action['description']));
@@ -103,6 +92,6 @@ echo $this->Form->submit(__('Tallenna'), array('before' => '<a href="#" class="c
 echo $this->Form->end();
 ?>
 <script>
-    $('#action-deadline-date').datepicker(window.datepickerDefaults)
+    $('#action-deadline').datetimepicker(window.datepickerDefaults)
 </script>
 
