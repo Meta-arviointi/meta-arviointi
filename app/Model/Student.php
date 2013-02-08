@@ -10,5 +10,8 @@ class Student extends AppModel {
     );
 	public $hasAndBelongsToMany = array('Group');
 
+    public $virtualFields = array(
+        'name' => 'Student.first_name || \' \' || Student.last_name'
+    );
 }
 ?>

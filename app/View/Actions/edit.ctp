@@ -1,72 +1,65 @@
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.generic-action-form').submit(function() {
+            var n = $(this).find('input[type="checkbox"]:checked').length;
+            if ( n == 0 ) {
+                alert('<?php echo __("Valitse ainakin yksi harjoitus")?>');
+                return false;
+            } else {
+                return true;
+            }
+        });
+
+        $('select#action-type-switcher').change(function() {
+            var url = <?php echo '\''. $this->Html->url(
+                    array(
+                        'controller' => 'actions',
+                        'action' => 'edit',
+                        $action_data['Action']['id']
+                    )
+                ) . '\';' ?>
+            url = url + "/" + $(this).val();
+            $.ajax({
+                url: url
+            }).done(function(data) {
+                $('#generic-action-form').html(data);
+            })
+        });
+
+
+    });
+</script>
+
+
 <?php echo '<div id="action-edit">';
-echo '<h2>Muokkaa toimenpidettä</h2>';
-echo $action_types[$this->data['Action']['action_type_id']];
-//debug($this->data);
+echo '<h2>' . __('Muokkaa toimenpidettä') . '</h2>';
+echo '<h3>' . $action_data['Student']['last_name'] . ' '
+     . $action_data['Student']['first_name'] . '</h3>';
+//echo $action_types[$action_data['Action']['action_type_id']];
+//debug($action_data);
 //debug($exercises);
 
-// Variables
-$action = $this->data['Action'];
-$action_exercises = $this->data['Exercise'];
-
-$list_action_exercises = null;
-// Check if action belongs to multiple action_exercises
-// and list the ID's. ID's are used in checboxes below.
-if ( count($action_exercises) > 1 ) {
-    foreach($action_exercises as $exercise) {
-        $list_action_exercises[] = $exercise['id'];
-    }
-} else { // only one exercise
-    $list_action_exercises = $action_exercises[0]['id'];
-}
-
-echo $this->Form->create('Action');
-echo $this->Form->input('id', array('type' => 'hidden'));
-echo $this->Form->input('user_id', array('type' => 'hidden'));
-echo $this->Form->input('student_id', array('type' => 'hidden'));
-echo $this->Form->input('action_type_id', array('type' => 'hidden'));
-echo $this->Form->input('handled_id', array('type' => 'hidden', 'value' => ''));
-echo $this->Form->label('handled_id', __('Käsitelty'));
-echo $this->Form->checkbox('handled_id', array(
-    'hiddenField' => false, // hidden value set manually above to be '',,
-    'value' => empty($this->data['Action']['handled_id']) ? 
-        $this->Session->read('Auth.User.id') : $action['handled_id']
+// Create dropdown-list to change action type
+echo $this->Form->create();
+echo $this->Form->input('id', array(
+        'id' => 'action-type-switcher',
+        'options' => $action_types,
+        'default' => $action_data['Action']['action_type_id'],
+        'label' => __('Toimenpidetyyppi'),
     )
 );
-if ( !empty($action['handled_id']) ) {
-    echo '<div class="meta"><span>(' . __('Käsitellyt') . ': ' . $users[$action['handled_id']] . ' - ' 
-        . date('j.n.Y G:i', strtotime($action['handled_time'])) . ')</span></div>';
-}
-echo $this->Form->input('Exercise', array(
-        'label' => __('Harjoitukset'),
-        'options' => $exercises,
-        'multiple' => 'checkbox',
-        'selected' => $list_action_exercises
-    )
-);
-echo $this->Form->input('description', array(
-        'label' => __('Selite')
-    )
-);
-if ( !empty($action['deadline']) ) {
-    echo $this->Form->input('deadline', array(
-        'label'         => __('Aikaraja'), 
-        'default'       => date('d.m.Y H:i', strtotime($action['deadline'])),
-        'timeFormat'    => 24, 
-        'dateFormat'    => 'DMY',
-        'interval'      => 15,
-        'minYear'       => date('Y'),
-        'maxYear'       => date('Y') + 1,
-        'monthNames'    => false,
-        'separator'     => '.'
-    ));
-}
+echo $this->Form->end();
 
-echo '<span class="timestamp">Luotu: ' . date('j.n.Y G:i', strtotime($action['created'])) 
-    . '</span>';
-echo '<br>';
-if ( $action['modified'] != $action['created'] ) {
-    echo '<span class="timestamp">Viimeksi muokattu: ' 
-        . date('j.n.Y G:i', strtotime($action['modified'])) . '</span>';
-}
-echo $this->Form->end(__('Tallenna'));
+echo '<div id="generic-action-form">';
+echo $this->element('generic-action-form', array(
+        'action_data' => $action_data,
+        'list_action_exercises' => $list_action_exercises,
+        'exercises' => $exercises,
+        'users' => $users,
+        'print_handled' => true
+    )
+);
+
 echo '</div>';
+echo '</div>';
+

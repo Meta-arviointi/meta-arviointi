@@ -3,7 +3,7 @@
 echo $this->Form->create('Action', array(
     'class' => 'student-action-form', 
     'id' => 'request-action-form', 
-    'url' => array('controller' => 'actions', 'action' => 'add_action')
+    'url' => array('controller' => 'actions', 'action' => 'save')
 ));
 echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $course_membership['Student']['id']));
 echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
@@ -29,6 +29,7 @@ $default_deadline_date = date('d.m.Y 00:00', strtotime('+ 7 day', strtotime(date
 echo $this->Form->input('deadline', array(
     'label'         => __('Uusi aikaraja'),
     'class'         => 'datetimepicker',
+    'id'            => 'action-request-deadline',
     'type'          => 'text',
     'default'       => $default_deadline_date
 ));

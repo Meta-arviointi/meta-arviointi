@@ -175,16 +175,6 @@
 
             echo '<div class="action">';
             echo '<div class="toolbar">';
-            echo $this->Html->link(__('Muokkaa test'),
-                array(
-                    'controller' => 'actions',
-                    'action' => 'edit_test',
-                    $action['Action']['id']
-                ),
-                array(
-                    'class' => 'modal-link edit-action',
-                )
-            );
             echo $this->Html->link(__('Lähetä sähköposti'),
                 '#', 
                 array(

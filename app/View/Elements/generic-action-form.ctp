@@ -4,7 +4,7 @@ $action = $action_data['Action'];
 echo $this->Form->create('Action', array(
     'class' => 'generic-action-form', 
     'id' => 'generic-action-form', 
-    'url' => array('controller' => 'actions', 'action' => 'add_action')
+    'url' => array('controller' => 'actions', 'action' => 'save')
 ));
 
 if (isset($action['id']) ) {
@@ -21,7 +21,7 @@ if (isset($action['user_id']) ) {
 }
 
 // If $action_type_id is set, this means an ajax
-// call from Acionts/edit, where we can't directly manipulate $action array.
+// call from Acionts/edit
 if ( isset($action_type_id) ) {
     echo $this->Form->input('action_type_id', array('type' => 'hidden', 'default' => $action_type_id));
 }
@@ -58,9 +58,13 @@ if ( isset($action['handled_id']) ) {
     );
 }
 
-// if EXTRA or REQUEST form, add deadline
-if ( ($action['action_type_id'] == 1 || (isset($action_type_id) && $action_type_id == 1)) ||
-    ($action['action_type_id'] == 4 || (isset($action_type_id) && $action_type_id == 4)) ) {
+// If new requested form ($action_type_id is set) is requested, print deadline if
+// requested action_type_id is 1 or 2.
+// If this is NOT new request ($action_type_id = 0), check if original action is
+// type of 1 or 4.
+// If these conditions don't evaluate true, then it's action type which doesn't need deadline
+if ( (isset($action_type_id) && ($action_type_id == 1 || $action_type_id == 4)) || 
+     (!isset($action_type_id) && ($action['action_type_id'] == 1 || $action['action_type_id'] == 4)) ) {
 
     $deadline = isset($action['deadline']);
 
@@ -88,7 +92,7 @@ if ( isset($action['modified']) &&
     echo '<span class="timestamp">Viimeksi muokattu: ' 
         . date('j.n.Y G:i', strtotime($action['modified'])) . '</span>';
 }
-echo $this->Form->submit(__('Tallenna'), array('before' => '<a href="#" class="collapse-toggle cancel">' . __('Peruuta') . '</a>'));
+echo $this->Form->submit(__('Tallenna'));
 echo $this->Form->end();
 ?>
 <script>
