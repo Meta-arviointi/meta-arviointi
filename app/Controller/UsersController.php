@@ -28,6 +28,7 @@ class UsersController extends AppController {
         $this->Session->delete('User.group_id');
         // Update last_login when logging out
         $this->User->id = $this->Auth->user('id');
+
         $this->User->saveField('last_login', date('Y-m-d H:i:sO'));
 
         $this->Session->setFlash(__('Kirjauduit ulos'));
@@ -197,9 +198,10 @@ class UsersController extends AppController {
         return !empty($user_course['Course']);
     }
 
-    public function test($course_id) {
+    public function test() {
         //debug($this->User->get_last_course($course_id));
-        $this->User->user_courses($this->Auth->user('id'));
+        debug($this->User->Action->new_actions());
+        debug($this->User->Action->new_actions_count());
     }
 
 

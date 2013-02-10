@@ -15,17 +15,36 @@ class Action extends AppModel {
      * Optional parameter last_login. If not set take
      * last_login from session.
      */
-    public function new_actions($last_login = 0) {
+    public function new_actions($last_login = 0, $course_id = 0) {
+        App::uses('CakeSession', 'Model/Datasource');
         if ( empty($last_login) )
-            $last_login = $this->Session->read('User.last_login');
+            $last_login = CakeSession::read('User.last_login');
+        if ( empty($course_id) )
+            $course_id = CakeSession::read('Course.course_id');
         if ( $last_login ) {
-            $this->contain();
+            $this->contain('Exercise');
             $actions = $this->find('all', array(
                     'conditions' => array(
                         'created >' => $last_login
+                    ),
+                    'contain' => array(
+                        'Exercise' => array(
+                            'conditions' => array(
+                                'Exercise.course_id' => $course_id
+                            )
+                        )
                     )
                 )
             );
+
+            /*
+             * Delete actions that don't belong to current course.
+             */
+            foreach ($actions as $index => $action) {
+                if ( empty($action['Exercise']) ) {
+                    unset($actions[$index]);
+                }
+            }
             return $actions;
         } else {
             return null;
@@ -37,18 +56,14 @@ class Action extends AppModel {
      * Optional parameter last_login. If not set take
      * last_login from session.
      */
-    public function new_actions_count($last_login = 0) {
+    public function new_actions_count($last_login = 0, $course_id = 0) {
         if ( empty($last_login) )
-            $last_login = $this->Session->read('User.last_login');
+            $last_login = CakeSession::read('User.last_login');
+        if ( empty($course_id) )
+            $course_id = CakeSession::read('Course.course_id');
         if ( $last_login ) {
-            $this->contain();
-            $actions_count = $this->find('count', array(
-                    'conditions' => array(
-                        'created >' => $last_login
-                    )
-                )
-            );
-            return $actions_count;
+            $actions = $this->new_actions($last_login, $course_id);
+            return count($actions);
         } else {
             return null;
         }
