@@ -22,7 +22,6 @@ class Action extends AppModel {
         if ( empty($course_id) )
             $course_id = CakeSession::read('Course.course_id');
         if ( $last_login ) {
-            $this->contain('Exercise');
             $actions = $this->find('all', array(
                     'conditions' => array(
                         'created >' => $last_login
@@ -67,6 +66,43 @@ class Action extends AppModel {
         } else {
             return null;
         }
+    }
+
+    /*
+     * Return all open (not handled) actions.
+     * Optional parameter course id. If not set
+     * take id from Session.
+     */
+    public function open_actions($course_id = 0) {
+        App::uses('CakeSession', 'Model/Datasource');
+        if ( empty($course_id) )
+            $course_id = CakeSession::read('Course.course_id');
+
+        $contain = array(
+            'Exercise' => array(
+                'conditions' => array(
+                    'Exercise.course_id' => $course_id
+                )
+            )
+        )
+        $actions = $this->find('all', array(
+                'conditions' => array(
+                    'handled_id =' => null
+                ),
+                'contain' => $contain
+            )
+        );
+
+        /*
+         * Delete actions that don't belong to current course.
+         */
+        foreach ($actions as $index => $action) {
+            if ( empty($action['Exercise']) ) {
+                unset($actions[$index]);
+            }
+        }
+        return $actions;
+
     }
 }
 ?>
