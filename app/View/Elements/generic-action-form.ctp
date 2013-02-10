@@ -81,11 +81,13 @@ if ( (isset($action_type_id) && ($action_type_id == 1 || $action_type_id == 4)) 
 }
 
 echo $this->Form->input('description', array('label' => false, 'rows' => 3, 'default' => $action['description']));
+
 if ( isset($action['created']) ) {
     echo '<span class="timestamp">Luotu: ' . date('j.n.Y G:i', strtotime($action['created'])) 
     . '</span>';
     echo '<br>';
 }
+// show modified if it differs from created
 if ( isset($action['modified']) && 
     $action['modified'] != $action['created'] ) {
     
