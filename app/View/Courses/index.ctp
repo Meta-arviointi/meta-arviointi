@@ -44,6 +44,7 @@
             <th><?php echo __('Opiskelijanumero'); ?></th>
             <th><?php echo __('Assistentti'); ?></th> <?php /* TODO sorttuas */ ?>
             <th><?php echo __('Toimenpiteitä'); ?></th>
+            <th><?php echo __('Toiminnot'); ?></th>
         </tr>
         <?php
         foreach($students as $student) {
@@ -63,6 +64,7 @@
 
             }
             echo '<td>'.(isset($student['Action']) ? count($student['Action']) : 0).'</td>';
+            echo '<td>'. $this->Html->image('edit-action-icon.png') . '</td>';
             echo '</tr>';
         }
         ?>

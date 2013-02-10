@@ -12,6 +12,9 @@ class UsersController extends AppController {
         if ($this->request->is('post')) {
             if ($this->Auth->login()) {
                 $this->User->id = $this->Auth->user('id');
+                // Save last_login to session, before saving new value
+                $last_login = $this->User->field('last_login');
+                $this->Session->write('User.last_login', $last_login);
                 $this->User->saveField('last_login', date('Y-m-d H:i:sO'));
                 $this->redirect($this->Auth->loginRedirect);
             } else {
@@ -23,6 +26,10 @@ class UsersController extends AppController {
     public function logout() {
         $this->Session->delete('Course.course_id');
         $this->Session->delete('User.group_id');
+        // Update last_login when logging out
+        $this->User->id = $this->Auth->user('id');
+        $this->User->saveField('last_login', date('Y-m-d H:i:sO'));
+
         $this->Session->setFlash(__('Kirjauduit ulos'));
         $this->redirect($this->Auth->logout());
     }
@@ -194,4 +201,6 @@ class UsersController extends AppController {
         //debug($this->User->get_last_course($course_id));
         $this->User->user_courses($this->Auth->user('id'));
     }
+
+
 }

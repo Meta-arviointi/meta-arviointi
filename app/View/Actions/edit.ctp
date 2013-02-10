@@ -26,13 +26,28 @@
             })
         });
 
+        $('.generic-action-form').find('.checkbox').each(function() {
+            var thisDiv = this;
+            var url = <?php echo '\'' .  $this->Html->url(array(
+                    'controller' => 'course_memberships',
+                    'action' => 'review_end'
+                )
+            ) . '\';' . "\n" ?>
+            var inputVal = $(thisDiv).find('input[type="checkbox"]').val();
+            $.ajax({
+                url: url + "/" + inputVal
+            }).done(function(data){
+                $(thisDiv).append('<span class="timestamp"><?php echo __('Viim. arviointipäivä') . ': \''?> + data + '</span>');
+            });
+        });
+
 
     });
 </script>
 
 
 <?php echo '<div id="action-edit">';
-echo '<h2>' . __('Muokkaa toimenpidettä') . '</h2>';
+echo '<h2>' . __('Muokkaa toimenpidettä') . ' (' . $action_types[$action_data['Action']['action_type_id']] . ')' . '</h2>';
 echo '<h3>' . $action_data['Student']['last_name'] . ' '
      . $action_data['Student']['first_name'] . '</h3>';
 //echo $action_types[$action_data['Action']['action_type_id']];
