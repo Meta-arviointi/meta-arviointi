@@ -109,7 +109,7 @@ class CourseMembershipsController extends AppController {
                         'conditions' => array('Exercise.id' => $exercise_id)
                     )
                 );
-                return date('d.m.Y', strtotime($exercise['Exercise']['review_endtime']));
+                return date('d.m.Y H:i', strtotime($exercise['Exercise']['review_endtime']));
             }
         }
 
