@@ -57,8 +57,6 @@ echo '<br/>';
 
 
         foreach($exercise_list as $exercise) {
-//            echo '<td>'.$this->Html->link($exercise['exercise_string'], 
-//                array('controller' => 'courses', 'action' => 'index', $course['Course']['id'])).'</td>';
             echo '<tr>';
             echo '<td>'. $exercise['exercise_string'] .'</td>';
             echo '<td>'. $this->Time->Format('d-m-Y', $exercise['starttime']) .'</td>';
@@ -68,8 +66,7 @@ echo '<br/>';
         }
 
             echo '</table>';
-            echo '[lisää harjoitusnappi]';
-//            echo $this->Html->link('Lisää harjoitus', array('action' => 'admin_add', 'controller' => 'courses'), array('class' => 'modal-link', 'id' => 'add-course-link'));
+            echo $this->Html->link('Lisää harjoitus', array('action' => 'admin_add', 'controller' => 'exercises'), array('class' => 'modal-link', 'id' => 'add-exercise-link'));
 
 echo '<br/>';
 echo '<br/>';
