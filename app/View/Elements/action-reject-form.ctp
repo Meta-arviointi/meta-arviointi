@@ -3,7 +3,7 @@
 echo $this->Form->create('Action', array(
     'class' => 'student-action-form', 
     'id' => 'reject-action-form', 
-    'url' => array('controller' => 'actions', 'action' => 'add_action')
+    'url' => array('controller' => 'actions', 'action' => 'save')
 ));
 echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $course_membership['Student']['id']));
 echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
@@ -28,3 +28,4 @@ if ( $print_handled ) {
 echo $this->Form->input('description', array('label' => false, 'rows' => 3));
 echo $this->Form->submit(__('Lisää'), array('before' => '<a href="#" class="collapse-toggle cancel">' . __('Peruuta') . '</a>'));
 echo $this->Form->end();
+

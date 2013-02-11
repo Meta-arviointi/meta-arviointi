@@ -41,9 +41,9 @@
             echo '<td>'.$this->Html->link($user['User']['first_name'], 
                 array('controller' => 'user', 'action' => 'view', $user['User']['id'])).'</td>';
 	    echo '<td>';
-            foreach($user['Course'] as $foob) {
-                echo $this->Html->link($foob['name'].'<br />',
-                array('controller' => 'user', 'action' => 'view', $foob['id']),
+            foreach($user['Course'] as $userc) {
+                echo $this->Html->link($userc['name'].'<br />',
+                array('controller' => 'courses', 'action' => 'admin_index', $userc['id']),
                 array('escape' => false));
             }
             echo '</td>';

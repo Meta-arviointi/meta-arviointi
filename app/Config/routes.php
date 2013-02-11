@@ -27,6 +27,12 @@
  */
 	Router::connect('/', array('controller' => 'courses', 'action' => 'index'));
 	Router::parseExtensions('json');
+
+/**
+ *  admin route hack
+ */
+//	Router::connect('admin/:controller/:cid', array('action' => 'index', 'prefix' => 'admin'), array('cid' => '[0-9]+'));
+
 /**
  * ...and connect the rest of 'Pages' controller's urls.
  */

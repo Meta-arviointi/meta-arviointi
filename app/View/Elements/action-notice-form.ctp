@@ -3,7 +3,7 @@
 echo $this->Form->create('Action', array(
     'class' => 'student-action-form', 
     'id' => 'notice-action-form', 
-    'url' => array('controller' => 'actions', 'action' => 'add_action')
+    'url' => array('controller' => 'actions', 'action' => 'save')
 ));
 echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $course_membership['Student']['id']));
 echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));

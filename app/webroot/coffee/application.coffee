@@ -25,6 +25,9 @@ window.datepickerDefaults = {
         'Marraskuu',
         'Joulukuu'
     ]
+    timeText: 'Aika',
+    hourText: 'Tunti',
+    minuteText: 'Minuutti',
     firstDay: 1 #week starts on monday
     dateFormat: 'dd.mm.yy'
 }
@@ -87,6 +90,7 @@ $(document).ready ->
         false
 
     $('input.datepicker').datepicker datepickerDefaults
+    $('input.datetimepicker').datetimepicker datepickerDefaults
     #$('#InputFieldId').datepicker datepickerDefaults
 
     $('#mail-indicator > a').on 'click', ->

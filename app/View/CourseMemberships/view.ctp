@@ -1,7 +1,7 @@
 <?php 
      /* DEBUG */
     echo '<pre>';
-    //var_dump($course_membership);
+    //debug($course_membership);
       // debug($this->request);
     echo '</pre>';
 ?>
@@ -18,7 +18,25 @@
                     return true;
                 }
             })
-        })
+        });
+
+        $('.student-action-form').each(function() {
+            var formToHandle = this;
+            var url = <?php echo '\'' .  $this->Html->url(array(
+                        'controller' => 'course_memberships',
+                        'action' => 'review_end'
+                    )
+                ) . '\';' . "\n" ?>
+            $(formToHandle).find('.checkbox').each(function() {
+                var thisDiv = this;
+                var inputVal = $(this).find('input[type="checkbox"]').val();
+                $.ajax({
+                    url: url + "/" + inputVal
+                }).done(function(data){
+                    $(thisDiv).append('<span class="timestamp"><?php echo __('Viim. arviointipäivä') . ': \''?> + data + '</span>');
+                });
+            });
+        });
 
     })
 </script>

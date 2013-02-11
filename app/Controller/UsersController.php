@@ -12,6 +12,9 @@ class UsersController extends AppController {
         if ($this->request->is('post')) {
             if ($this->Auth->login()) {
                 $this->User->id = $this->Auth->user('id');
+                // Save last_login to session, before saving new value
+                $last_login = $this->User->field('last_login');
+                $this->Session->write('User.last_login', $last_login);
                 $this->User->saveField('last_login', date('Y-m-d H:i:sO'));
                 $this->redirect($this->Auth->loginRedirect);
             } else {
@@ -23,6 +26,11 @@ class UsersController extends AppController {
     public function logout() {
         $this->Session->delete('Course.course_id');
         $this->Session->delete('User.group_id');
+        // Update last_login when logging out
+        $this->User->id = $this->Auth->user('id');
+
+        $this->User->saveField('last_login', date('Y-m-d H:i:sO'));
+
         $this->Session->setFlash(__('Kirjauduit ulos'));
         $this->redirect($this->Auth->logout());
     }
@@ -91,14 +99,14 @@ class UsersController extends AppController {
         // Set array to be used in drop-down selection
         $this->set('course_groups', $course_groups);
 
-	$params = array(
-		'order' => array('User.last_name ASC'),
-		'fields' => array('User.last_name', 'User.first_name', 'User.email'),
-                'contain' => array('Course' => array('fields' => array('Course.id', 'Course.name')))
-	);
-	$users = $this->User->find('all', $params);
-	$this->set('users', $users);
-
+	    $params = array(
+		    'order' => array('User.last_name ASC'),
+		    'fields' => array('User.last_name', 'User.first_name', 'User.email'),
+                'contain' => array('Course' => array('fields' => array('Course.id', 'Course.name'), 'order' => array('Course.id DESC'))
+            )
+	    );
+	    $users = $this->User->find('all', $params);
+	    $this->set('users', $users);
     }
 
 /*
@@ -190,8 +198,11 @@ class UsersController extends AppController {
         return !empty($user_course['Course']);
     }
 
-    public function test($course_id) {
+    public function test() {
         //debug($this->User->get_last_course($course_id));
-        $this->User->user_courses($this->Auth->user('id'));
+        debug($this->User->Action->new_actions());
+        debug($this->User->Action->new_actions_count());
     }
+
+
 }
