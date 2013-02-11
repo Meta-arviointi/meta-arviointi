@@ -84,7 +84,7 @@ class Action extends AppModel {
                     'Exercise.course_id' => $course_id
                 )
             )
-        )
+        );
         $actions = $this->find('all', array(
                 'conditions' => array(
                     'handled_id =' => null
