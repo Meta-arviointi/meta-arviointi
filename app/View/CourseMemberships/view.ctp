@@ -38,7 +38,8 @@
             });
         });
 
-        //alert($.urlParam('scroll_to'));
+        var scroll = $.urlParam('scroll_to');
+        $.scrollTo($('#'+scroll), {offset: -45});
 
     })
 </script>
