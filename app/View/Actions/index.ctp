@@ -30,16 +30,17 @@
 //  debug($course_memberships);
     echo '</pre>';
 
-    // Selection for assistent groups
-    /*echo $this->Form->create(false, array('id' => 'StudentIndexFilters', 'type' => 'get'));
+    // Selection for assistant group
+    echo $this->Form->create(false, array('id' => 'StudentIndexFilters', 'type' => 'get'));
     echo $this->Form->label('group', 'Vastuuryhmä');
-    echo $this->Form->select('group_id', $user_groups, array('empty' => array(0 => 'Kaikki'), 'default' => $group_id));
+    echo $this->Form->select('group_id', $user_groups, array('div' => false, 'empty' => array(0 => 'Kaikki'), 'default' => $group_id));
+    echo $this->Form->input('filter', array('div' => false, 'label' => __('Suodata'), 'id' => 'TextFilterKeyword'));
     echo $this->Form->end();
-    */
+    
     ?>
 
-    <table class="data-table">
-        <tr>
+    <table class="data-table" id="ActionsList">
+        <tr class="table-header">
             <th><?php echo __('Tyyppi'); ?></th>
             <th><?php echo __('Harjoitus'); ?></th>
             <th><?php echo __('Opiskelija'); ?></th>
@@ -67,7 +68,7 @@
                 } else { // only one exercise
                         $action_title = 'H' . $action['Exercise'][0]['exercise_number'];
                 }
-                echo '<tr>';
+                echo '<tr class="table-content">';
                 echo '<td>' . $action['ActionType']['name'] . '</td>';
                 echo '<td>' . $action_title . '</td>';
                 echo '<td>' . $this->Html->link($action['Student']['last_name'] . ', ' . $action['Student']['first_name'], array('controller' => 'course_memberships', 'action' => 'view', $course_memberships[$action['Student']['id']])) . '</td>';

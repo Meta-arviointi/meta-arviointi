@@ -28,10 +28,29 @@ class ActionsController extends AppController {
         if ( $course_changed ) {
             $this->Action->User->set_new_group($this->Auth->user('id'), $course_id);
         }
+
+        $group_id = null;
+        // Check if get-request has 'group_id'.
+        // If so, set it to session 'User.group_id'
+        if (isset($this->request->query['group_id'])) {
+            $group_id = $this->request->query['group_id'];
+            $this->Session->write('User.group_id', $group_id);
+        } else { // No variable in get-request, take group_id from session
+            // Read group_id from session, if 'null' group_id = 0.
+            $group_id = $this->Session->read('User.group_id') == null ? 0 : $this->Session->read('User.group_id');
+        }
         
+        $student_group_filter = null;
+        if ( $group_id ) {
+            $student_group_filter = array('Group' => 
+                array('conditions' =>
+                     array('Group.id' => $group_id)
+                )
+            );
+        }
         $actions = $this->Action->find('all', array(
                 'contain' => array(
-                    'Student',
+                    'Student' => $student_group_filter,
                     'User',
                     'ActionType',
                     'Exercise' => array(
@@ -49,7 +68,12 @@ class ActionsController extends AppController {
         foreach ($actions as $index => $action) {
             if ( empty($action['Exercise']) ) {
                 unset($actions[$index]);
+            } else {
+                if ( $group_id > 0 &&  empty($action['Student']['Group']) ) {
+                    unset($actions[$index]);
+                }
             }
+            
         }
 
         $this->set('actions', $actions);
@@ -63,6 +87,21 @@ class ActionsController extends AppController {
             )
         );
         $this->set('course_memberships', $course_memberships);
+
+
+        // Call Group-model to return groups with assistant names
+        // in given course ($course_id from Session)
+        $results = $this->Action->Student->Group->groups($course_id);
+
+        // Create array with 'Group.id' as key and 'User.name' as value
+        // NOTE: 'User.name' is virtual field defined in User-model
+        $user_groups = array();
+        foreach($results as $result) {
+            $user_groups[$result['Group']['id']] = $result['User']['name'];
+        }
+
+        $this->set('user_groups', $user_groups);
+
 
         // Get all courses user has attended
         // TODO: what if user isadmin?
@@ -78,6 +117,7 @@ class ActionsController extends AppController {
 
         $this->set('users_courses', $users_courses);
 
+        $this->set('group_id', $group_id);
     }
 
     /**
