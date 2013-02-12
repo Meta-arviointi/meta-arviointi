@@ -48,6 +48,7 @@ class ActionsController extends AppController {
                 )
             );
         }
+        
         $actions = $this->Action->find('all', array(
                 'contain' => array(
                     'Student' => $student_group_filter,
