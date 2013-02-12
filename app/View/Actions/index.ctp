@@ -69,7 +69,15 @@
                         $action_title = 'H' . $action['Exercise'][0]['exercise_number'];
                 }
                 echo '<tr class="table-content">';
-                echo '<td>' . $action['ActionType']['name'] . '</td>';
+                echo '<td>' . $this->Html->link($action['ActionType']['name'], 
+                    array(
+                        'controller' => 'course_memberships',
+                        'action' => 'view',
+                        $course_memberships[$action['Student']['id']],
+                        '#' => 'action' .$action['Action']['id']
+                        )
+                    ) . '</td>';
+
                 echo '<td>' . $action_title . '</td>';
                 echo '<td>' . $this->Html->link($action['Student']['last_name'] . ', ' . $action['Student']['first_name'], array('controller' => 'course_memberships', 'action' => 'view', $course_memberships[$action['Student']['id']])) . '</td>';
                 echo '<td>' . $action['User']['name'] . '</td>';

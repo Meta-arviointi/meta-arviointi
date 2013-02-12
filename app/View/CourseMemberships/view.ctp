@@ -191,7 +191,7 @@
             }
             $action_title = $action_title .  ': ' . $action['ActionType']['name'];
 
-            echo '<div class="action">';
+            echo '<div class="action" id="action'.$action['Action']['id'].'">';
             echo '<div class="toolbar">';
             echo $this->Html->link(__('Lähetä sähköposti'),
                 '#', 
