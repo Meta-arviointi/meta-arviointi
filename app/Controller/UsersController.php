@@ -11,14 +11,45 @@ class UsersController extends AppController {
     public function login() {
         if ($this->request->is('post')) {
             if ($this->Auth->login()) {
+                // Select logged in user
                 $this->User->id = $this->Auth->user('id');
+
                 // Save last_login to session, before saving new value
                 $last_login = $this->User->field('last_login');
                 $this->Session->write('User.last_login', $last_login);
                 $this->User->saveField('last_login', date('Y-m-d H:i:sO'));
-                $this->redirect($this->Auth->loginRedirect);
+
+                // Empty group_id just in case it's old session
+                $this->Session->delete('User.group_id');
+
+                // Read course_id from session
+                $course_id = $this->Session->read('Course.course_id');
+                $is_admin = $this->Auth->user('is_admin');
+
+                /*
+                 * Check if user is assigned to latest course.
+                 * If not, get last course user is assigned, and set
+                 * that course_id to session and proceed.
+                 */
+                if ( !$this->assigned_to_course() ) {
+                    $last_course = $this->User->get_last_course($this->Auth->user('id'));
+                    if ( $last_course ) {
+                        $course_id = $last_course['id'];
+                        $this->Session->write('Course.course_id', $course_id);
+                    } // TODO else = ei millään kurssilla (redirect?)
+                }
+
+                /* Get user's group in selected course */
+                $user = $this->User->user_group($this->Auth->user('id'), $course_id);
+                // If present, set group_id to session
+                if ( !empty($user['Group']) ) {
+                    $this->Session->write('User.group_id', $user['Group']['id']);
+                }
+
+                $this->redirect($this->Auth->redirect());
+
             } else {
-                $this->Session->setFlash(__('Invalid username or password, try again'));
+                $this->Session->setFlash(__('Käyttäjätunnus tai salasana väärin, yritä uudelleen.'));
             }
         }
     }
@@ -36,50 +67,7 @@ class UsersController extends AppController {
     }
 
 
-    /**
-     * Perform operations after successful login.
-     * Such as selecting default group for user.
-     */
-    public function start() {
 
-        // Empty group_id just in case it's old session
-        $this->Session->delete('User.group_id');
-
-        // Read course_id from session
-        $course_id = $this->Session->read('Course.course_id');
-        $is_admin = $this->Auth->user('is_admin');
-
-        /*
-         * Check if user is assigned to latest course.
-         * If not, get last course user is assigned, and set
-         * that course_id to session and proceed.
-         */
-        if ( !$this->assigned_to_course() ) {
-            $last_course = $this->User->get_last_course($this->Auth->user('id'));
-            if ( $last_course ) {
-                $course_id = $last_course['id'];
-                $this->Session->write('Course.course_id', $course_id);
-            }
-        }
-
-        /* Get user's group in selected course */
-        $user = $this->User->user_group($this->Auth->user('id'), $course_id);
-        // If present, set group_id to session
-        if ( !empty($user['Group']) ) {
-            $this->Session->write('User.group_id', $user['Group']['id']);
-        }
-        // Redirect to students index-view
-        $this->redirect(array(
-            'controller' => 'courses',
-            'action' => 'index'
-            )
-        );
-    }
-
-//    public function index() {
-//        $this->User->recursive = 0;
-//        $this->set('users', $this->paginate());
-//    }
 
     public function admin_index() {
         $this->User->recursive = 0;
