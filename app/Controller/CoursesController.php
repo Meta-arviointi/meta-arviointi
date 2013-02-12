@@ -20,43 +20,32 @@ array(
     'offset' => n, //int
     'callbacks' => true //other possible values are false, 'before', 'after'
 )*/
-	if ($cid <= 0) {
-	        $params = array(
-		        'order' => array('Course.endtime DESC'),
-			'fields' => array('Course.id', 'Course.name', 'Course.starttime', 'Course.endtime')
-	        );
-	} else {
-	        $params = array(
-		        'order' => array('Course.endtime DESC'),
-			'fields' => array('Course.id', 'Course.name', 'Course.starttime', 'Course.endtime'),
-			'conditions' => array('Course.id' => $cid),
-            );
+    if ($cid > 0) {
+        $this->Session->write('Course.admin_course', $cid);    
 
-            $order = array('Student.last_name' => 'ASC');
-            $students = $this->Course->CourseMembership->Student->find('all', array(
-                'contain' => array(
-                    'Group' => array(
-                        'conditions' =>
-                            array(
-                                'Group.course_id' => $cid,
-                            )
-                        ,
-                        'User' => array(
-                            'fields' => 'name'
-                        )
-                     ),
-                    'CourseMembership' => array(
-                            'conditions' => array('CourseMembership.course_id' => $cid)
+        $order = array('Student.last_name' => 'ASC');
+        $students = $this->Course->CourseMembership->Student->find('all', array(
+            'contain' => array(
+                'Group' => array(
+                    'conditions' => array(
+                        'Group.course_id' => $cid
+                    ),
+                    'User' => array(
+                        'fields' => 'name'
                     )
                 ),
-                'order' => $order
-            )
-        );
-	}
+                'CourseMembership' => array(
+                    'conditions' => array(
+                        'CourseMembership.course_id' => $cid
+                    )
+                )
+            ),
+            'order' => $order
+        ));
+    }
 
-	$courses = $this->Course->find('all', $params);
-        // Create array with 'Group.id' as key and 'User.name' as value
-        // NOTE: 'User.name' is virtual field defined in User-model
+	$courses = $this->Course->get_courses($cid);
+
     $course_groups = array();
     $exercise_list = array();
     $users_list = array();
