@@ -16,7 +16,7 @@
             echo $this->Form->end();
             echo __('Opiskelijat');
             echo ' | ';
-            echo $this->Html->link(__('Toimenpiteet'), array('action' => 'index_actions'));
+            echo $this->Html->link(__('Toimenpiteet'), array('controller' => 'actions'));
         ?>
         <hr>
     </div>

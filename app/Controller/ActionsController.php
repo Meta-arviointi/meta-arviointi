@@ -2,6 +2,61 @@
 class ActionsController extends AppController {
     public $name = 'Actions';
 
+    /**
+     * List all actions
+     */
+    public function index() {
+        $course_id = $this->Session->read('Course.course_id') == null ? 0 : $this->Session->read('Course.course_id');
+        /*
+        $this->Course->Exercise->Action->contain(array(
+                'ActionType',
+                'Exercise' => array(
+                    'Course' => array(
+                        'conditions' => array('Course.id' => $course_id)
+                    )
+                ),
+                'Student',
+                'User'
+            )
+        );*/
+
+
+        $actions = $this->Action->find('all', array(
+                'contain' => array(
+                    'Student',
+                    'User',
+                    'ActionType',
+                    'Exercise' => array(
+                        'conditions' => array(
+                            'Exercise.course_id' => $course_id
+                        )
+                    )
+                )
+             )
+        );
+
+        /*
+         * Delete actions that don't belong to current course.
+         */
+        foreach ($actions as $index => $action) {
+            if ( empty($action['Exercise']) ) {
+                unset($actions[$index]);
+            }
+        }
+
+        $this->set('actions', $actions);
+        //debug($actions);
+
+        // get mapping student.id => course_membership.id, to use in link on view side
+        // '<td>' . $this->Html->link($action['Student']['last_name'] etc... 
+        $course_memberships = $this->Action->Student->CourseMembership->find('list', 
+            array('fields' => array('CourseMembership.student_id','CourseMembership.id'),
+                    'conditions' => array('CourseMembership.course_id' => $course_id)
+            )
+        );
+        $this->set('course_memberships', $course_memberships);
+    }
+
     /*
      * Method saves action to database.
      * Used in both cases: create new action, and edit existing.
