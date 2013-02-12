@@ -198,4 +198,9 @@ $(document).ready ->
                 return
         false
 
+    $.urlParam = (name) ->
+        results = new RegExp("[\\?&]" + name + "=([^&#]*)").exec(window.location.href)
+        return 0  unless results
+        results[1] or 0
+
 

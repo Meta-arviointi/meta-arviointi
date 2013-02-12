@@ -38,6 +38,8 @@
             });
         });
 
+        //alert($.urlParam('scroll_to'));
+
     })
 </script>
 <div class="row">

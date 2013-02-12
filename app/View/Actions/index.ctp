@@ -74,7 +74,7 @@
                         'controller' => 'course_memberships',
                         'action' => 'view',
                         $course_memberships[$action['Student']['id']],
-                        '#' => 'action' .$action['Action']['id']
+                        '?' => array('scroll_to' => 'action'.$action['Action']['id'])
                         )
                     ) . '</td>';
 
