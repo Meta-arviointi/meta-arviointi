@@ -1,7 +1,7 @@
 <div class="row">
     <div class="twelvecol last">
         <?php
-            echo $this->Html->link(__('Opiskelijat'), array('action' => 'index'));
+            echo $this->Html->link(__('Opiskelijat'), array('controller' => 'courses', 'action' => 'index'));
             echo ' | ';
             echo __('Toimenpiteet')
         ?>
