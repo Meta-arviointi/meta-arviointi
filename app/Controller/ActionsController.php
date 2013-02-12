@@ -5,22 +5,30 @@ class ActionsController extends AppController {
     /**
      * List all actions
      */
-    public function index() {
-        $course_id = $this->Session->read('Course.course_id') == null ? 0 : $this->Session->read('Course.course_id');
-        /*
-        $this->Course->Exercise->Action->contain(array(
-                'ActionType',
-                'Exercise' => array(
-                    'Course' => array(
-                        'conditions' => array('Course.id' => $course_id)
-                    )
-                ),
-                'Student',
-                'User'
-            )
-        );*/
+    public function index($course_id = 0) {
+        // Flag variable to indicate if course is changed
+        $course_changed = false;
 
+        /* Check if course_id is requested in params */
+        if ( $course_id > 0 ) {
+            // Check if course_id is changed from last request
+            if ( $course_id != $this->Session->read('Course.course_id') ) {
+                $course_changed = true;
+            }
+            // Save new course_id to session for further use
+            $this->Session->write('Course.course_id', $course_id);
+        } else {
+            // No course_id in request, take course_id from session
+            $course_id = $this->Session->read('Course.course_id') == null ? 0 : $this->Session->read('Course.course_id');
+        }
 
+        /* If course changed, update group_id to Session
+         * to match user's group in new course.
+         */
+        if ( $course_changed ) {
+            $this->Action->User->set_new_group($this->Auth->user('id'), $course_id);
+        }
+        
         $actions = $this->Action->find('all', array(
                 'contain' => array(
                     'Student',
@@ -55,6 +63,46 @@ class ActionsController extends AppController {
             )
         );
         $this->set('course_memberships', $course_memberships);
+
+        // Get all courses user has attended
+        // TODO: what if user isadmin?
+        $courses = $this->Course->User->user_courses($this->Auth->user('id'));
+
+        $users_courses = array();
+        // Iterate over courses and populate array ready to be used in
+        // selection list in actions/index/-view
+        // format is Course.id as key and Course.name as value (like find('list'))
+        foreach($courses as $course) {
+            $users_courses[$course['id']] = $course['name'];
+        }
+
+        $this->set('users_courses', $users_courses);
+
+    }
+
+    /**
+     * Redirects to index-method.
+     * Function is called from select-list Forms.
+     * It takes $course_id from request and passes it to
+     * index-method (above).
+     */
+    public function index_rdr() {
+        // Init. variable to make sure it's not null at the end
+        $course_id = $this->Session->read('Course.course_id');
+        // Check if request is post
+        if ( $this->request->is('post') ) {
+            $course_id = $this->request->data['course_id'];
+        } else if ( $this->request->is('get') ) { // .. or get
+            $course_id = $this->request->query['course_id'];
+        }
+
+        // Redirect to index() with $course_id
+        $this->redirect(array(
+                'controller' => 'actions',
+                'action' => 'index',
+                $course_id
+            )
+        );
     }
 
     /*

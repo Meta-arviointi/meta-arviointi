@@ -120,7 +120,7 @@ array(
          * to match user's group in new course.
          */
         if ( $course_changed ) {
-            $this->set_new_group($this->Auth->user('id'), $course_id);
+            $this->Course->User->set_new_group($this->Auth->user('id'), $course_id);
         }
 
 
@@ -259,7 +259,6 @@ array(
                 $course_id
             )
         );
-
     }
 
 
@@ -275,20 +274,5 @@ array(
         }
     }
 
-    /*
-     * After course_id is changed between requests,
-     * update user's new group_id (related to new course) to Session.
-     */
-    private function set_new_group($user_id, $course_id) {
-        $user = $this->Course->User->user_group($user_id, $course_id);
-        // If present, set group_id to session
-        if ( !empty($user['Group']) ) {
-            $this->Session->write('User.group_id', $user['Group']['id']);
-        } else {
-            // No Group assigned to user in current course.
-            // Delete group_id from session, so no old values remain.
-            $this->Session->delete('User.group_id');
-        }
-    }
 }
 
