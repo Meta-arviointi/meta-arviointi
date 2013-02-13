@@ -23,6 +23,8 @@
 		echo $this->Html->script('jquery-ui-1.9.2.custom.min');
 		echo $this->Html->script('jquery-ui-timepicker-addon.js');
 		echo $this->Html->script('jquery.scrollTo.min');
+		echo $this->Html->script('jquery.ba-bbq.min');
+		echo $this->Coffee->import('ajaxfilters');
 		echo $this->Coffee->import('application');
 	?>
 </head>
