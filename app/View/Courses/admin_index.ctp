@@ -114,11 +114,10 @@ echo '<br/>';
             foreach($student['Group'] as $stg) {
                 echo '<td>'. $stg['User']['name'] .'</td>';
             }
-        }
-
+        
+}
         echo '</table>';
-        echo '[lisää opiskelija]';
-//            echo $this->Html->link('Lisää harjoitus', array('action' => 'admin_add', 'controller' => 'courses'), array('class' => 'modal-link', 'id' => 'add-course-link'));
+        echo $this->Html->link('Lisää Opiskelijoita/Opiskelija', array('action' => 'admin_add', 'controller' => 'students'), array('class' => 'modal-link', 'id' => 'add-students-link'));
 
         }
     } else {
