@@ -20,43 +20,32 @@ array(
     'offset' => n, //int
     'callbacks' => true //other possible values are false, 'before', 'after'
 )*/
-	if ($cid <= 0) {
-	        $params = array(
-		        'order' => array('Course.endtime DESC'),
-			'fields' => array('Course.id', 'Course.name', 'Course.starttime', 'Course.endtime')
-	        );
-	} else {
-	        $params = array(
-		        'order' => array('Course.endtime DESC'),
-			'fields' => array('Course.id', 'Course.name', 'Course.starttime', 'Course.endtime'),
-			'conditions' => array('Course.id' => $cid),
-            );
+    if ($cid > 0) {
+        $this->Session->write('Course.admin_course', $cid);    
 
-            $order = array('Student.last_name' => 'ASC');
-            $students = $this->Course->CourseMembership->Student->find('all', array(
-                'contain' => array(
-                    'Group' => array(
-                        'conditions' =>
-                            array(
-                                'Group.course_id' => $cid,
-                            )
-                        ,
-                        'User' => array(
-                            'fields' => 'name'
-                        )
-                     ),
-                    'CourseMembership' => array(
-                            'conditions' => array('CourseMembership.course_id' => $cid)
+        $order = array('Student.last_name' => 'ASC');
+        $students = $this->Course->CourseMembership->Student->find('all', array(
+            'contain' => array(
+                'Group' => array(
+                    'conditions' => array(
+                        'Group.course_id' => $cid
+                    ),
+                    'User' => array(
+                        'fields' => 'name'
                     )
                 ),
-                'order' => $order
-            )
-        );
-	}
+                'CourseMembership' => array(
+                    'conditions' => array(
+                        'CourseMembership.course_id' => $cid
+                    )
+                )
+            ),
+            'order' => $order
+        ));
+    }
 
-	$courses = $this->Course->find('all', $params);
-        // Create array with 'Group.id' as key and 'User.name' as value
-        // NOTE: 'User.name' is virtual field defined in User-model
+	$courses = $this->Course->get_courses($cid);
+
     $course_groups = array();
     $exercise_list = array();
     $users_list = array();
@@ -131,7 +120,7 @@ array(
          * to match user's group in new course.
          */
         if ( $course_changed ) {
-            $this->set_new_group($this->Auth->user('id'), $course_id);
+            $this->Course->User->set_new_group($this->Auth->user('id'), $course_id);
         }
 
 
@@ -270,63 +259,8 @@ array(
                 $course_id
             )
         );
-
     }
 
-    /**
-     * List all actions
-     */
-    public function index_actions() {
-        $course_id = $this->Session->read('Course.course_id') == null ? 0 : $this->Session->read('Course.course_id');
-        /*
-        $this->Course->Exercise->Action->contain(array(
-                'ActionType',
-                'Exercise' => array(
-                    'Course' => array(
-                        'conditions' => array('Course.id' => $course_id)
-                    )
-                ),
-                'Student',
-                'User'
-            )
-        );*/
-
-
-        $actions = $this->Course->Exercise->Action->find('all', array(
-                'contain' => array(
-                    'Student',
-                    'User',
-                    'ActionType',
-                    'Exercise' => array(
-                        'conditions' => array(
-                            'Exercise.course_id' => $course_id
-                        )
-                    )
-                )
-             )
-        );
-
-        /*
-         * Delete actions that don't belong to current course.
-         */
-        foreach ($actions as $index => $action) {
-            if ( empty($action['Exercise']) ) {
-                unset($actions[$index]);
-            }
-        }
-
-        $this->set('actions', $actions);
-        //debug($actions);
-
-        // get mapping student.id => course_membership.id, to use in link on view side
-        // '<td>' . $this->Html->link($action['Student']['last_name'] etc... 
-        $course_memberships = $this->Course->CourseMembership->find('list', 
-            array('fields' => array('CourseMembership.student_id','CourseMembership.id'),
-                    'conditions' => array('CourseMembership.course_id' => $course_id)
-            )
-        );
-        $this->set('course_memberships', $course_memberships);
-    }
 
     public function admin_add() {
         if ($this->request->is('post')) {
@@ -340,20 +274,5 @@ array(
         }
     }
 
-    /*
-     * After course_id is changed between requests,
-     * update user's new group_id (related to new course) to Session.
-     */
-    private function set_new_group($user_id, $course_id) {
-        $user = $this->Course->User->user_group($user_id, $course_id);
-        // If present, set group_id to session
-        if ( !empty($user['Group']) ) {
-            $this->Session->write('User.group_id', $user['Group']['id']);
-        } else {
-            // No Group assigned to user in current course.
-            // Delete group_id from session, so no old values remain.
-            $this->Session->delete('User.group_id');
-        }
-    }
 }
 

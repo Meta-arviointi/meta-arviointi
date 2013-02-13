@@ -100,6 +100,11 @@ $(document).ready ->
         $('#mail-indicator').toggleClass 'open'
         false
 
+    $('#TextFilterKeyword').keyup ->
+        $('#ActionsList tr.table-content').hide()
+        $('#ActionsList tr.table-content:has(td:contains('+$(this).val()+'))').show()
+        false
+
     chat = $('#chat')
     if chat[0]
         chat_viewport = chat.find('.chat-viewport')
@@ -195,4 +200,10 @@ $(document).ready ->
                 alert errorThrown
                 return
         false
+
+    $.urlParam = (name) ->
+        results = new RegExp("[\\?&]" + name + "=([^&#]*)").exec(window.location.href)
+        return 0  unless results
+        results[1] or 0
+
 

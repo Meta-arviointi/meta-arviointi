@@ -43,8 +43,9 @@ class AppController extends Controller {
         'Session',
         'Auth' => array(
             'loginAction' => array('controller' => 'users', 'action' => 'login', 'course_id' => false, 'admin' => false),
-            'loginRedirect' => array('controller' => 'users', 'action' => 'start'),
+            'loginRedirect' => array('controller' => 'courses', 'action' => 'index'),
             'logoutRedirect' => array('controller' => 'users', 'action' => 'login', 'course_id' => false),
+            'authError' => 'Ole hyvä ja kirjaudu sisään',
             'authenticate' => array(
                 'Form' => array(
                     'fields' => array('username' => 'basic_user_account')
@@ -55,8 +56,10 @@ class AppController extends Controller {
     );
 
     public function beforeFilter() {
-        if ( $this->Auth->user() ) {
-            if ( !$this->Session->read('Course.course_id') ) {
+        // Take newest course
+        // (no need to be logged in because we
+        // need course_id in login())
+        if ( !$this->Session->read('Course.course_id') ) {
                 $params = array(
                     'order' => array('Course.starttime DESC')
                 );
@@ -64,11 +67,7 @@ class AppController extends Controller {
                 // write course_id to session
                 $this->Session->write('Course.course_id', $this->_course['Course']['id']);
                 //$this->redirect(array('course_id' => $this->_course['Course']['id']));
-            }
         }
-
-        //        $this->Auth->allow('*');
-        //        $this->Auth->allow('add', 'logout');
     }
 
     public function beforeRender() {
