@@ -57,8 +57,11 @@ $(document).ready ->
         $(this).parents('.collapsable').slideUp(200).prev('.decollapse-toggle').slideDown 200
         false
 
+    ###
     $('#StudentIndexFilters select').change ->
         $(this).parents('form').submit()
+    ###
+    $('#StudentsList').ajaxfilters()
 
     $('#UserCourseSelection select').change ->
         $(this).parents('form').submit()

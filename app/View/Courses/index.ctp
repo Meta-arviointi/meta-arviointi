@@ -30,14 +30,14 @@
     echo '</pre>';
 
     // Selection for assistent groups
-    echo $this->Form->create(false, array('id' => 'StudentIndexFilters', 'type' => 'get'));
+    echo $this->Form->create(false, array('id' => 'StudentIndexFilters', 'type' => 'get', 'data-target' => 'StudentsList'));
     echo $this->Form->label('group', 'Vastuuryhmä');
     echo $this->Form->select('group_id', $user_groups, array('div' => false, 'empty' => array(0 => 'Kaikki'), 'default' => $group_id));
     echo $this->Form->input('filter', array('div' => false, 'label' => __('Suodata'), 'id' => 'TextFilterKeyword'));
     echo $this->Form->end();
     ?>
 
-    <table class="data-table" id="StudentsList">
+    <table class="data-table" id="StudentsList" data-source="<?php echo $this->Html->url(array('admin' => false, 'controller' => 'students', 'action' => 'index_ajax')); ?>">
         <tr class="table-header">
             <th><?php echo __('Sukunimi'); ?></th>
             <th><?php echo __('Etunimi'); ?></th>
