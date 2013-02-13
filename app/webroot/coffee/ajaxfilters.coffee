@@ -39,7 +39,7 @@
                 for key, val of state
                     forms.find('*[name='+key+']').val val
 
-                tbody.load table.attr('data-source')
+                tbody.load table.attr('data-source'), $.bbq.getState(id)
 )(jQuery)
 
 
