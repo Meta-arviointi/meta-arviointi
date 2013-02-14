@@ -122,7 +122,6 @@
         <?php
         echo '<div id="add-action-form-container">';
 
-
             echo '<div id="student-action-form-links">';
             if ( !empty($exercises) ) {
                 echo '<strong>Lisää: </strong>';
@@ -288,7 +287,7 @@
         ?>
         <div id="email-messages">
             <?php 
-                foreach($course_membership['Student']['EmailMessage'] as $msg) {
+                foreach($course_membership['EmailMessage'] as $msg) {
                     echo '<div class="email-message';
                     if(empty($msg['read_time'])) echo ' not-read';
                     echo '">';

@@ -51,7 +51,12 @@ class ActionsController extends AppController {
         
         $actions = $this->Action->find('all', array(
                 'contain' => array(
-                    'Student' => $student_group_filter,
+                    'CourseMembership' => array(
+                        'conditions' => array(
+                            'CourseMembership.course_id' => $course_id
+                        ),
+                        'Student' => $student_group_filter
+                    ),
                     'User',
                     'ActionType',
                     'Exercise' => array(
@@ -65,12 +70,14 @@ class ActionsController extends AppController {
 
         /*
          * Delete actions that don't belong to current course.
+         * If group is selected, delete actions which don't belong to
+         * selected group's students'
          */
         foreach ($actions as $index => $action) {
-            if ( empty($action['Exercise']) ) {
+            if ( empty($action['Exercise']) || empty($action['CourseMembership']) ) {
                 unset($actions[$index]);
             } else {
-                if ( $group_id > 0 &&  empty($action['Student']['Group']) ) {
+                if ( $group_id > 0 &&  empty($action['CourseMembership']['Student']['Group']) ) {
                     unset($actions[$index]);
                 }
             }
@@ -80,19 +87,10 @@ class ActionsController extends AppController {
         $this->set('actions', $actions);
         //debug($actions);
 
-        // get mapping student.id => course_membership.id, to use in link on view side
-        // '<td>' . $this->Html->link($action['Student']['last_name'] etc... 
-        $course_memberships = $this->Action->Student->CourseMembership->find('list', 
-            array('fields' => array('CourseMembership.student_id','CourseMembership.id'),
-                    'conditions' => array('CourseMembership.course_id' => $course_id)
-            )
-        );
-        $this->set('course_memberships', $course_memberships);
-
 
         // Call Group-model to return groups with assistant names
         // in given course ($course_id from Session)
-        $results = $this->Action->Student->Group->groups($course_id);
+        $results = $this->Action->CourseMembership->Student->Group->groups($course_id);
 
         // Create array with 'Group.id' as key and 'User.name' as value
         // NOTE: 'User.name' is virtual field defined in User-model
@@ -156,11 +154,13 @@ class ActionsController extends AppController {
 
             // Convert date and time from Datetimepicker to match database timestamp format
             // ie. '06.02.2013 00:15' converts to '2013-02-06 00:15:00+0200'
-            if ( $this->request->data['Action']['deadline'] ) {
+            if ( isset($this->request->data['Action']['deadline']) ) {
                 $deadline = $this->request->data['Action']['deadline'];
                 $deadline_format = date_create_from_format('d.m.Y H:i', $deadline);
                 $deadline_dbstring = date_format($deadline_format, 'Y-m-d H:i:sO');
                 $this->request->data['Action']['deadline'] = $deadline_dbstring;
+            } else { // no deadline, make sure it's null when saving to DB
+                $this->request->data['Action']['deadline'] = null;
             }
 
             // If marked as handled, set handled_time to current time
@@ -182,25 +182,11 @@ class ActionsController extends AppController {
                  * just saved action, so redirect is possible
                  * to course_memberships/view/$id
                  */
-                $action = $this->Action->find('first', array(
-                        'conditions' => array('Action.id' => $id),
-                        'contain' => array(
-                            'Student' => array(
-                                'CourseMembership' => array(
-                                    'conditions' => array(
-                                        'CourseMembership.course_id' => $this->Session->read('Course.course_id')
-                                    )
-                                )
-                            )
-                        )
-                    )
-                );
-
                 $this->redirect(array(
                         'controller' => 'course_memberships',
                         'action' => 'view',
-                        $action['Student']['CourseMembership'][0]['id'],
-                        '?' => array('scroll_to' => 'action'.$action['Action']['id'])
+                        $this->Action->field('course_membership_id'),
+                        '?' => array('scroll_to' => 'action'.$id)
                      )
                 );            
             }
@@ -237,7 +223,13 @@ class ActionsController extends AppController {
     }
 
     public function edit($id, $action_type_id = 0) {
-        $this->Action->contain(array('Exercise', 'Student')); // include info about Exercise
+        $this->Action->contain(array(
+                'Exercise',
+                'CourseMembership' => array(
+                    'Student'
+                )
+            )
+        );
         $action_data = $this->Action->findById($id);
         $this->set('action_data', $action_data);
         $this->set('action_types', $this->Action->ActionType->find('list'));
@@ -278,17 +270,11 @@ class ActionsController extends AppController {
     }
 
     public function create($cm_id = 0, $action_type_id = 0) {
-        $this->Action->Student->CourseMembership->id = $cm_id;
-        $cm = $this->Action->Student->CourseMembership;
-        $student_id = $cm->field('student_id');
-        if ( !empty($student_id) ) {
-            $this->Action->Student->contain(); // only data about Student
-            $student = $this->Action->Student->find('first',
-                    array('conditions' => array('Student.id' => $student_id))
-            );
-            $action_data['Student'] = $student['Student'];
+        $this->Action->CourseMembership->id = $cm_id;
+        $cm = $this->Action->CourseMembership;
+        if ( !empty($cm) ) {
+            $action_data['CourseMembership'] = $cm;
 
-            $this->set('cm_id', $cm_id);
             $this->set('action_data', $action_data);
             $this->set('action_types', $this->Action->ActionType->find('list'));
             $this->set('exercises', $this->Action->Exercise->find('list', array(

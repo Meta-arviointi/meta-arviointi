@@ -178,14 +178,10 @@ array(
 
         // Loop to fetch all actions related to one student
         foreach ($students as &$student) {
+            $this->Course->Exercise->Action->contain();
             $student_actions = $this->Course->Exercise->Action->find('all', array(
                     'conditions' => array(
-                        'Action.student_id' => $student['Student']['id']
-                    ),
-                    'contain' => array(
-                        'Exercise' => array(
-                            'conditions' => array('Exercise.course_id' => $course_id)
-                        )
+                        'Action.course_membership_id' => $student['CourseMembership'][0]['id']
                     )
                 )
             );
@@ -193,15 +189,10 @@ array(
             // from call to find('all'), and add actions to
             // $student['Action'] -array
             foreach ($student_actions as $action) {
-                // Check that action belongs to exercise
-                // that belongs to current course
-                if ( !empty($action['Exercise']) ) {
-                    $student['Action'][] = $action['Action'];
-                }
+                $student['Action'][] = $action['Action'];
             }
         }
 
-        //debug($students);
 
         // Call Group-model to return groups with assistant names
         // in given course ($course_id from Session)

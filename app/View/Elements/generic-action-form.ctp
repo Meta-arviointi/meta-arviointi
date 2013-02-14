@@ -10,8 +10,8 @@ echo $this->Form->create('Action', array(
 if (isset($action['id']) ) {
     echo $this->Form->input('id', array('type' => 'hidden', 'default' => $action['id']));
 }
-// Student id mandatory
-echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $action_data['Student']['id']));
+// CourseMembership.id mandatory
+echo $this->Form->input('course_membership_id', array('type' => 'hidden', 'default' => $action_data['CourseMembership']['id']));
 
 // If editing, take user_id from data. If creating new, take user_id from session
 if (isset($action['user_id']) ) {
