@@ -177,7 +177,7 @@
 
         echo '</div>';
 
-        foreach($student_actions as $action) {   
+        foreach($student_actions as $action) {
 
             $action_title = null;
 

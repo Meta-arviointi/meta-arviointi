@@ -1,5 +1,5 @@
 <?php
-$action = $action_data['Action'];
+$action = isset($action_data['Action']) ? $action_data['Action'] : null;
 
 echo $this->Form->create('Action', array(
     'class' => 'generic-action-form', 
@@ -25,7 +25,7 @@ if (isset($action['user_id']) ) {
 if ( isset($action_type_id) ) {
     echo $this->Form->input('action_type_id', array('type' => 'hidden', 'default' => $action_type_id));
 }
-else { // basic
+else if ( isset($action['action_type_id']) ) { // basic
     echo $this->Form->input('action_type_id', array('type' => 'hidden', 'default' => $action['action_type_id']));
 }
 
@@ -63,6 +63,7 @@ if ( isset($action['handled_id']) ) {
 // If this is NOT new request ($action_type_id = 0), check if original action is
 // type of 1 or 4.
 // If these conditions don't evaluate true, then it's action type which doesn't need deadline
+// TODO: these are hard-coded values, types 1 and 4 need deadline-textinput field
 if ( (isset($action_type_id) && ($action_type_id == 1 || $action_type_id == 4)) || 
      (!isset($action_type_id) && ($action['action_type_id'] == 1 || $action['action_type_id'] == 4)) ) {
 

@@ -199,7 +199,8 @@ class ActionsController extends AppController {
                 $this->redirect(array(
                         'controller' => 'course_memberships',
                         'action' => 'view',
-                        $action['Student']['CourseMembership'][0]['id']
+                        $action['Student']['CourseMembership'][0]['id'],
+                        '?' => array('scroll_to' => 'action'.$action['Action']['id'])
                      )
                 );            
             }
@@ -271,6 +272,36 @@ class ActionsController extends AppController {
             if ( $action_type_id > 0 ) {
                 $this->set('action_type_id', $action_type_id);
                 $this->set('print_handled', true);
+                $this->render('/Elements/generic-action-form');
+            }
+        }
+    }
+
+    public function create($cm_id = 0, $action_type_id = 0) {
+        $this->Action->Student->CourseMembership->id = $cm_id;
+        $cm = $this->Action->Student->CourseMembership;
+        $student_id = $cm->field('student_id');
+        if ( !empty($student_id) ) {
+            $this->Action->Student->contain(); // only data about Student
+            $student = $this->Action->Student->find('first',
+                    array('conditions' => array('Student.id' => $student_id))
+            );
+            $action_data['Student'] = $student['Student'];
+
+            $this->set('cm_id', $cm_id);
+            $this->set('action_data', $action_data);
+            $this->set('action_types', $this->Action->ActionType->find('list'));
+            $this->set('exercises', $this->Action->Exercise->find('list', array(
+                        'conditions' => array(
+                            'Exercise.course_id' => $cm->field('course_id')
+                        ),
+                        'fields' => array('Exercise.id', 'Exercise.exercise_string')
+                    )
+                )
+            );
+            if ( $action_type_id > 0 ) {
+                $this->set('action_type_id', $action_type_id);
+                $this->set('print_handled', false);
                 $this->render('/Elements/generic-action-form');
             }
         }
