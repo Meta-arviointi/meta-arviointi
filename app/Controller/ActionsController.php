@@ -270,16 +270,18 @@ class ActionsController extends AppController {
     }
 
     public function create($cm_id = 0, $action_type_id = 0) {
-        $this->Action->CourseMembership->id = $cm_id;
-        $cm = $this->Action->CourseMembership;
+        $cm = $this->Action->CourseMembership->find('first', array(
+                'conditions' => array(
+                    'CourseMembership.id' => $cm_id
+                )
+            )
+        );
         if ( !empty($cm) ) {
-            $action_data['CourseMembership'] = $cm;
-
-            $this->set('action_data', $action_data);
+            $this->set('action_data', $cm);
             $this->set('action_types', $this->Action->ActionType->find('list'));
             $this->set('exercises', $this->Action->Exercise->find('list', array(
                         'conditions' => array(
-                            'Exercise.course_id' => $cm->field('course_id')
+                            'Exercise.course_id' => $cm['CourseMembership']['course_id']
                         ),
                         'fields' => array('Exercise.id', 'Exercise.exercise_string')
                     )
