@@ -13,5 +13,9 @@ class Student extends AppModel {
     public $virtualFields = array(
         'name' => 'Student.first_name || \' \' || Student.last_name'
     );
+
+    public function find_student($bua) {
+        return $this->find('first', array('conditions' => array('student_number' => $bua)));
+    }
 }
 ?>

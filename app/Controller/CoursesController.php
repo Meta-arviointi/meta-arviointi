@@ -42,6 +42,8 @@ array(
             ),
             'order' => $order
         ));
+    } else {
+        $this->Session->write('Course.admin_course', '0');
     }
 
 	$courses = $this->Course->get_courses($cid);

@@ -4,8 +4,13 @@ class StudentsController extends AppController {
 	public $name = 'Students';
 
 	public function admin_add() {
+
+        $course_id = $this->Session->read('Course.admin_course');
+
 		if($this->request->is('post')) {
 			if(empty($this->data['Student']['tmp_file'])) {
+
+                // single student
 				if($this->Student->save($this->request->data)) {
 					$this->redirect(array('action' => 'view', $this->Student->id));
 				}
@@ -14,10 +19,65 @@ class StudentsController extends AppController {
 				if (move_uploaded_file($this->data['Student']['tmp_file']['tmp_name'], $uploadfile)) {
 					$csvfile = fopen($uploadfile, "r");
 
+                    $users_system = $this->Course->User->find('list', array('fields' => array('basic_user_account', 'id')));
+                    $users_csv = array();
+                    $users_gid = array();
+                    $users = 0;
+                    $students = 0;
+
+                    while(($row = fgetcsv($csvfile)) !== false) {
+                        $line = explode(';',$row[0]);
+
+                        if (in_array($line[4], $users_csv)) { 
+                            echo 'assari käyty läpi csv -> opiskelijan käsittelyyn'; 
+                            echo '<br/>';
+                        } else {
+                            echo 'assaria ei käyty läpi csv -> assarin lisäkäsittely';
+                            echo '<br/>';
+                            array_push($users_csv, $line[4]); // lisätään assari $users_csv listaan
+                            if (in_array($line[4], $users_system)) {
+                                echo 'assari on jo järjestelmässä -> lisää uusi vastuuryhmä assarille';
+                                echo '<br/>';
+                            } else {
+                                echo 'assaria ei ole järjestelmässä -> lisää dummy assari ja sille vastuuryhmä'; // pitäisi lisätä dummy
+                                echo '<br/>';
+                                $users_system[$line[4]] = 15;
+                            }
+                            print_r($users_system);
+                            echo '<br/>';
+                            echo $users_system[$line[4]];
+                            echo '<br/>';
+//                            $this->Group->save(array('course_id' => $course_id, 'user_id' => $users_system[$line[4]]));
+//                            $gid = $this->Group->id;
+//                            $user_group[$line[4]] = $gid;
+                        }
+/*
+                        $this->Student->save(array(
+                            'Student' => array(
+                                'student_number' => $student_number,
+                                'last_name' => $last_name,
+                                'first_name' => $first_name,
+                                'email' => $email
+                            ),
+                            'Group' => array(
+                                'id' => $gid
+                            )
+                        ));
+
+                        $sid = $this->Student->id;
+                        $this->CourseMembership->save(array('course_id' => $course_id, 'student_id' => $sid));
+*/
+
+                        print_r($row);
+                            echo '<br/>';
+                        print_r($users_csv);
+                            echo '<br/>';
+
+                    }
+
 					fclose($csvfile);
 					unlink($uploadfile);
-				}
-				else {
+				} else {
 					// FAILED
 				}
 			}
