@@ -73,7 +73,7 @@ class AppController extends Controller {
     public function beforeRender() {
         // Get new email messages from IMAP and insert them to the database
         // FIXME when the imap-functions are available!
-        if(function_exists('curl_init')) {
+        if(false && function_exists('curl_init')) {
             $json_url = 'http://kallunki.org/email_json.php';
             $ch = curl_init($json_url);
             $options = array(
@@ -121,11 +121,11 @@ class AppController extends Controller {
                     'Group' => array(
                         'Student' => array(
                             'CourseMembership' => array(
-                                'Course'
-                            ),
-                            'EmailMessage' => array(
-                                'conditions' => array(
-                                    'EmailMessage.read_time' => null
+                                'Course',
+                                'EmailMessage' => array(
+                                    'conditions' => array(
+                                        'EmailMessage.read_time' => null
+                                    )
                                 )
                             )
                         )

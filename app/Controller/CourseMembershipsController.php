@@ -15,13 +15,11 @@ class CourseMembershipsController extends AppController {
         $this->set('action_types', $this->ActionType->types());
 
         // Find selected CourseMembership data
-        $this->CourseMembership->recursive = 2;
         $course_membership = $this->CourseMembership->findById($id);
 
         // get student's actions in selected course enrolment
-        $student_actions = $this->CourseMembership->Course->Exercise->Action->find('all', array(
+        $student_actions = $this->CourseMembership->Action->find('all', array(
                 'contain' => array(
-                    'Student',
                     'User',
                     'ActionType',
                     'ActionComment' => array('User'),
@@ -32,7 +30,7 @@ class CourseMembershipsController extends AppController {
                     )
                 ),
                 'conditions' => array(
-                    'Action.student_id' => $course_membership['Student']['id']
+                    'Action.course_membership_id' => $id
                 ),
                 'order' => array('Action.created DESC')
             )

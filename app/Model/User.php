@@ -102,4 +102,8 @@ class User extends AppModel {
             return false;
         }
     }
+
+    public function find_user($bua) {
+        return $this->find('first', array('conditions' => array('basic_user_account' => $bua)));
+    }
 }

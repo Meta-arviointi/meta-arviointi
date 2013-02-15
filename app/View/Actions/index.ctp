@@ -57,6 +57,7 @@
         if ( !empty($actions) ) { // check if not empty
             foreach($actions as $action) {
                 $action_title = null;
+                $student = $action['CourseMembership']['Student'];
                 // If Action belongs to several Exercises
                 if ( count($action['Exercise']) > 1 ) {
                     foreach($action['Exercise'] as $exercise) {
@@ -73,13 +74,13 @@
                     array(
                         'controller' => 'course_memberships',
                         'action' => 'view',
-                        $course_memberships[$action['Student']['id']],
+                        $action['CourseMembership']['id'],
                         '?' => array('scroll_to' => 'action'.$action['Action']['id'])
                         )
                     ) . '</td>';
 
                 echo '<td>' . $action_title . '</td>';
-                echo '<td>' . $this->Html->link($action['Student']['last_name'] . ', ' . $action['Student']['first_name'], array('controller' => 'course_memberships', 'action' => 'view', $course_memberships[$action['Student']['id']])) . '</td>';
+                echo '<td>' . $this->Html->link($student['last_name'] . ', ' . $student['first_name'], array('controller' => 'course_memberships', 'action' => 'view', $action['CourseMembership']['id'])) . '</td>';
                 echo '<td>' . $action['User']['name'] . '</td>';
                 echo '</tr>';
             }

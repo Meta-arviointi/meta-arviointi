@@ -2,7 +2,7 @@
 
 class EmailMessage extends AppModel {
 	public $name = 'EmailMessage';
-	public $belongsTo = array('Student');
+	public $belongsTo = array('CourseMembership');
 }
 
 ?>
