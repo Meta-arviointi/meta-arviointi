@@ -20,59 +20,69 @@ class StudentsController extends AppController {
 					$csvfile = fopen($uploadfile, "r");
 
                     $users_system = $this->Course->User->find('list', array('fields' => array('basic_user_account', 'id')));
+                    $students_system = $this->Student->find('list', array('fields' => array('student_number', 'id')));
                     $users_csv = array();
                     $users_gid = array();
                     $users = 0;
                     $students = 0;
 
                     while(($row = fgetcsv($csvfile)) !== false) {
+                        // $row[0] = sukunimi;etunimi;ppt;email;assari_ppt
                         $line = explode(';',$row[0]);
 
-                        if (in_array($line[4], $users_csv)) { 
-                            echo 'assari käyty läpi csv -> opiskelijan käsittelyyn'; 
-                            echo '<br/>';
+                        $student_lname = $line[0];
+                        $student_fname = $line[1];
+                        $student_bua = $line[2];
+                        $student_email = $line[3];
+                        $user_bua = $line[4];
+                        $sid = 0;
+                        $gid = 0;
+
+                        if (in_array($user_bua, $users_csv)) { 
+                            // assari on käyty läpi jo
                         } else {
-                            echo 'assaria ei käyty läpi csv -> assarin lisäkäsittely';
-                            echo '<br/>';
-                            array_push($users_csv, $line[4]); // lisätään assari $users_csv listaan
-                            if (in_array($line[4], $users_system)) {
-                                echo 'assari on jo järjestelmässä -> lisää uusi vastuuryhmä assarille';
-                                echo '<br/>';
+                            // assaria ei ole käyty läpi
+                            array_push($users_csv, $user_bua); // lisätään assari $users_csv listaan
+                            if (in_array($user_bua, array_keys($users_system))) {
+                                // assari on jo lisättynä järjestelmään: ei tarvittavia toimenpiteitä
                             } else {
-                                echo 'assaria ei ole järjestelmässä -> lisää dummy assari ja sille vastuuryhmä'; // pitäisi lisätä dummy
-                                echo '<br/>';
-                                $users_system[$line[4]] = 15;
+                                // assaria ei ole järjestelmässä, lisätään DUMMY placeholder assari ja merkitään assarin ppt järjestelmässä olevaksi tulevia tarkistuksia varten
+                                $this->Course->User->save(array('basic_user_account' => $user_bua, 'last_name' => 'PLACEHOLDER', 'first_name' => 'PLEASE CHANGE', 'email' => 'INVALID@EMAIL', 'password' => 'default', 'is_admin' => 'false'));
+                                $users_system[$user_bua] = $this->Course->User->id;
                             }
-                            print_r($users_system);
-                            echo '<br/>';
-                            echo $users_system[$line[4]];
-                            echo '<br/>';
-//                            $this->Group->save(array('course_id' => $course_id, 'user_id' => $users_system[$line[4]]));
-//                            $gid = $this->Group->id;
-//                            $user_group[$line[4]] = $gid;
+                            // lisätään assarille vastuuryhmä ja otetaan ryhmän id talteen
+                            $this->Student->Group->save(array('course_id' => $course_id, 'user_id' => $users_system[$user_bua]));
+                            $gid = $this->Student->Group->id;
+                            $user_group[$user_bua] = $gid;
                         }
-/*
-                        $this->Student->save(array(
-                            'Student' => array(
-                                'student_number' => $student_number,
-                                'last_name' => $last_name,
-                                'first_name' => $first_name,
-                                'email' => $email
-                            ),
-                            'Group' => array(
-                                'id' => $gid
-                            )
-                        ));
 
-                        $sid = $this->Student->id;
-                        $this->CourseMembership->save(array('course_id' => $course_id, 'student_id' => $sid));
-*/
-
-                        print_r($row);
-                            echo '<br/>';
-                        print_r($users_csv);
-                            echo '<br/>';
-
+                        if (in_array($student_bua, array_keys($students_system))) {
+                            // opiskelija on jo järjestelmässä, lisätään opiskelija määriteltyyn ryhmään
+                            $this->Student->save(array(
+                                'Student' => array(
+                                    'id' => $students_system[$student_bua]
+                                ),
+                                'Group' => array(
+                                    'id' => $user_group[$user_bua]
+                                )
+                            ));
+                            $sid = $students_system[$student_bua];
+                        } else {
+                            // opiskelijaa ei ole järjestelmässä, lisätään opiskelija järjestelmään ja liitetään määriteltyyn ryhmään
+                            $this->Student->save(array(
+                                'Student' => array(
+                                    'student_number' => $student_bua,
+                                    'last_name' => $student_lname,
+                                    'first_name' => $student_fname,
+                                    'email' => $student_email
+                                ),
+                                'Group' => array(
+                                    'id' => $user_group[$user_bua]
+                                )
+                            ));
+                            $sid = $this->Student->id;                                                    
+                        }
+                        $this->Student->CourseMembership->save(array('course_id' => $course_id, 'student_id' => $sid));
                     }
 
 					fclose($csvfile);
