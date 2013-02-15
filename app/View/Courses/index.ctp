@@ -68,7 +68,19 @@
 
                     }
                     echo '<td>'.(isset($student['Action']) ? count($student['Action']) : 0).'</td>';
-                    echo '<td>'. $this->Html->image('edit-action-icon.png') . '</td>';
+                    echo '<td>'. $this->Html->link($this->Html->image('edit-action-icon.png',
+                            array('alt' => __('Lisää toimenpide'), 'title' => __('Lisää toimenpide'))),
+                            array(
+                                'controller' => 'actions',
+                                'action' => 'create',
+                                $student['CourseMembership'][0]['id']
+                            ),
+                            array(
+                                'id' => 'quick-action',
+                                'class' => 'modal-link',
+                                'escape' => false
+                            )
+                    ); '</td>';
                     echo '</tr>';
                 }
             } else { // print "nothing available"

@@ -3,7 +3,7 @@ ALTER TABLE ONLY public.groups_students DROP CONSTRAINT groups_students_student_
 ALTER TABLE ONLY public.groups_students DROP CONSTRAINT groups_students_group_id_fkey;
 ALTER TABLE ONLY public.groups DROP CONSTRAINT groups_course_id_fkey;
 ALTER TABLE ONLY public.exercises DROP CONSTRAINT exercises_course_id_fkey;
-ALTER TABLE ONLY public.email_messages DROP CONSTRAINT email_messages_student_id_fkey;
+ALTER TABLE ONLY public.email_messages DROP CONSTRAINT email_messages_course_membership_id_fkey;
 ALTER TABLE ONLY public.email_messages DROP CONSTRAINT email_messages_action_id_fkey;
 ALTER TABLE ONLY public.courses_users DROP CONSTRAINT courses_users_user_id_fkey;
 ALTER TABLE ONLY public.courses_users DROP CONSTRAINT courses_users_course_id_fkey;
@@ -12,10 +12,10 @@ ALTER TABLE ONLY public.course_memberships DROP CONSTRAINT course_memberships_qu
 ALTER TABLE ONLY public.course_memberships DROP CONSTRAINT course_memberships_course_id_fkey;
 ALTER TABLE ONLY public.chat_messages DROP CONSTRAINT chat_messages_user_id_fkey;
 ALTER TABLE ONLY public.actions DROP CONSTRAINT actions_user_id_fkey;
-ALTER TABLE ONLY public.actions DROP CONSTRAINT actions_student_id_fkey;
 ALTER TABLE ONLY public.actions DROP CONSTRAINT actions_handled_id_fkey;
 ALTER TABLE ONLY public.actions_exercises DROP CONSTRAINT actions_exercises_exercise_id_fkey;
 ALTER TABLE ONLY public.actions_exercises DROP CONSTRAINT actions_exercises_action_id_fkey;
+ALTER TABLE ONLY public.actions DROP CONSTRAINT actions_course_membership_id_fkey;
 ALTER TABLE ONLY public.actions DROP CONSTRAINT actions_action_type_id_fkey;
 ALTER TABLE ONLY public.action_comments DROP CONSTRAINT action_comments_user_id_fkey;
 ALTER TABLE ONLY public.action_comments DROP CONSTRAINT action_comments_action_id_fkey;
@@ -77,4 +77,3 @@ DROP SEQUENCE public.action_types_id_seq;
 DROP TABLE public.action_types;
 DROP SEQUENCE public.action_comments_id_seq;
 DROP TABLE public.action_comments;
-

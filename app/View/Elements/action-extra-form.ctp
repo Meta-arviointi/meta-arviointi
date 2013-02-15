@@ -5,7 +5,7 @@ echo $this->Form->create('Action', array(
     'id' => 'extra-action-form', 
     'url' => array('controller' => 'actions', 'action' => 'save')
 ));
-echo $this->Form->input('student_id', array('type' => 'hidden', 'default' => $course_membership['Student']['id']));
+echo $this->Form->input('course_membership_id', array('type' => 'hidden', 'default' => $course_membership['CourseMembership']['id']));
 echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
 echo $this->Form->input('action_type_id', array('type' => 'hidden', 'default' => '4'));
 echo $this->Form->input('Exercise', array(

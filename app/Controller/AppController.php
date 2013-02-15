@@ -121,11 +121,11 @@ class AppController extends Controller {
                     'Group' => array(
                         'Student' => array(
                             'CourseMembership' => array(
-                                'Course'
-                            ),
-                            'EmailMessage' => array(
-                                'conditions' => array(
-                                    'EmailMessage.read_time' => null
+                                'Course',
+                                'EmailMessage' => array(
+                                    'conditions' => array(
+                                        'EmailMessage.read_time' => null
+                                    )
                                 )
                             )
                         )

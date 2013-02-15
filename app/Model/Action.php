@@ -3,7 +3,7 @@
 class Action extends AppModel {
     public $name = 'Action';
 
-    public $belongsTo = array('Student', 'User', 'ActionType');
+    public $belongsTo = array('CourseMembership', 'User', 'ActionType');
     public $hasMany = array('ActionComment' => array(
         'dependent' => true
         )
