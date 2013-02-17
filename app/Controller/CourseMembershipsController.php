@@ -58,6 +58,13 @@ class CourseMembershipsController extends AppController {
             'fields' => array('User.name')
         ));
 
+        // Fetch all other CourseMemberships of student $sid.
+        // In view.ctp: Display links to student's other 
+        // courses attended.
+        $sid = $course_membership['Student']['id'];
+        $student_courses = $this->CourseMembership->findAllByStudentId($sid);
+        
+        //debug($student_courses);
         //debug($course_membership);
         //debug($student_actions);
         //debug($exercises);
@@ -65,6 +72,7 @@ class CourseMembershipsController extends AppController {
         $this->set('student_actions', $student_actions);
         $this->set('exercises', $exercises);
         $this->set('users', $users);
+        $this->set('student_courses', $student_courses);
 
     }
 

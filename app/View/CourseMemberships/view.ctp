@@ -52,7 +52,7 @@
 </div>
 <hr class="row">
 <div class="row">
-    <div class="ninecol">
+    <div class="sixcol">
         <?php
 
         echo '<h1>';
@@ -62,6 +62,7 @@
         <p>
             <?php echo $course_membership['Student']['email'] ?>
         </p>
+
         <p>Kommentti: <?php echo empty($course_membership['CourseMembership']['comment']) ? '-' : $course_membership['CourseMembership']['comment'] ?>
             <?php
                 echo $this->Html->link('('.__('Muokkaa').')',
@@ -74,6 +75,28 @@
             ?>
         </p>
 
+    </div>
+    <div class="threecol">
+        <?php echo '<p>' . __('Kursseilla') . ":<p> \n"  ?>
+        <?php
+            // Display links to other courses
+            foreach($student_courses as $cm) {
+                if ( $cm['CourseMembership']['id'] != 
+                    $course_membership['CourseMembership']['id']) {
+                    echo '<span class="student-courses">' . 
+                        $this->Html->link($cm['Course']['name'],
+                            array(
+                                'action' => 'view',
+                                $cm['CourseMembership']['id']
+                            )
+                        ) . '</span>' . "\n";
+
+                } else {
+                    echo '<span class="student-courses">' .
+                        $cm['Course']['name'] . '</span>' . "\n";
+                }
+            } 
+        ?>
     </div>
     <div class="threecol last">
         <?php
