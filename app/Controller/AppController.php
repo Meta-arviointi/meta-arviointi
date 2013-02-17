@@ -73,7 +73,7 @@ class AppController extends Controller {
     public function beforeRender() {
         // Get new email messages from IMAP and insert them to the database
         // FIXME when the imap-functions are available!
-        if(false && function_exists('curl_init')) {
+        if(function_exists('curl_init')) {
             $json_url = 'http://kallunki.org/email_json.php';
             $ch = curl_init($json_url);
             $options = array(
@@ -83,8 +83,11 @@ class AppController extends Controller {
                 CURLOPT_POSTFIELDS => array('secret_token' => 'm374arvioint1')
             );
             curl_setopt_array($ch, $options);
-            $results = json_decode(curl_exec($ch));
+            $results = curl_exec($ch);
+            $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             //print_r($results);
+            //echo $http_status;
+            $results = json_decode($results);
 
 
             if(!empty($results)) {
@@ -99,9 +102,9 @@ class AppController extends Controller {
                         'sent_time' => date('Y-m-d H:i:sO', strtotime($r->date))
                     ));
 
-                    $student = $this->EmailMessage->Student->findByEmail(strtolower($r->from));
-                    if($student) {
-                        $this->EmailMessage->set('student_id', $student['Student']['id']);
+                    $student = $this->EmailMessage->CourseMembership->Student->findByEmail(strtolower($r->from));
+                    if(!empty($student['CourseMembership'])) {
+                        $this->EmailMessage->set('course_membership_id', $student['CourseMembership'][0]['id']);
                     }
                     $this->EmailMessage->save();
                 }
@@ -142,10 +145,7 @@ class AppController extends Controller {
                                 $membership = $cm;
                             }
                         }
-                        foreach($student['EmailMessage'] as &$em) {
-                            $em['course_membership_id'] = $membership['id'];
-                        }
-                        $email_messages = array_merge($email_messages, $student['EmailMessage']);
+                        $email_messages = array_merge($email_messages, $membership['EmailMessage']);
                     }
                 }
             }
