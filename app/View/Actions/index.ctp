@@ -45,6 +45,7 @@
             <th><?php echo __('Harjoitus'); ?></th>
             <th><?php echo __('Opiskelija'); ?></th>
             <th><?php echo __('Lisännyt'); ?></th>
+            <th><?php echo __('Käsitelty'); ?></th>
         </tr>
         <?php /* <tr> paginaatio poistettu käytöstä (toistaiseksi)
             <th><?php echo $this->Paginator->sort('last_name', 'Sukunimi'); ?></th>
@@ -80,12 +81,19 @@
                     ) . '</td>';
 
                 echo '<td>' . $action_title . '</td>';
-                echo '<td>' . $this->Html->link($student['last_name'] . ', ' . $student['first_name'], array('controller' => 'course_memberships', 'action' => 'view', $action['CourseMembership']['id'])) . '</td>';
+                echo '<td>' . $this->Html->link($student['last_name'] . ', ' . $student['first_name'], 
+                    array('controller' => 'course_memberships', 'action' => 'view', $action['CourseMembership']['id'])) . '</td>';
                 echo '<td>' . $action['User']['name'] . '</td>';
+                $handler = isset($users[$action['Action']['handled_id']]) ? $users[$action['Action']['handled_id']] : null;
+                if ( !empty($handler) ) {
+                    echo '<td class="handled">' . $handler . '</td>';
+                } else {
+                    echo '<td class="empty-cell">' . __('Ei käsitelty') . '</td>';
+                }
                 echo '</tr>';
             }
         } else { // print "nothing available"
-            echo '<tr><td id="empty" colspan="4">' . __('Ei toimenpiteitä') . '</td><tr>';
+            echo '<tr><td class="empty" colspan="5">' . __('Ei toimenpiteitä') . '</td><tr>';
         }
 
         ?>

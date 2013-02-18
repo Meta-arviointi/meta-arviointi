@@ -64,7 +64,8 @@ class ActionsController extends AppController {
                             'Exercise.course_id' => $course_id
                         )
                     )
-                )
+                ),
+                'order' => array('Action.created DESC')
              )
         );
 
@@ -114,6 +115,10 @@ class ActionsController extends AppController {
             $users_courses[$course['id']] = $course['name'];
         }
 
+        $this->set('users', $this->Action->User->find('list', array(
+            'fields' => array('User.name')))
+        );
+
         $this->set('users_courses', $users_courses);
 
         $this->set('group_id', $group_id);
@@ -149,7 +154,7 @@ class ActionsController extends AppController {
      * Used in both cases: create new action, and edit existing.
      */
     public function save() {
-        if($this->request->is('post') || $this->request->is('put') ) {
+        if ( $this->request->is('post') || $this->request->is('put') ) {
             //debug($this->request->data);
 
             // Convert date and time from Datetimepicker to match database timestamp format
@@ -164,7 +169,7 @@ class ActionsController extends AppController {
             }
 
             // If marked as handled, set handled_time to current time
-            if ( $this->request->data['Action']['handled_id'] ) {
+            if ( !empty($this->request->data['Action']['handled_id']) ) {
                 $this->request->data['Action']['handled_time'] = date('Y-m-d H:i:sO');
             } else { // if handled mark was removed, remove information
                 $this->request->data['Action']['handled_id'] = null;
@@ -177,10 +182,7 @@ class ActionsController extends AppController {
                     ? $id = $this->Action->id : $id = $this->request->data['Action']['id'];
                 $this->Session->setFlash(__("Toimenpide (id: $id) tallennettu!"));
 
-                /* Prepare for redirect.
-                 * Get CourseMembership.id of the
-                 * just saved action, so redirect is possible
-                 * to course_memberships/view/$id
+                /* Redirect to course_membership/view page
                  */
                 $this->redirect(array(
                         'controller' => 'course_memberships',
@@ -190,6 +192,54 @@ class ActionsController extends AppController {
                      )
                 );            
             }
+        }
+    }
+
+    /**
+     * Save many actions at once.
+     * Format of $data-array should be like in
+     * http://book.cakephp.org/2.0/en/models/saving-your-data.html#saving-related-model-data-habtm
+     * Example:
+     * array(
+     *   (int) 0 => array(
+     *     'Action' => array(
+     *       'user_id' => '2',
+     *       'action_type_id' => '1',
+     *       'deadline' => '25.02.2013 15:35',
+     *       'description' => 'adas',
+     *       'course_membership_id' => '2'
+     *     ),
+     *     'Exercise' => array(
+     *       'Exercise' => array(
+     *          (int) 0 => '2',
+     *          (int) 1 => '3'
+     *       )
+     *     )
+     *   ),
+     *   (int) 1 => array(
+     *     'Action' => array(
+     *       'user_id' => '2',
+     *
+     *   .... and so on..
+     * @param data associated data to be saved
+     *
+     */
+    public function save_many($data = array()) {
+        if ( !empty($data) ) {
+            // Convert date and time from Datetimepicker to match database timestamp format
+            // ie. '06.02.2013 00:15' converts to '2013-02-06 00:15:00+0200'
+            foreach($data as $item) {
+                if ( isset($item['Action']['deadline']) ) {
+                    $deadline = $item['Action']['deadline'];
+                    $deadline_format = date_create_from_format('d.m.Y H:i', $deadline);
+                    $deadline_dbstring = date_format($deadline_format, 'Y-m-d H:i:sO');
+                    $item['Action']['deadline'] = $deadline_dbstring;
+                } else { // no deadline, make sure it's null when saving to DB
+                    $item['Action']['deadline'] = null;
+                }
+            }
+
+            return $this->Action->saveAll($data);
         }
     }
 
@@ -291,6 +341,65 @@ class ActionsController extends AppController {
                 $this->set('action_type_id', $action_type_id);
                 $this->set('print_handled', false);
                 $this->render('/Elements/generic-action-form');
+            }
+        }
+    }
+
+    public function create_many($action_type_id = 0) {
+        // POST = submit from generic-many-actions-form.ctp
+        // Includes CourseMembership data. CourseMemberships are
+        // selected in courses/index at #CreateManyActions-form
+        if ( $this->request->is('post') ) {
+            // Check if more than one CourseMembership is submitted
+            $cms = $this->request->data['CourseMembership'];
+            if ( count($cms) > 1 ) {
+                $save_data = null; // data to be saved of one action
+                $action = null; // Action-data
+                $exercises = null; // Exercise-data
+                $data = null; // data for save_many() (saveAll())
+
+                // Loop through CourseMemberships and make individual calls to save()
+                foreach($cms as $cm => $id) {
+                    $action = $this->request->data['Action'];
+                    $exercises = $this->request->data['Exercise'];
+                    // Set CourseMembership ID to Action
+                    $action['course_membership_id'] = $id;
+                    $save_data['Action'] = $action;
+                    $save_data['Exercise'] = $exercises;
+                    $data[] = $save_data; // add data to be saved
+                }
+
+                if ( $this->save_many($data) ) {
+                    $this->Session->setFlash(__("Uudet toimenpiteet luotu"));
+                    $this->redirect(array(
+                        'action' => 'index')
+                    );
+                } else {
+                    $this->Session->setFlash(__('Toimenpiteiden luonti ei onnistunut'));
+                    $this->redirect($this->referer());
+                }
+            } else { // only one student selected
+                $cm_id = array_values($this->request->data['CourseMembership']);
+                $this->request->data['Action']['course_membership_id'] = $cm_id[0];
+                unset($this->request->data['CourseMembership']);
+                $this->save(); // call save() (default saving for one action)
+
+            }
+
+        } else { // data for forms.
+            $this->set('action_types', $this->Action->ActionType->find('list'));
+            $this->set('exercises', $this->Action->Exercise->find('list', array(
+                        'conditions' => array(
+                            'Exercise.course_id' => $this->Session->read('Course.course_id')
+                        ),
+                        'fields' => array('Exercise.id', 'Exercise.exercise_string')
+                    )
+                )
+            );
+            if ( $action_type_id > 0 ) {
+                $this->set('action_type_id', $action_type_id);
+                $this->set('print_handled', false);
+                $this->render('/Elements/generic-many-actions-form');
             }
         }
     }

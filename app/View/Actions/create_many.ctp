@@ -1,14 +1,14 @@
 <script type="text/javascript">
     $(document).ready(function() {
+
         $('select#action-type-switcher').change(function() {
             if ( $(this).val() != '' ) {
                 var url = <?php echo '\''. $this->Html->url(
                         array(
                             'controller' => 'actions',
-                            'action' => 'create',
-                            $action_data['CourseMembership']['id']
+                            'action' => 'create_many'                            
                         )
-                    ) . '\';' . "\n" ?>
+                    ) . '\';' ?>
                 url = url + "/" + $(this).val();
                 $.ajax({
                     url: url
@@ -17,13 +17,14 @@
                 })    
             }
         });
+
     });
 </script>
 <?php 
 echo '<div id="action-create">';
-echo '<h2>' . __('Luo toimenpide') . '</h2>';
-echo '<h3>' . $action_data['Student']['last_name'] . ' '
-     . $action_data['Student']['first_name'] . '</h3>';
+echo '<h2>' . __('Luo toimenpide usealle') . '</h2>';
+/*echo '<h3>' . $action_data['Student']['last_name'] . ' '
+     . $action_data['Student']['first_name'] . '</h3>';*/
 //echo $action_types[$action_data['Action']['action_type_id']];
 //debug($action_data);
 //debug($exercises);
