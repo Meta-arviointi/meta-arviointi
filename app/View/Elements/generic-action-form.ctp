@@ -81,7 +81,7 @@ if ( (isset($action_type_id) && ($action_type_id == 1 || $action_type_id == 4)) 
     ));
 }
 
-echo $this->Form->input('description', array('label' => false, 'rows' => 3, 'default' => isset($action) ? $action['description'] : null));
+echo $this->Form->input('description', array('label' => false, 'rows' => 3, 'default' => isset($action['description']) ? $action['description'] : null));
 
 if ( isset($action['created']) ) {
     echo '<span class="timestamp">Luotu: ' . date('j.n.Y G:i', strtotime($action['created'])) 
