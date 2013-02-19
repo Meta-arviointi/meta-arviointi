@@ -6,11 +6,16 @@ class ActionType extends AppModel {
 	public $hasMany = array('Action');
 
 	/**
-	 * Fetch action types 
+	 * Fetch action types, that are active 
 	 * @return all types with id as key and type name as value
 	 */
 	public function types() {
-		return $this->find('list');
+		return $this->find('list', array(
+				'conditions' => array(
+					'active' => true
+				)
+			)
+		);
 
 	}
 }

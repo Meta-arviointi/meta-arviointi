@@ -282,7 +282,7 @@ class ActionsController extends AppController {
         );
         $action_data = $this->Action->findById($id);
         $this->set('action_data', $action_data);
-        $this->set('action_types', $this->Action->ActionType->find('list'));
+        $this->set('action_types', $this->Action->ActionType->types());
         $this->set('users', $this->Action->User->find('list', array(
                 'fields' => array('User.name')
             )
@@ -328,7 +328,7 @@ class ActionsController extends AppController {
         );
         if ( !empty($cm) ) {
             $this->set('action_data', $cm);
-            $this->set('action_types', $this->Action->ActionType->find('list'));
+            $this->set('action_types', $this->Action->ActionType->types());
             $this->set('exercises', $this->Action->Exercise->find('list', array(
                         'conditions' => array(
                             'Exercise.course_id' => $cm['CourseMembership']['course_id']
@@ -387,7 +387,7 @@ class ActionsController extends AppController {
             }
 
         } else { // data for forms.
-            $this->set('action_types', $this->Action->ActionType->find('list'));
+            $this->set('action_types', $this->Action->ActionType->types());
             $this->set('exercises', $this->Action->Exercise->find('list', array(
                         'conditions' => array(
                             'Exercise.course_id' => $this->Session->read('Course.course_id')

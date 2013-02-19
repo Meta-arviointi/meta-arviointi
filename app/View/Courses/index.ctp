@@ -76,7 +76,7 @@
             )
     );
 
-    echo $this->Form->create(false, array('id' => 'CreateManyActions', 
+    echo $this->Form->create(false, array('id' => 'CreateManyActions',
             'url' => array('controller' => 'actions', 'action' => 'create_many'),
             'inputDefaults' => array(
                 'label' => false,
