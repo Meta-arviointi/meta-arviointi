@@ -80,7 +80,7 @@
             foreach($users_list as $assari) {
                 if ($assari['is_admin'] != 'false') { 
                     echo '<tr>';
-                    echo '<td>'. $this->Html->link($assari['first_name'] .' '. $assari['last_name'], array('controller' => 'users', 'action' => 'view', $assari['id'])). '</td>';
+                    echo '<td>'. $this->Html->link($assari['first_name'] .' '. $assari['last_name'], array('controller' => 'users', 'action' => 'view', 'admin' => false, $assari['id'])). '</td>';
                     echo '<td>'. $assari['email'] .'</td>';
                     if (isset($groups[$assari['id']])) {
                         echo '<td>'. $groups[$assari['id']] .'</td>';
