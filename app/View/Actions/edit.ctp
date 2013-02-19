@@ -48,8 +48,8 @@
 
 <?php echo '<div id="action-edit">';
 echo '<h2>' . __('Muokkaa toimenpidettä') . ' (' . $action_types[$action_data['Action']['action_type_id']] . ')' . '</h2>';
-echo '<h3>' . $action_data['Student']['last_name'] . ' '
-     . $action_data['Student']['first_name'] . '</h3>';
+echo '<h3>' . $action_data['CourseMembership']['Student']['last_name'] . ' '
+     . $action_data['CourseMembership']['Student']['first_name'] . '</h3>';
 //echo $action_types[$action_data['Action']['action_type_id']];
 //debug($action_data);
 //debug($exercises);

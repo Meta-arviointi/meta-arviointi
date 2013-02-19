@@ -57,8 +57,11 @@ $(document).ready ->
         $(this).parents('.collapsable').slideUp(200).prev('.decollapse-toggle').slideDown 200
         false
 
+    ###
     $('#StudentIndexFilters select').change ->
         $(this).parents('form').submit()
+    ###
+    $('#StudentsList').ajaxfilters()
 
     $('#UserCourseSelection select').change ->
         $(this).parents('form').submit()
@@ -95,6 +98,11 @@ $(document).ready ->
 
     $('#mail-indicator > a').on 'click', ->
         $('#mail-indicator').toggleClass 'open'
+        false
+
+    $('#TextFilterKeyword').keyup ->
+        $('#ActionsList tr.table-content').hide()
+        $('#ActionsList tr.table-content:has(td:contains('+$(this).val()+'))').show()
         false
 
     chat = $('#chat')
@@ -192,4 +200,10 @@ $(document).ready ->
                 alert errorThrown
                 return
         false
+
+    $.urlParam = (name) ->
+        results = new RegExp("[\\?&]" + name + "=([^&#]*)").exec(window.location.href)
+        return 0  unless results
+        results[1] or 0
+
 

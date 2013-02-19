@@ -33,8 +33,14 @@ class User extends AppModel {
                 'rule' => array('notEmpty'),
                 'message' => 'A password is required'
             )
+        ),
+        'email' => array(
+            'email',
+            'required' => array(
+                'rule' => array('notEmpty'),
+                'message' => 'Email is required'
+            )
         )
-
     );
 
     public function get_last_course($user_id) {
@@ -101,5 +107,9 @@ class User extends AppModel {
         } else {
             return false;
         }
+    }
+
+    public function find_user($bua) {
+        return $this->find('first', array('conditions' => array('basic_user_account' => $bua)));
     }
 }

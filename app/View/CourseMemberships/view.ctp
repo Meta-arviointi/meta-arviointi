@@ -38,6 +38,9 @@
             });
         });
 
+        var scroll = $.urlParam('scroll_to');
+        $.scrollTo($('#'+scroll), {offset: -45});
+
     })
 </script>
 <div class="row">
@@ -49,7 +52,7 @@
 </div>
 <hr class="row">
 <div class="row">
-    <div class="ninecol">
+    <div class="sixcol">
         <?php
 
         echo '<h1>';
@@ -59,6 +62,7 @@
         <p>
             <?php echo $course_membership['Student']['email'] ?>
         </p>
+
         <p>Kommentti: <?php echo empty($course_membership['CourseMembership']['comment']) ? '-' : $course_membership['CourseMembership']['comment'] ?>
             <?php
                 echo $this->Html->link('('.__('Muokkaa').')',
@@ -71,6 +75,28 @@
             ?>
         </p>
 
+    </div>
+    <div class="threecol">
+        <?php echo '<p>' . __('Kursseilla') . ":<p> \n"  ?>
+        <?php
+            // Display links to other courses
+            foreach($student_courses as $cm) {
+                if ( $cm['CourseMembership']['id'] != 
+                    $course_membership['CourseMembership']['id']) {
+                    echo '<span class="student-courses">' . 
+                        $this->Html->link($cm['Course']['name'],
+                            array(
+                                'action' => 'view',
+                                $cm['CourseMembership']['id']
+                            )
+                        ) . '</span>' . "\n";
+
+                } else {
+                    echo '<span class="student-courses">' .
+                        $cm['Course']['name'] . '</span>' . "\n";
+                }
+            } 
+        ?>
     </div>
     <div class="threecol last">
         <?php
@@ -118,7 +144,6 @@
 
         <?php
         echo '<div id="add-action-form-container">';
-
 
             echo '<div id="student-action-form-links">';
             if ( !empty($exercises) ) {
@@ -174,7 +199,7 @@
 
         echo '</div>';
 
-        foreach($student_actions as $action) {   
+        foreach($student_actions as $action) {
 
             $action_title = null;
 
@@ -191,7 +216,7 @@
             }
             $action_title = $action_title .  ': ' . $action['ActionType']['name'];
 
-            echo '<div class="action">';
+            echo '<div class="action" id="action'.$action['Action']['id'].'">';
             echo '<div class="toolbar">';
             echo $this->Html->link(__('Lähetä sähköposti'),
                 '#', 
@@ -285,7 +310,7 @@
         ?>
         <div id="email-messages">
             <?php 
-                foreach($course_membership['Student']['EmailMessage'] as $msg) {
+                foreach($course_membership['EmailMessage'] as $msg) {
                     echo '<div class="email-message';
                     if(empty($msg['read_time'])) echo ' not-read';
                     echo '">';

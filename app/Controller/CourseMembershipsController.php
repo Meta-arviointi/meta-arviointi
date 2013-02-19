@@ -15,13 +15,11 @@ class CourseMembershipsController extends AppController {
         $this->set('action_types', $this->ActionType->types());
 
         // Find selected CourseMembership data
-        $this->CourseMembership->recursive = 2;
         $course_membership = $this->CourseMembership->findById($id);
 
         // get student's actions in selected course enrolment
-        $student_actions = $this->CourseMembership->Course->Exercise->Action->find('all', array(
+        $student_actions = $this->CourseMembership->Action->find('all', array(
                 'contain' => array(
-                    'Student',
                     'User',
                     'ActionType',
                     'ActionComment' => array('User'),
@@ -32,7 +30,7 @@ class CourseMembershipsController extends AppController {
                     )
                 ),
                 'conditions' => array(
-                    'Action.student_id' => $course_membership['Student']['id']
+                    'Action.course_membership_id' => $id
                 ),
                 'order' => array('Action.created DESC')
             )
@@ -60,6 +58,13 @@ class CourseMembershipsController extends AppController {
             'fields' => array('User.name')
         ));
 
+        // Fetch all other CourseMemberships of student $sid.
+        // In view.ctp: Display links to student's other 
+        // courses attended.
+        $sid = $course_membership['Student']['id'];
+        $student_courses = $this->CourseMembership->findAllByStudentId($sid);
+        
+        //debug($student_courses);
         //debug($course_membership);
         //debug($student_actions);
         //debug($exercises);
@@ -67,6 +72,7 @@ class CourseMembershipsController extends AppController {
         $this->set('student_actions', $student_actions);
         $this->set('exercises', $exercises);
         $this->set('users', $users);
+        $this->set('student_courses', $student_courses);
 
     }
 

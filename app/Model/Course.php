@@ -27,5 +27,21 @@ class Course extends AppModel {
             )
         )
     );
+
+    public function get_courses($cid) {
+        if ($cid <= 0) {
+            $params = array(
+                'order' => array('Course.endtime DESC'),
+                'fields' => array('Course.id', 'Course.name', 'Course.starttime', 'Course.endtime')
+            );
+        } else {
+            $params = array(
+                'order' => array('Course.endtime DESC'),
+                'fields' => array('Course.id', 'Course.name', 'Course.starttime', 'Course.endtime'),
+                'conditions' => array('Course.id' => $cid),
+            );
+        }
+        return $this->find('all', $params);
+    }
 }
 ?>

@@ -23,6 +23,8 @@
 		echo $this->Html->script('jquery-ui-1.9.2.custom.min');
 		echo $this->Html->script('jquery-ui-timepicker-addon.js');
 		echo $this->Html->script('jquery.scrollTo.min');
+		echo $this->Html->script('jquery.ba-bbq.min');
+		echo $this->Coffee->import('ajaxfilters');
 		echo $this->Coffee->import('application');
 	?>
 </head>
@@ -45,7 +47,11 @@
 							echo '<div id="login-details">';
 							echo $this->Html->link(
 								$this->Session->read('Auth.User.name'),
-								array('controller' => 'users', 'action' => 'my_profile'),
+								array(
+									'controller' => 'users',
+									'action' => 'view',
+									$this->Session->read('Auth.User.id')
+									),
 								array('id' => 'my-profile-link', 'class' => 'header-button')
 							);
 							echo $this->Html->link(

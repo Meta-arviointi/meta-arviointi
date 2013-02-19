@@ -1,14 +1,24 @@
-<?php
-echo '<h1>' . _('Muokkaa opiskelijan tietoja') . '</h1>';
-echo $this->Form->create('Student');
-echo $this->Form->input('id', array('type' => 'hidden'));
-echo $this->Form->input('first_name', array('label' => __('Etunimi')));
+<div class="row">
+	<div class="twelvecol last">
+	<h1>Lisää uusia opiskelijoita (CSV tiedosto)<br/>TAI<br/>lisää uusi opiskelija</h1>
+	<?php
+	echo $this->Form->create('Student', array('type' => 'file'));
+	echo $this->Form->file('tmp_file');
+	echo $this->Form->end('Lähetä');
 
-echo $this->Form->input('last_name', array('label' => __('Sukunimi')));
-echo $this->Form->input('student_number', array('label' => __('Opiskelijanumero')));
-echo $this->Form->input('email', array('label' => __('E-mail')));
+	echo '<br/>';
+	echo '<br/>';
 
-echo $this->Form->submit('Tallenna');
-echo $this->Form->end();
+	echo $this->Form->create('Student');
+	echo $this->Form->input('first_name');
 
-?>
+	echo $this->Form->input('last_name');
+	echo $this->Form->input('student_number');
+	echo $this->Form->input('email');
+
+	echo $this->Form->submit('Tallenna');
+//	echo $this->Html->link('Peruuta', array('action' => 'index'));
+	echo $this->Form->end();
+	?>
+	</div>
+</div>
