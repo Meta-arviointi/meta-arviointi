@@ -33,13 +33,13 @@
             echo ' ';
             echo 'Annettuja toimenpiteitä: '. $actioncount;
 
-            echo '<br/>';
-            echo '[lisää tiedot csv nappi 8-p]';
-            echo '[luo uusi assistentti järjestelmään nappi]';
-            echo '[lisää opiskelija järjestelmään nappi]';
+//            echo '<br/>';
+//            echo '[lisää tiedot csv nappi 8-p]';
+//            echo '[luo uusi assistentti järjestelmään nappi]';
+//            echo '[lisää opiskelija järjestelmään nappi]';
 
-echo '<br/>';
-echo '<br/>';
+            echo '<br/>';
+            echo '<br/>';
             echo 'Harjoitukset';
             echo '<table class="data-table">';
             echo '    <tr>';
@@ -55,21 +55,20 @@ echo '<br/>';
             echo '        <th>'. __('Palautus') .'</th>';
             echo '    </tr>';
 
+            foreach($exercise_list as $exercise) {
+                echo '<tr>';
+                echo '<td>'. $exercise['exercise_string'] .'</td>';
+                echo '<td>'. $this->Time->Format('d-m-Y, H:i', $exercise['starttime']) .'</td>';
+                echo '<td>'. $this->Time->Format('d-m-Y, H:i', $exercise['endtime']) .'</td>';
+                echo '<td>'. $this->Time->Format('d-m-Y, H:i', $exercise['review_starttime']) .'</td>';
+                echo '<td>'. $this->Time->Format('d-m-Y, H:i', $exercise['review_endtime']) .'</td>';
+            }
 
-        foreach($exercise_list as $exercise) {
-            echo '<tr>';
-            echo '<td>'. $exercise['exercise_string'] .'</td>';
-            echo '<td>'. $this->Time->Format('d-m-Y, H:i', $exercise['starttime']) .'</td>';
-            echo '<td>'. $this->Time->Format('d-m-Y, H:i', $exercise['endtime']) .'</td>';
-            echo '<td>'. $this->Time->Format('d-m-Y, H:i', $exercise['review_starttime']) .'</td>';
-            echo '<td>'. $this->Time->Format('d-m-Y, H:i', $exercise['review_endtime']) .'</td>';
-        }
+            echo '</table>';
+            echo $this->Html->link('Lisää harjoitus', array('action' => 'admin_add', 'controller' => 'exercises'), array('class' => 'modal-link', 'id' => 'add-exercise-link'));
 
-        echo '</table>';
-        echo $this->Html->link('Lisää harjoitus', array('action' => 'admin_add', 'controller' => 'exercises'), array('class' => 'modal-link', 'id' => 'add-exercise-link'));
-
-echo '<br/>';
-echo '<br/>';
+            echo '<br/>';
+            echo '<br/>';
             echo $this->Html->link('Assistentit', array('action' => 'admin_index', 'controller' => 'users'));
             echo '<table class="data-table">';
             echo '    <tr>';
@@ -78,23 +77,24 @@ echo '<br/>';
             echo '        <th>'. __('Ryhmän koko') .'</th>';
             echo '    </tr>';
 
-        foreach($users_list as $assari) {
-            if ($assari['is_admin'] != 'false') { 
-                echo '<tr>';
-                echo '<td>'. $this->Html->link($assari['first_name'] .' '. $assari['last_name'], array('controller' => 'users', 'action' => 'view', $assari['id'])). '</td>';
-                echo '<td>'. $assari['email'] .'</td>';
-                if (isset($groups[$assari['id']])) {
-                    echo '<td>'. $groups[$assari['id']] .'</td>';
-                } else {
-                    echo '<td>0</td>';
+            foreach($users_list as $assari) {
+                if ($assari['is_admin'] != 'false') { 
+                    echo '<tr>';
+                    echo '<td>'. $this->Html->link($assari['first_name'] .' '. $assari['last_name'], array('controller' => 'users', 'action' => 'view', $assari['id'])). '</td>';
+                    echo '<td>'. $assari['email'] .'</td>';
+                    if (isset($groups[$assari['id']])) {
+                        echo '<td>'. $groups[$assari['id']] .'</td>';
+                    } else {
+                        echo '<td>0</td>';
+                    }
                 }
             }
-        }
-        echo '</table>';
-        echo $this->Html->link('Lisää assistentti', array('action' => 'admin_add', 'controller' => 'users'), array('class' => 'modal-link', 'id' => 'add-user-link'));
+            echo '</table>';
+            echo $this->Html->link('Lisää assistentti', array('action' => 'admin_add', 'controller' => 'users'), array('class' => 'modal-link', 'id' => 'add-user-link'));
 
-echo '<br/>';
-echo '<br/>';
+            echo '<br/>';
+            echo '<br/>';
+            
             echo 'Opiskelijat';
             echo '<table class="data-table">';
             echo '    <tr>';
@@ -104,19 +104,17 @@ echo '<br/>';
             echo '        <th>'. __('Vastuuassistentti') .'</th>';
             echo '    </tr>';
 
-        foreach($students_list as $student) {
-//            echo '<td>'.$this->Html->link($exercise['exercise_string'], 
-//                array('controller' => 'courses', 'action' => 'index', $course['Course']['id'])).'</td>';
-            echo '<tr>';
-            echo '<td>'. $student['Student']['first_name'] .'</td>';
-            echo '<td>'. $student['Student']['last_name'] .'</td>';
-            echo '<td>'. $student['Student']['email'] .'</td>';
-            foreach($student['Group'] as $stg) {
-                echo '<td>'. $stg['User']['name'] .'</td>';
+            foreach($students_list as $student) {
+                echo '<tr>';
+                echo '<td>'. $student['Student']['first_name'] .'</td>';
+                echo '<td>'. $student['Student']['last_name'] .'</td>';
+                echo '<td>'. $student['Student']['email'] .'</td>';
+                foreach($student['Group'] as $stg) {
+                    echo '<td>'. $stg['User']['name'] .'</td>';
+                }
             }
-        }
-        echo '</table>';
-        echo $this->Html->link('Lisää Opiskelijoita/Opiskelija', array('action' => 'admin_add', 'controller' => 'students'), array('class' => 'modal-link', 'id' => 'add-students-link'));
+            echo '</table>';
+            echo $this->Html->link('Lisää Opiskelijoita/Opiskelija', array('action' => 'admin_add', 'controller' => 'students'), array('class' => 'modal-link', 'id' => 'add-students-link'));
 
         }
     } else {

@@ -42,16 +42,30 @@ class StudentsController extends AppController {
                             // assari on käyty läpi jo
                         } else {
                             // assaria ei ole käyty läpi
+                            $users++;
                             array_push($users_csv, $user_bua); // lisätään assari $users_csv listaan
                             if (in_array($user_bua, array_keys($users_system))) {
                                 // assari on jo lisättynä järjestelmään: ei tarvittavia toimenpiteitä
                             } else {
                                 // assaria ei ole järjestelmässä, lisätään DUMMY placeholder assari ja merkitään assarin ppt järjestelmässä olevaksi tulevia tarkistuksia varten
-                                $this->Course->User->save(array('basic_user_account' => $user_bua, 'last_name' => 'PLACEHOLDER', 'first_name' => 'PLEASE CHANGE', 'email' => 'INVALID@EMAIL', 'password' => 'default', 'is_admin' => 'false'));
+                                $this->Course->User->save(array('basic_user_account' => $user_bua, 'last_name' => 'PLACEHOLDER', 'first_name' => 'PLEASE CHANGE', 'email' => 'INVALID@EMAIL.FI', 'password' => 'default', 'is_admin' => 'false'));
                                 $users_system[$user_bua] = $this->Course->User->id;
                             }
+                            // lisätään assari kurssille
+                            $this->Course->save(array(
+                                'Course' => array(
+                                    'id' => $course_id
+                                ),
+                                'User' => array(
+                                    'id' => $users_system[$user_bua]
+                                )
+                            ));
                             // lisätään assarille vastuuryhmä ja otetaan ryhmän id talteen
-                            $this->Student->Group->save(array('course_id' => $course_id, 'user_id' => $users_system[$user_bua]));
+                            $this->Student->Group->save(array(
+                                'course_id' => $course_id, 
+                                'user_id' => $users_system[$user_bua]
+                                )
+                            );
                             $gid = $this->Student->Group->id;
                             $user_group[$user_bua] = $gid;
                         }
@@ -83,10 +97,12 @@ class StudentsController extends AppController {
                             $sid = $this->Student->id;                                                    
                         }
                         $this->Student->CourseMembership->save(array('course_id' => $course_id, 'student_id' => $sid));
+                        $students++;
                     }
 
 					fclose($csvfile);
 					unlink($uploadfile);
+                    $this->redirect(array('action' => 'index', 'controller' => 'courses', $course_id));
 				} else {
 					// FAILED
 				}
