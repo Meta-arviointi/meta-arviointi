@@ -53,18 +53,21 @@ class StudentsController extends AppController {
                                 $users_system[$user_bua] = $this->Course->User->id;
                             }
                             // lisätään assari kurssille
-                            echo "assarin lisäys kurssille";
+                            /*echo "assarin lisäys kurssille";
                             echo "<br/>";
                             echo "course_id = ". $course_id;
                             echo "<br/>";
                             echo "user id = ". $users_system[$user_bua];
-                            echo "<br/>";
+                            echo "<br/>";*/
+                            $crs = $this->Course->findById($course_id);
+                            $crs_users = $crs['User'];
+                            array_push($crs_users, $users_system[$user_bua]);
                             $this->Course->save(array(
                                 'Course' => array(
                                     'id' => $course_id
                                 ),
                                 'User' => array(
-                                    'id' => $users_system[$user_bua]
+                                    'User' => $crs_users
                                 )
                             ));
                             // lisätään assarille vastuuryhmä ja otetaan ryhmän id talteen
