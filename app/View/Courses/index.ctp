@@ -1,3 +1,34 @@
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#CreateManyLink').addClass('disabled');
+        var n = $('#CreateManyActions').find('input[type="checkbox"]:checked').length;
+        if ( n > 0 ) {
+            $('#CreateManyLink').removeClass('disabled');
+        }
+
+        $('#CreateManyLink').click(function(event) {
+            event.preventDefault();
+            if ( $(this).hasClass('disabled')) {
+                return false
+            } else {
+                return true;
+            }
+        });
+
+        $('#CreateManyActions').find('input[type="checkbox"]').each(function() {
+            var chkbox = this;
+            $(chkbox).click(function() {
+                var n = $('#CreateManyActions').find('input[type="checkbox"]:checked').length;
+                if ( n == 0 ) {
+                    $('#CreateManyLink').addClass('disabled');
+                } else {
+                    $('#CreateManyLink').removeClass('disabled');
+                }
+            })
+        });
+
+    });
+</script>
 <div class="row">
     <div class="twelvecol last">
         <?php
@@ -35,11 +66,29 @@
     echo $this->Form->select('group_id', $user_groups, array('div' => false, 'empty' => array(0 => 'Kaikki'), 'default' => $group_id));
     echo $this->Form->input('filter', array('div' => false, 'label' => __('Suodata'), 'id' => 'TextFilterKeyword'));
     echo $this->Form->end();
-    ?>
 
+    echo $this->Html->link(__('Lisää toimenpide valituille'),array(
+            'controller' => 'actions',
+            'action' => 'create_many'
+            ),
+            array('class' => 'modal-link',
+                'id' => 'CreateManyLink'
+            )
+    );
+
+    echo $this->Form->create(false, array('id' => 'CreateManyActions',
+            'url' => array('controller' => 'actions', 'action' => 'create_many'),
+            'inputDefaults' => array(
+                'label' => false,
+                'div' => false
+            )
+        )
+    );
+    ?>
     <table class="data-table" id="StudentsList" data-source="<?php echo $this->Html->url(array('admin' => false, 'controller' => 'students', 'action' => 'index_ajax')); ?>">
         <thead>
             <tr class="table-header">
+                <th></th><!-- checboxes -->
                 <th><?php echo __('Sukunimi'); ?></th>
                 <th><?php echo __('Etunimi'); ?></th>
                 <th><?php echo __('Opiskelijanumero'); ?></th>
@@ -53,6 +102,11 @@
             if ( !empty($students) ) { // check if not empty
                 foreach($students as $student) {
                     echo '<tr class="table-content">';
+                    echo '<td>' . $this->Form->checkbox('CourseMembership.'.$student['CourseMembership'][0]['id'], array(
+                                'value' => $student['CourseMembership'][0]['id'],
+                                'hiddenField' => false
+                            )
+                        ) . '</td>';
                     echo '<td>'.$this->Html->link($student['Student']['last_name'],
                         array('controller' => 'course_memberships', 'action' => 'view', $student['CourseMembership'][0]['id'])).'</td>';
                     echo '<td>'.$this->Html->link($student['Student']['first_name'],
@@ -84,9 +138,9 @@
                     echo '</tr>';
                 }
             } else { // print "nothing available"
-                echo '<tr><td id="empty" colspan="6">' . __('Ei opiskelijoita') . '</td><tr>';
+                echo '<tr><td class="empty" colspan="6">' . __('Ei opiskelijoita') . '</td><tr>';
             }
-
+            echo $this->Form->end();
             ?>
         </tbody>
     </table>

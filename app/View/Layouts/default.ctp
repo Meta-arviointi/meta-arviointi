@@ -47,7 +47,11 @@
 							echo '<div id="login-details">';
 							echo $this->Html->link(
 								$this->Session->read('Auth.User.name'),
-								array('controller' => 'users', 'action' => 'my_profile'),
+								array(
+									'controller' => 'users',
+									'action' => 'view',
+									$this->Session->read('Auth.User.id')
+									),
 								array('id' => 'my-profile-link', 'class' => 'header-button')
 							);
 							echo $this->Html->link(

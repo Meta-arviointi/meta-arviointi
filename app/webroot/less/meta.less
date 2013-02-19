@@ -221,10 +221,13 @@ hr.row {
 	}
 	td {
         padding: 5px 10px;
-        &#empty {
+        &.empty {
             text-align: center;
             font-size: 1.2em;
             font-weight: bold;
+            font-style: italic;
+        }
+        &.empty-cell {
             font-style: italic;
         }
 	}
@@ -324,7 +327,7 @@ textarea {
     }
 }
 
-.generic-action-form {
+.generic-action-form, .generic-many-actions-form {
     .input label {
         padding-right: 0.5em;
     }
@@ -737,4 +740,10 @@ textarea {
         display: inline-block;
         width: 150px;
     }
+}
+
+a.disabled {
+    color: grey;
+    pointer-events: none;
+    cursor: default;
 }

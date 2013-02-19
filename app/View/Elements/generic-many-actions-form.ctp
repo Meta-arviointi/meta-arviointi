@@ -1,16 +1,19 @@
 <script type="text/javascript">
     $(document).ready(function() {
-        $('.generic-action-form').submit(function() {
+
+        $('.generic-many-actions-form').submit(function() {
             var n = $(this).find('input[type="checkbox"]:checked').length;
             if ( n == 0 ) {
                 alert('<?php echo __("Valitse ainakin yksi harjoitus")?>');
                 return false;
-            } else {
-                return true;
+            } else { // #CreateManyActions is in /courses/index !
+                $(this).append(($('#CreateManyActions').find('input[type="checkbox"]:checked')).attr('type','hidden'));
+                return true;    
             }
+        
         });
 
-        $('.generic-action-form').find('.checkbox').each(function() {
+        $('.generic-many-actions-form').find('.checkbox').each(function() {
             var thisDiv = this;
             var url = <?php echo '\'' .  $this->Html->url(array(
                     'controller' => 'course_memberships',
@@ -24,24 +27,21 @@
                 $(thisDiv).append('<span class="timestamp"><?php echo __('Viim. arviointipäivä') . ': \''?> + data + '</span>');
             });
         });
-
-
     });
 </script>
 <?php
 $action = !empty($action_data['Action']) ? $action_data['Action'] : null;
 
 echo $this->Form->create('Action', array(
-    'class' => 'generic-action-form', 
-    'id' => 'generic-action-form', 
-    'url' => array('controller' => 'actions', 'action' => 'save')
+    'class' => 'generic-many-actions-form', 
+    'url' => array('controller' => 'actions', 'action' => 'create_many')
 ));
 
 if (isset($action['id']) ) {
     echo $this->Form->input('id', array('type' => 'hidden', 'default' => $action['id']));
 }
 // CourseMembership.id mandatory
-echo $this->Form->input('course_membership_id', array('type' => 'hidden', 'default' => $action_data['CourseMembership']['id']));
+//echo $this->Form->input('course_membership_id', array('type' => 'hidden', 'default' => $action_data['CourseMembership']['id']));
 
 // If editing, take user_id from data. If creating new, take user_id from session
 if (isset($action['user_id']) ) {
@@ -111,7 +111,7 @@ if ( (isset($action_type_id) && ($action_type_id == 1 || $action_type_id == 4)) 
     ));
 }
 
-echo $this->Form->input('description', array('label' => false, 'rows' => 3, 'default' => isset($action['description']) ? $action['description'] : null));
+echo $this->Form->input('description', array('label' => false, 'rows' => 3, 'default' => isset($action) ? $action['description'] : null));
 
 if ( isset($action['created']) ) {
     echo '<span class="timestamp">Luotu: ' . date('j.n.Y G:i', strtotime($action['created'])) 

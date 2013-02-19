@@ -97,15 +97,26 @@ class UsersController extends AppController {
 	    $this->set('users', $users);
     }
 
-/*
+
     public function view($id = null) {
-        $this->User->id = $id;
-        if (!$this->User->exists()) {
-            throw new NotFoundException(__('Invalid user'));
+        if ( $id == $this->Auth->user('id') || $this->Auth->user('is_admin') ) {
+            $this->User->id = $id;
+            if ($this->User->exists()) {
+                $this->set('user', $this->User->read(null, $id));    
+            } else {
+                throw new NotFoundException(__('Invalid user'));
+            }
+        } else {
+            $this->Session->setFlash(__('Ei riittäviä oikeuksia'));
+            // HUOM. Jos kirjoittaa urlilla /users/view/x, ainakaan
+            // Firefox ei lähetä HTTP_REFERER kenttää headerissa.
+            // Silloin ao. redirect menee '/'. Referer toimii Firefoxissa
+            // jos on painettu linkkiä. 
+            $this->redirect($this->referer());
         }
-        $this->set('user', $this->User->read(null, $id));
+        
     }
-*/
+
     public function admin_add() {
 
         if ($this->request->is('post')) {
