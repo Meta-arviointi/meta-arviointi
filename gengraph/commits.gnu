@@ -18,6 +18,10 @@ set yrange [0:]
 
 #plot 'commitlog.txt' using 1:2 with linespoints lt 1 title "Commits"
 #plot 'commitlog.txt' using 1:2 with linespoints lt 1 smooth csplines title "Commits"
+set xtics nomirror rotate by -45
+set key left
+set lmargin at screen 0.08
+set rmargin at screen 0.90
 plot 'commitlog.txt' using 1:2 linestyle 7 lt 2 lc 1 pointtype 7 title "Commit count", \
      'commitlog.txt' using 1:2 with linespoints lc 3 smooth csplines title "Commits trend", \
      'commitlog.txt' using 1:2 with linespoints lc 2 lw 2 smooth bezier title "Commits trend 2"
