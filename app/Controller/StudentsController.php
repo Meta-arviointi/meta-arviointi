@@ -20,12 +20,13 @@ class StudentsController extends AppController {
 					$csvfile = fopen($uploadfile, "r");
 
                     $users_system = $this->Course->User->find('list', array('fields' => array('basic_user_account', 'id')));
+//                    $course = $this->Course->findById($course_id);
+
                     $students_system = $this->Student->find('list', array('fields' => array('student_number', 'id')));
                     $users_csv = array();
                     $users_gid = array();
                     $users = 0;
                     $students = 0;
-
                     while(($row = fgetcsv($csvfile)) !== false) {
                         // $row[0] = sukunimi;etunimi;ppt;email;assari_ppt
                         $line = explode(';',$row[0]);
@@ -37,6 +38,11 @@ class StudentsController extends AppController {
                         $user_bua = $line[4];
                         $sid = 0;
                         $gid = 0;
+
+//                        if (in_array($user_bua, array_keys($users_course))) {
+                            // assari on jo kurssilla, assarin läpikäynti tarpeetonta
+//                            array_push($users_csv, $user_bua);
+//                        }
 
                         if (in_array($user_bua, $users_csv)) { 
                             // assari on käyty läpi jo
@@ -53,12 +59,6 @@ class StudentsController extends AppController {
                                 $users_system[$user_bua] = $this->Course->User->id;
                             }
                             // lisätään assari kurssille
-                            /*echo "assarin lisäys kurssille";
-                            echo "<br/>";
-                            echo "course_id = ". $course_id;
-                            echo "<br/>";
-                            echo "user id = ". $users_system[$user_bua];
-                            echo "<br/>";*/
                             $crs = $this->Course->findById($course_id);
                             $crs_users = $crs['User'];
                             array_push($crs_users, $users_system[$user_bua]);
@@ -82,7 +82,8 @@ class StudentsController extends AppController {
                         }
 
                         if (in_array($student_bua, array_keys($students_system))) {
-                            // opiskelija on jo järjestelmässä, lisätään opiskelija määriteltyyn ryhmään
+                            // opiskelija on jo järjestelmässä
+//                            if (ryhmä)
                             $this->Student->create();
                             $this->Student->save(array(
                                 'Student' => array(
@@ -94,7 +95,7 @@ class StudentsController extends AppController {
                             ));
                             $sid = $students_system[$student_bua];
                         } else {
-                            // opiskelijaa ei ole järjestelmässä, lisätään opiskelija järjestelmään ja liitetään määriteltyyn ryhmään
+                            // opiskelijaa ei ole järjestelmässä, lisätään opiskelija järjestelmään
                             $this->Student->create();
                             $this->Student->save(array(
                                 'Student' => array(
@@ -109,14 +110,19 @@ class StudentsController extends AppController {
                             ));
                             $sid = $this->Student->id;                                                    
                         }
-                        $this->Student->CourseMembership->create();
-                        $this->Student->CourseMembership->save(array('course_id' => $course_id, 'student_id' => $sid));
-                        $students++;
-                    }
+                        if ($this->Student->hasCourseMembership($sid, $course_id)) {
+                            // opiskelija on jo kurssille merkittynä, ei lisätä uutta merkintää
+                        } else {
+                            $this->Student->CourseMembership->create();
+                            $this->Student->CourseMembership->save(array('course_id' => $course_id, 'student_id' => $sid));
+                        }
+                        $students++; 
+                   }
 
 					fclose($csvfile);
 					unlink($uploadfile);
-//                    $this->redirect(array('action' => 'index', 'controller' => 'courses', $course_id));
+                    $this->Session->setFlash(__('Kurssille lisätty '. $students .' opiskelijaa ja '. $users .' assistenttia.'));
+                    $this->redirect(array('action' => 'index', 'controller' => 'courses', $course_id));
 				} else {
 					// FAILED
 				}
