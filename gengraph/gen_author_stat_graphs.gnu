@@ -3,7 +3,8 @@ reset
 set terminal png size 600,600
 set output "author_stats.png"
 set ylabel "Commits"
-set yrange [0:60]
+set yrange [0:110]
+set ytics auto
 set grid
 set xlabel "Author"
 set xtics nomirror rotate by -45
