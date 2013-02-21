@@ -1,11 +1,12 @@
 <div class="row">
-    <div class="twelvecol last">
-        <?php
-            echo __('Opiskelijat');
-            echo ' | ';
-            echo $this->Html->link(__('Toimenpiteet'), array('action' => 'index_actions'));
-        ?>
-        <hr>
+    <div class="twelveol">
+<?php 
+$links = array(
+        array('text' => __('Kurssit'), 'url' => array('controller' => 'courses')),
+        array('text' => __('Assistentit'), 'url' => array('controller' => 'users'), 'options' => array('class' => 'selected'))
+);
+echo $this->element('tab-menu', array('links' => $links)); 
+?>
     </div>
 </div>
 <div class="row">
@@ -16,15 +17,7 @@
     echo '<pre>';
     //debug($students);
     echo '</pre>';
-
-    // Selection for assistent groups
-    echo $this->Form->create(false, array('id' => 'UsersList', 'type' => 'get'));
-    echo $this->Form->label('group', 'Kurssi');
-    echo $this->Form->select('course_id', $course_groups, array('empty' => array(0 => 'Kaikki kurssit'), 'default' => 0));
-    echo $this->Form->input('filter', array('div' => false, 'label' => __('Suodata'), 'id' => 'TextFilterKeyword'));
-    echo $this->Form->end();
-    ?>
-
+?>
     <table class="data-table" id="UsersList">
         <tr>
             <th><?php echo __('Sukunimi'); ?></th>

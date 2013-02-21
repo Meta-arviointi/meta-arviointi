@@ -1,24 +1,12 @@
 <div class="row">
-    <div class="twelvecol last">
-        <?php
-            echo $this->Form->create(false, array(
-                    'type' => 'get',
-                    'action' => 'index_rdr',
-                    'id' => 'UserCourseSelection'
-                )
-            );
-            echo $this->Form->input('course_id', array(
-                    'options' => $users_courses,
-                    'default' => $this->Session->read('Course.course_id'),
-                    'label' => __('Kurssi'),
-                )
-            );
-            echo $this->Form->end();
-            echo $this->Html->link(__('Opiskelijat'), array('controller' => 'courses', 'action' => 'index'));
-            echo ' | ';
-            echo __('Toimenpiteet')
-        ?>
-        <hr>
+    <div class="twelveol">
+<?php 
+$links = array(
+        array('text' => __('Opiskelijat'), 'url' => array('controller' => 'students')),
+        array('text' => __('Toimenpiteet'), 'url' => array('controller' => 'actions'), 'options' => array('class' => 'selected'))
+);
+echo $this->element('tab-menu', array('links' => $links)); 
+?>
     </div>
 </div>
 <div class="row">

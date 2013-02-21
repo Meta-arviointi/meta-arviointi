@@ -41,7 +41,26 @@
 	<div id="header">
 		<div class="container">
 			<div class="row">
-				<div class="twelvecol">
+				<div class="twocol">
+					<h1><?php echo $this->Html->link(__('Meta-arviointi'), array(
+							'admin' => false,
+							'controller' => 'students',
+							'action' => 'index'
+							),
+							array('class' => 'root-link')
+						) ?>
+					</h1>
+				</div>
+				<div class="twocol">
+					<?php 
+						if ( $course_selection && isset($users_courses)) {
+							echo $this->element('course-selection', array('users_courses', $users_courses));
+						}
+					?>
+				</div>
+				<div class="twocol">
+				</div>
+				<div class="sixcol last">
 					<?php
 						if($this->Session->read('Auth.User')) {
 							echo '<div id="login-details">';
@@ -58,6 +77,18 @@
 								__('Kirjaudu ulos'),
 								array('admin' => false, 'controller' => 'users', 'action' => 'logout', 'course_id' => false),
 								array('id' => 'logout-link', 'class' => 'header-button')
+							);
+							echo '</div>';
+
+							echo '<div id="admin-link">';
+							echo $this->Html->link(__('Hallinnointi'), array(
+									'admin' => true,
+									'controller' => 'courses',
+									'action' => 'index'
+								), 
+								array(
+									'class' => 'header-button'
+								)
 							);
 							echo '</div>';
 
@@ -84,8 +115,8 @@
 							echo '</div>';
 						} 
 					?>
-					<h1>Meta-arviointi</h1>
 				</div>
+				
 			</div>
 		</div>
 	</div>

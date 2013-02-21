@@ -1,11 +1,12 @@
 <div class="row">
-    <div class="twelvecol last">
-        <?php
-            echo __('Opiskelijat');
-            echo ' | ';
-            echo $this->Html->link(__('Toimenpiteet'), array('action' => 'index_actions'));
-        ?>
-        <hr>
+    <div class="twelveol">
+<?php 
+$links = array(
+        array('text' => __('Kurssit'), 'url' => array('controller' => 'courses'), 'options' => array('class' => 'selected')),
+        array('text' => __('Assistentit'), 'url' => array('controller' => 'users'))
+);
+echo $this->element('tab-menu', array('links' => $links)); 
+?>
     </div>
 </div>
 <div class="row">
@@ -118,10 +119,6 @@
 
         }
     } else {
-        echo $this->Form->create(false, array('id' => 'CoursesList', 'type' => 'get'));
-        echo $this->Form->label('group', 'Kurssit');
-        echo $this->Form->select('course_id', $course_groups, array('empty' => array(0 => 'Kaikki kurssit'), 'default' => 0));
-        echo $this->Form->end();
 
         echo '        <table class="data-table">';
         echo '        <tr>';
