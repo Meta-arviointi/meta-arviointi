@@ -1,3 +1,4 @@
+<div id="course-selection-dropdown">
 <?php
     echo $this->Form->create(false, array(
             'type' => 'get',
@@ -13,3 +14,4 @@
     );
     echo $this->Form->end();
 ?>
+</div>
