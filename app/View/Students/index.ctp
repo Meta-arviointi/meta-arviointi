@@ -30,28 +30,17 @@
     });
 </script>
 <div class="row">
-    <div class="twelvecol last">
-        <?php
-            echo $this->Form->create(false, array(
-                    'type' => 'get',
-                    'action' => 'index_rdr',
-                    'id' => 'UserCourseSelection'
-                )
-            );
-            echo $this->Form->input('course_id', array(
-                    'options' => $users_courses,
-                    'default' => $this->Session->read('Course.course_id'),
-                    'label' => __('Kurssi'),
-                )
-            );
-            echo $this->Form->end();
-            echo __('Opiskelijat');
-            echo ' | ';
-            echo $this->Html->link(__('Toimenpiteet'), array('controller' => 'actions'));
-        ?>
-        <hr>
+    <div class="twelveol">
+<?php 
+$links = array(
+        array('text' => __('Opiskelijat'), 'url' => array('controller' => 'students'), 'options' => array('class' => 'selected')),
+        array('text' => __('Toimenpiteet'), 'url' => array('controller' => 'actions'))
+);
+echo $this->element('tab-menu', array('links' => $links)); 
+?>
     </div>
 </div>
+
 <div class="row">
 	<div class="twelvecol last">
     <?php 
