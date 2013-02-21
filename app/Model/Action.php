@@ -10,6 +10,33 @@ class Action extends AppModel {
     );
     public $hasAndBelongsToMany = array('Exercise');
 
+    public $validate = array(
+        'user_id' => array(
+            'rule' => 'notEmpty',
+            'required' => true,
+            'message' => 'Käyttäjää ei voitu tallentaa'
+        ),
+        'course_membership_id' => array(
+            'rule' => 'notEmpty',
+            'required' => true,
+            'message' => 'Opiskelijaa ei voitu kohdetaa'
+        ),
+        'action_type_id' => array(
+            'rule' => 'notEmpty',
+            'required' => true,
+            'message' => 'Valitse toimenpidetyyppi'
+        ),
+        'deadline' => array(
+            'rule' => array('datetime', 'dmy'),
+            'message' => 'Anna päivä ja aika muodossa: pp.kk.vvvv hh:mm',
+            'allowEmpty' => true
+        ),
+        'Exercise' => array(
+            'rule' => array('multiple', array('min' => 1)),
+            'message' => 'Valitse ainakin yksi harjoitus'
+        )
+    );
+
     /*
      * Return all actions created after last login.
      * Optional parameter last_login. If not set take
