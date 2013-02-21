@@ -13,6 +13,10 @@ class Exercise extends AppModel {
                 	'notEmpty'
                 ), 
                 'message' => 'Exercise name is required'
+            ),
+            'dateformat' => array(
+                'rule' => array('datetime', 'dmy'),
+                'message' => 'Tarkista päivämäärän muoto (pp.kk.vvvv hh:mm)'
             )
         ),
         'starttime' => array(
@@ -21,6 +25,10 @@ class Exercise extends AppModel {
                 	'notEmpty'
                 ), 
                 'message' => 'Exercise start time is required'
+            ),
+            'dateformat' => array(
+                'rule' => array('datetime', 'dmy'),
+                'message' => 'Tarkista päivämäärän muoto (pp.kk.vvvv hh:mm)'
             )
         ),
         'endtime' => array(
@@ -29,6 +37,10 @@ class Exercise extends AppModel {
                 	'notEmpty'
                 ), 
                 'message' => 'Exercise end time is required'
+            ),
+            'dateformat' => array(
+                'rule' => array('datetime', 'dmy'),
+                'message' => 'Tarkista päivämäärän muoto (pp.kk.vvvv hh:mm)'
             )
         ),
         'review_starttime' => array(
@@ -37,6 +49,10 @@ class Exercise extends AppModel {
                 	'notEmpty'
                 ), 
                 'message' => 'Review start time is required'
+            ),
+            'dateformat' => array(
+                'rule' => array('datetime', 'dmy'),
+                'message' => 'Tarkista päivämäärän muoto (pp.kk.vvvv hh:mm)'
             )
         ),
         'review_endtime' => array(
@@ -45,6 +61,10 @@ class Exercise extends AppModel {
                 	'notEmpty'
                 ), 
                 'message' => 'Review end time is required'
+            ),
+            'dateformat' => array(
+                'rule' => array('datetime', 'dmy'),
+                'message' => 'Tarkista päivämäärän muoto (pp.kk.vvvv hh:mm)'
             )
         )
     );

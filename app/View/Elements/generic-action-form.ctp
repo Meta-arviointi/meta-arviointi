@@ -1,5 +1,6 @@
 <script type="text/javascript">
     $(document).ready(function() {
+        /*
         $('.generic-action-form').submit(function() {
             var n = $(this).find('input[type="checkbox"]:checked').length;
             if ( n == 0 ) {
@@ -9,7 +10,7 @@
                 return true;
             }
         });
-
+*/
         $('.generic-action-form').find('.checkbox').each(function() {
             var thisDiv = this;
             var url = <?php echo '\'' .  $this->Html->url(array(

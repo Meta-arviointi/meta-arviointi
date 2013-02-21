@@ -279,10 +279,10 @@ echo $this->element('tab-menu', array('links' => $links));
                     'label' => false
                 )
             ));
-            echo $this->Form->input('redirect', array('type' => 'hidden', 'default' => $course_membership['CourseMembership']['id']));
             echo $this->Form->input('action_id', array('type' => 'hidden', 'default' => $action['Action']['id']));
             echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
             echo $this->Form->input('comment', array('rows' => 2));
+            echo $this->Form->error('comment');
             echo $this->Form->submit(__('Lähetä kommentti'));
             echo $this->Form->end();
 

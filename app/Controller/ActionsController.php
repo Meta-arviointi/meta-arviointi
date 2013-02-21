@@ -191,6 +191,9 @@ class ActionsController extends AppController {
                         '?' => array('scroll_to' => 'action'.$id)
                      )
                 );            
+            } else {
+                $this->Session->setFlash(__("Toimenpidettä ei voitu tallentaa (valittiinko harjoituksia?)"));
+                $this->redirect($this->referer());
             }
         }
     }
@@ -245,15 +248,18 @@ class ActionsController extends AppController {
 
     public function add_action_comment() {
         if($this->request->is('post')) {
-            //debug($this->request);
             if($this->Action->ActionComment->save($this->request->data)) {
+                $this->Action->id = $this->request->data['ActionComment']['action_id'];
+                $cm = $this->Action->field('course_membership_id');
                 $this->redirect(array(
-                    'controller' => 'course_memberships',
-                    'action' => 'view',
-                    // parameter value comes from POST data
-                    $this->request->data['ActionComment']['redirect']
+                        'controller' => 'course_memberships',
+                        'action' => 'view',
+                        $cm
                     )
                 );
+            } else {
+                $this->Session->setFlash(__('Kommenttia ei voitu luoda'));
+                $this->redirect($this->referer());
             }
         }
     }

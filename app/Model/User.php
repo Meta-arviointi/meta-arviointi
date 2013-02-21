@@ -23,22 +23,33 @@ class User extends AppModel {
 
     public $validate = array(
         'basic_user_account' => array(
-            'required' => array(
-                'rule' => array('notEmpty'),
-                'message' => 'A basic user account is required'
+            'notEmpty' => array(
+                'rule' => 'notEmpty',
+                'required' => true,
+                'message' => 'Peruspalvelutunnus vaaditaan'
+            ),
+            'maxLength' => array(
+                'rule' => array('maxLength', 30),
+                'required' => true,
+                'message' => 'Tunnus liian pitkä (max 30 merkkiä)'
+            ),
+            'isUnique' => array(
+                'rule' => 'isUnique',
+                'required' => true,
+                'message' => 'Tunnus on jo käytössä'
             )
         ),
         'password' => array(
             'required' => array(
                 'rule' => array('notEmpty'),
-                'message' => 'A password is required'
+                'message' => 'Salasana on pakollinen'
             )
         ),
         'email' => array(
             'email',
             'required' => array(
                 'rule' => array('notEmpty'),
-                'message' => 'Email is required'
+                'message' => 'Sähköposti on pakollinen'
             )
         )
     );

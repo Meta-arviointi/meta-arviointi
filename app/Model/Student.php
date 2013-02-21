@@ -12,6 +12,29 @@ class Student extends AppModel {
         'name' => 'Student.first_name || \' \' || Student.last_name'
     );
 
+    public $validate = array(
+        'first_name' => array(
+            'rule' => 'alphaNumeric',
+            'required' => true,
+            'message' => 'Etunimi on pakollinen (vain numeroita tai kirjaimia)'
+        ),
+        'last_name' => array(
+            'rule' => 'alphaNumeric',
+            'required' => true,
+            'message' => 'Sukunimi on pakollinen (vain numeroita tai kirjaimia)'
+        ),
+        'email' => array(
+            'rule' => 'email',
+            'required' => true,
+            'message' => 'Sähköposti on puutteellinen'
+        ),
+        'student_number' => array(
+            'rule' => 'alphaNumeric',
+            'required' => true,
+            'message' => 'Opiskelijanumero on pakollinen'
+        )
+    );
+
     public function find_student($bua) {
         return $this->find('first', array('conditions' => array('student_number' => $bua)));
     }

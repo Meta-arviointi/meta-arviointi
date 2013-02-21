@@ -51,14 +51,12 @@
 						) ?>
 					</h1>
 				</div>
-				<div class="twocol">
+				<div class="fourcol">
 					<?php 
 						if ( $course_selection && isset($users_courses)) {
 							echo $this->element('course-selection', array('users_courses', $users_courses));
 						}
 					?>
-				</div>
-				<div class="twocol">
 				</div>
 				<div class="sixcol last">
 					<?php

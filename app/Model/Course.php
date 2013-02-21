@@ -11,19 +11,27 @@ class Course extends AppModel {
         'name' => array(
             'required' => array(
                 'rule' => array('notEmpty'),
-                'message' => 'Course name is required'
+                'message' => 'Kurssin nimi on pakollinen'
             )
         ),
         'starttime' => array(
             'required' => array(
                 'rule' => array('notEmpty'),
-                'message' => 'Course start time is required'
+                'message' => 'Aloituspäivämäärä on pakollinen'
+            ),
+            'dateformat' => array(
+                'rule' => array('datetime', 'dmy'),
+                'message' => 'Tarkista päivämäärän muoto'
             )
         ),
         'endtime' => array(
             'required' => array(
                 'rule' => array('notEmpty'),
-                'message' => 'Course end time is required'
+                'message' => 'Loppumispäivämäärä on pakollinen'
+            ),
+            'dateformat' => array(
+                'rule' => array('datetime', 'dmy'),
+                'message' => 'Tarkista päivämäärän muoto (pp.kk.vvvv hh:mm)'
             )
         )
     );
