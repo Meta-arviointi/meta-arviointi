@@ -142,9 +142,7 @@ class User extends AppModel {
                     )
                 )
             );
-
             $user = $this->find('first',$options);
-            debug($user);
             return $user['Course']; // empty array() if false
         } else {
             return false;

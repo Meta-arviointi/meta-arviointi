@@ -253,25 +253,36 @@ class StudentsController extends AppController {
                             // add group id linkage to $user_bua
                             $user_group[$user_bua] = $gid;
 
+
                         } // AFTER THIS IF-ELSE, WE KNOW: 1) user id ($uid), 2) user's group id ($gid)
 
                         // STEP 2: CHECK STUDENT STATUS
+
                         if (in_array($student_bua, array_keys($students_system))) {
                             // Student already saved in system, get $sid
                             $sid = $students_system[$student_bua];
                             // Check if student has a group assigned in course
                             $group = $this->Student->student_group($sid, $course_id);
                             if ( !$group ) { // no group, create group linkage
-                                $stdnt = $this->Student->findById($sid);
-                                $stdnt_group = $stdnt['Group'];
-                                $this->Student->save(array(
-                                    'Student' => array(
-                                        'id' => $sid
-                                    ),
+                                $group = $this->Student->Group->findById($gid);
+                                $group_students = $group['Student'];
+                                array_push($group_students, $sid);
+                                //debug($group_students);
+                                $options = array(
                                     'Group' => array(
-                                        'Group' => $stdnt_group
+                                        'id' => $gid
+                                    ),
+                                    'Student' => array(
+                                        'Student' => $group_students
                                     )
-                                ));
+                                );
+                                //debug($options);
+                                $this->Student->Group->save($options);
+                                /*debug($data);
+                                $group = $this->Student->Group->findById($gid);
+                                $group_students = $group['Student'];
+                                debug($group_students);
+                                exit;*/
                             } else {
                                 // student is already linked to group in course.
                                 // (but we don't know if it's group supervised by $uid,
