@@ -74,6 +74,7 @@ echo $this->element('tab-menu', array('links' => $links));
             echo '<table class="data-table">';
             echo '    <tr>';
             echo '        <th>'. __('Nimi') .'</th>';
+            echo '        <th>'. __('PPT') .'</th>';
             echo '        <th>'. __('Sähköposti') .'</th>';
             echo '        <th>'. __('Ryhmän koko') .'</th>';
             echo '    </tr>';
@@ -82,6 +83,7 @@ echo $this->element('tab-menu', array('links' => $links));
                 if ($assari['is_admin'] != 'false') { 
                     echo '<tr>';
                     echo '<td>'. $this->Html->link($assari['first_name'] .' '. $assari['last_name'], array('controller' => 'users', 'action' => 'view', 'admin' => false, $assari['id'])). '</td>';
+                    echo '<td>' . $assari['basic_user_account'] . '</td>';
                     echo '<td>'. $assari['email'] .'</td>';
                     if (isset($groups[$assari['id']])) {
                         echo '<td>'. $groups[$assari['id']] .'</td>';
@@ -101,6 +103,7 @@ echo $this->element('tab-menu', array('links' => $links));
             echo '    <tr>';
             echo '        <th>'. __('Etunimi') .'</th>';
             echo '        <th>'. __('Sukunimi') .'</th>';
+            echo '        <th>'. __('Opiskelijanumero') .'</th>';
             echo '        <th>'. __('Sähköposti') .'</th>';
             echo '        <th>'. __('Vastuuassistentti') .'</th>';
             echo '    </tr>';
@@ -109,6 +112,7 @@ echo $this->element('tab-menu', array('links' => $links));
                 echo '<tr>';
                 echo '<td>'. $student['Student']['first_name'] .'</td>';
                 echo '<td>'. $student['Student']['last_name'] .'</td>';
+                echo '<td>'. $student['Student']['student_number'] .'</td>';
                 echo '<td>'. $student['Student']['email'] .'</td>';
                 foreach($student['Group'] as $stg) {
                     echo '<td>'. $stg['User']['name'] .'</td>';
