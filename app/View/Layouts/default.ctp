@@ -41,7 +41,7 @@
 	<div id="header">
 		<div class="container">
 			<div class="row">
-				<div class="twocol">
+				<div class="fivecol">
 					<h1><?php echo $this->Html->link(__('Meta-arviointi'), array(
 							'admin' => false,
 							'controller' => 'students',
@@ -50,15 +50,13 @@
 							array('class' => 'root-link')
 						) ?>
 					</h1>
-				</div>
-				<div class="fourcol">
 					<?php 
 						if ( $course_selection && isset($users_courses)) {
 							echo $this->element('course-selection', array('users_courses', $users_courses));
 						}
 					?>
 				</div>
-				<div class="sixcol last">
+				<div class="sevencol last">
 					<?php
 						if($this->Session->read('Auth.User')) {
 							echo '<div id="login-details">';
