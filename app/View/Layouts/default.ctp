@@ -41,7 +41,7 @@
 	<div id="header">
 		<div class="container">
 			<div class="row">
-				<div class="twocol">
+				<div class="threecol">
 					<h1><?php echo $this->Html->link(__('Meta-arviointi'), array(
 							'admin' => false,
 							'controller' => 'students',
@@ -51,7 +51,7 @@
 						) ?>
 					</h1>
 				</div>
-				<div class="fourcol">
+				<div class="threecol">
 					<?php 
 						if ( $course_selection && isset($users_courses)) {
 							echo $this->element('course-selection', array('users_courses', $users_courses));
