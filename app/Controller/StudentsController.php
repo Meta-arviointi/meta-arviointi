@@ -179,7 +179,7 @@ class StudentsController extends AppController {
                     // Add timestamp to import logfile
                     $log_filename = 'Meta_csv_import_'. date('dmy-His').'.txt'; 
                     // create file
-                    $import_log = new File(WWW_ROOT . 'files'. DS .$log_filename, true, 0644);
+                    $import_log = new File(LOGS. DS .$log_filename, true, 0644);
 
                     $users_system = $this->Course->User->find('list', array('fields' => array('basic_user_account', 'id')));
 
@@ -271,11 +271,14 @@ class StudentsController extends AppController {
 
                                     
                                 } else {
-                                   //TODO: user not in system, add to log 
+                                   //User not in system
+                                    $row_errors[] = "Assistentti ($user_bua) ei järjestelmässä. Lisää assistentti käsin." .
+                                        " Lisätään opiskelijaa ($student_number) järjestelmään...";
                                 } 
                                 
                             } else {
                                 // else NO USER INFORMATION IN ROW
+                                
                             }
 
                             // At this point, IF $user_bua was found from the csv-line:
@@ -318,14 +321,19 @@ class StudentsController extends AppController {
                                     debug($group_students);
                                     exit;*/
                                 } else {
+                                    if ( !$uid ) {
+                                        // We end up here, if $uid is not known (we can't link
+                                        // student to particular group)
+                                        $row_errors[] = "Tuntematon assistentti. Opiskelija ($student_number) lisätään kurssille ilman vastuuryhmää.";
+                                    } else {
+                                        $row_errors[] = "Opiskelija ($student_number) on jo liitetty johonkin vastuuryhmään.";
+                                    }
                                     // student is already linked to group in course
                                     // (but we don't know if it's group supervised by $uid,
                                     // or somebody else. If it's needed, group's user_id can be found
                                     // from $group[0][user_id].
                                     // Atm we skip information as we assume it's enough that student is assigned
                                     // to some group
-                                    // We end up in this else, if $uid is not known (we can't link
-                                    // student to particular group)
                                 }
                                 
                             } else { // STUDENT IS NEW
@@ -357,6 +365,10 @@ class StudentsController extends AppController {
                                             )
                                         )
                                     );
+                                    if ( $rdata ) {
+                                        $row_errors[] = "Tuntematon assistentti. Uusi opiskelija ($student_number) luotu.".
+                                            " Lisätään kurssille ilman vastuuryhmää.";
+                                    }
                                     
                                     
                                 }
@@ -377,14 +389,21 @@ class StudentsController extends AppController {
                                     $students_course++;  // increment count of new students added to course
                                 }
 
+                            } else {
+                                $row_errors[] = "Opiskelijaa ($student_number) ei voitu luoda. Tarkista tiedot (esim e-mailin formaatti).";
                             }
 
 
                         } else {
-                            // there were less than four items in row
+                            $row_errors[] = 'Rivi väärän muotoinen. Oikea muoto: sukunimi;etunimi;opnumero;email[;assari_ppt]';
                         }
 
-                        
+                        if ( count($row_errors) > 0 ) {
+                            foreach($row_errors as $error) {
+                                $row_string = "Rivi $curr_row: " . $error . "\n";
+                                $import_log->append($row_string);
+                            }
+                        }
                    }
 
 					fclose($csvfile);
