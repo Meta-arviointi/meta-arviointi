@@ -43,7 +43,7 @@ class AppController extends Controller {
         'Session',
         'Auth' => array(
             'loginAction' => array('controller' => 'users', 'action' => 'login', 'course_id' => false, 'admin' => false),
-            'loginRedirect' => array('controller' => 'courses', 'action' => 'index'),
+            'loginRedirect' => array('controller' => 'students', 'action' => 'index'),
             'logoutRedirect' => array('controller' => 'users', 'action' => 'login', 'course_id' => false),
             'authError' => 'Ole hyvä ja kirjaudu sisään',
             'authenticate' => array(
