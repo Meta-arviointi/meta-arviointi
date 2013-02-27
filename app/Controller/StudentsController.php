@@ -485,16 +485,13 @@ class StudentsController extends AppController {
             }
         }
 
+
         // Loop to fetch all actions related to one student
         foreach ($students as &$student) {
-            $student_actions = $this->Course->Exercise->Action->find('all', array(
+            $this->Student->CourseMembership->Action->contain();
+            $student_actions = $this->Student->CourseMembership->Action->find('all', array(
                     'conditions' => array(
-                        'Action.student_id' => $student['Student']['id']
-                    ),
-                    'contain' => array(
-                        'Exercise' => array(
-                            'conditions' => array('Exercise.course_id' => $course_id)
-                        )
+                        'Action.course_membership_id' => $student['CourseMembership'][0]['id']
                     )
                 )
             );
@@ -502,14 +499,10 @@ class StudentsController extends AppController {
             // from call to find('all'), and add actions to
             // $student['Action'] -array
             foreach ($student_actions as $action) {
-                // Check that action belongs to exercise
-                // that belongs to current course
-                if ( !empty($action['Exercise']) ) {
-                    $student['Action'][] = $action['Action'];
-                }
+                $student['Action'][] = $action['Action'];
             }
         }
-
+        
 		$this->set('students', $students);
 	}
 
