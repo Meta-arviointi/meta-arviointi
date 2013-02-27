@@ -5,6 +5,11 @@ class ActionType extends AppModel {
 	
 	public $hasMany = array('Action');
 
+    public $hasOne = array('ActionEmailTemplate' => array(
+        'dependent' => true
+        )
+    );
+    
 	/**
 	 * Fetch action types, that are active 
 	 * @return all types with id as key and type name as value
