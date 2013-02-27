@@ -10,7 +10,7 @@ echo $this->element('tab-menu', array('links' => $links));
     </div>
 </div>
 <div class="row">
-	<div class="twelvecol last">
+    <div class="twelvecol last">
 
     <?php 
      /* DEBUG */
@@ -30,10 +30,21 @@ echo $this->element('tab-menu', array('links' => $links));
 // lisää controlleriin data admin booleanista, tänne if tarkistus onko admin - pois listasta jos on?
             echo '<tr>';
             echo '<td>'.$this->Html->link($user['User']['last_name'], 
-                array('controller' => 'user', 'action' => 'view', $user['User']['id'])).'</td>';
+                array('admin' => false,
+                    'controller' => 'users',
+                    'action' => 'view',
+                    $user['User']['id']
+                    )
+                ).'</td>';
             echo '<td>'.$this->Html->link($user['User']['first_name'], 
-                array('controller' => 'user', 'action' => 'view', $user['User']['id'])).'</td>';
-	    echo '<td>';
+                array('admin' => false,
+                     'controller' => 'users',
+                     'action' => 'view',
+                     $user['User']['id']
+                     )
+                ).'</td>';
+            echo '<td>';
+            
             foreach($user['Course'] as $userc) {
                 echo $this->Html->link($userc['name'].'<br />',
                 array('controller' => 'courses', 'action' => 'admin_index', $userc['id']),
@@ -41,7 +52,12 @@ echo $this->element('tab-menu', array('links' => $links));
             }
             echo '</td>';
             echo '<td>'.$this->Html->link($user['User']['email'], 
-                array('controller' => 'user', 'action' => 'view', $user['User']['id'])).'</td>';
+                array('admin' => false, 
+                    'controller' => 'users', 
+                    'action' => 'view', 
+                    $user['User']['id']
+                    )
+                ).'</td>';
         }
         ?>
     </table>

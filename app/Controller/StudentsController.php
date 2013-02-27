@@ -1,7 +1,7 @@
 <?php
 class StudentsController extends AppController {
 
-	public $name = 'Students';
+    public $name = 'Students';
 
         public function index($course_id = 0) {
         // Flag variable to indicate if course is changed
@@ -156,42 +156,60 @@ class StudentsController extends AppController {
         );
     }
 
-	public function admin_add() {
+    public function admin_add() {
 
         $course_id = $this->Session->read('Course.admin_course');
         $course_id = intval($course_id); // from session, datatype is char
 
-		if( $this->request->is('post') ) {
-			if ( empty($this->data['Student']['tmp_file']) ) {
+        if( $this->request->is('post') ) {
+            if ( empty($this->data['Student']['tmp_file']) ) {
                 // single student
-				if ( $this->Student->save($this->request->data) ) {
+                if ( $this->Student->save($this->request->data) ) {
                     $this->redirect(array('action' => 'index', 'controller' => 'courses', $course_id));
-				} else {
+                } else {
                     $this->Session->setFlash('Opiskelijan tallennus ei onnistunut');
                     $this->redirect($this->referer());
                 }
-			} else { // CSV IMPORT
+            } else { // CSV IMPORT
                 App::uses('File', 'Utility');
 
-				$uploadfile = WWW_ROOT . 'files/' . basename($this->data['Student']['tmp_file']['name']);
-				if ( move_uploaded_file($this->data['Student']['tmp_file']['tmp_name'], $uploadfile) ) {
-					$csvfile = fopen($uploadfile, "r"); // OPEN CSV
+                $uploadfile = WWW_ROOT . 'files/' . basename($this->data['Student']['tmp_file']['name']);
+                if ( move_uploaded_file($this->data['Student']['tmp_file']['tmp_name'], $uploadfile) ) {
+                    $csvfile = fopen($uploadfile, "r"); // OPEN CSV
+
                     // Add timestamp to import logfile
                     $log_filename = 'Meta_csv_import_'. date('dmy-His').'.txt'; 
                     // create file
-                    $import_log = new File(LOGS. DS .$log_filename, true, 0644);
+                    $import_log = new File(LOGS. DS .$log_filename, true, 0640);
 
-                    $users_system = $this->Course->User->find('list', array('fields' => array('basic_user_account', 'id')));
-
-                    $students_system = $this->Student->find('list', array('fields' => array('student_number', 'id')));
+                    // Get users from system
+                    $users_system = $this->Course->User->find('list', array(
+                        'fields' => array('basic_user_account', 'id')
+                        )
+                    );
+                    // Get students from system
+                    $students_system = $this->Student->find('list', array(
+                        'fields' => array('student_number', 'id')
+                        )
+                    );
 
                     $users_csv = array();
                     $users_gid = array();
                     $users = 0;
-                    $students_course = 0; // students added to course
                     $new_students = 0;
                     $new_groups = 0;
                     $curr_row = 0;
+                    $students_course = array(); // students added to course
+                    // totally new students
+                    $created_students = array();
+                    $new_students_group = array();
+                    $new_students_wo_group = array();
+                    // created user groups
+                    $new_user_groups = array();
+                    // unknown users
+                    $unknown_users = array();
+                    // users linked to course
+                    $added_users = array();
                     while(($row = fgetcsv($csvfile)) !== false) {
                         $curr_row++; // increment current row
                         $row_errors = array();
@@ -239,7 +257,10 @@ class StudentsController extends AppController {
                                                 'User' => $crs_users
                                             )
                                         ));
-                                        $users++; // increment added users to course  
+                                        $users++; // increment added users to course
+                                        $this->Student->Group->User->contain();
+                                        $linked_user = $this->Student->Group->User->findById($uid);
+                                        $added_users[] =  $linked_user;
                                     } // else user already assigned to course
 
                                     // check if we already know user's group
@@ -260,6 +281,10 @@ class StudentsController extends AppController {
                                             // set $gid
                                             $gid = $this->Student->Group->id;
                                             $new_groups++;
+
+                                            $this->Student->Group->User->contain();
+                                            $g_user = $this->Student->Group->User->findById($uid);
+                                            $new_user_groups[] =  $g_user;                                            
                                         } else { // user has a group already
                                             // Take existing Group's ID
                                             $gid = $group['Group']['id'];
@@ -274,6 +299,7 @@ class StudentsController extends AppController {
                                    //User not in system
                                     $row_errors[] = "Assistentti ($user_bua) ei järjestelmässä. Lisää assistentti käsin." .
                                         " Lisätään opiskelijaa ($student_number) järjestelmään...";
+                                    $unknown_users[] = $user_bua;
                                 } 
                                 
                             } else {
@@ -289,7 +315,8 @@ class StudentsController extends AppController {
 
                             // STEP 2: CHECK STUDENT STATUS
 
-                            $sid = isset($students_system[$student_number]) ? $students_system[$student_number] : null;
+                            $sid = isset($students_system[$student_number]) ? 
+                                $students_system[$student_number] : null;
                             if ( $sid ) {
 
                                 // Student already saved in system
@@ -342,7 +369,7 @@ class StudentsController extends AppController {
                                 if ( !empty($uid) ) {
                                     $this->Student->create();
                                     // $uid is known, then we know also $gid
-                                    $this->Student->save(array(
+                                    $rdata = $this->Student->save(array(
                                         'Student' => array(
                                             'student_number' => $student_number,
                                             'last_name' => $student_lname,
@@ -352,9 +379,18 @@ class StudentsController extends AppController {
                                         'Group' => array(
                                             'id' => $gid
                                         )
-                                    ));    
-                                } else { // $uid not known, create new user
-
+                                    ));
+                                    if ( $rdata ) {
+                                        $new_students_group[] = array(
+                                            'Student' => array(
+                                                'student_number' => $student_number,
+                                                'last_name' => $student_lname,
+                                                'first_name' => $student_fname,
+                                                'email' => $student_email
+                                            )
+                                        );
+                                    }    
+                                } else { // $uid not known, create student w/o group
                                     $this->Student->create();
                                     $rdata = $this->Student->save(array(
                                         'Student' => array(
@@ -368,9 +404,9 @@ class StudentsController extends AppController {
                                     if ( $rdata ) {
                                         $row_errors[] = "Tuntematon assistentti. Uusi opiskelija ($student_number) luotu.".
                                             " Lisätään kurssille ilman vastuuryhmää.";
+                                        $new_students_wo_group[] = $rdata;
+
                                     }
-                                    
-                                    
                                 }
                                 
                                 // get just saved student's id
@@ -385,12 +421,19 @@ class StudentsController extends AppController {
                                     // Student not linked to current course
                                     // create CourseMembership
                                     $this->Student->CourseMembership->create();
-                                    $this->Student->CourseMembership->save(array('course_id' => $course_id, 'student_id' => $sid));
-                                    $students_course++;  // increment count of new students added to course
+                                    $this->Student->CourseMembership->save(array(
+                                        'course_id' => $course_id,
+                                        'student_id' => $sid
+                                        )
+                                    );
+                                    // add student to array of added students
+                                    $students_course[] = $this->Student->findById($sid);
+
                                 }
 
                             } else {
-                                $row_errors[] = "Opiskelijaa ($student_number) ei voitu luoda. Tarkista tiedot (esim e-mailin formaatti).";
+                                $row_errors[] = "Opiskelijaa ($student_number) ei voitu luoda.".
+                                " Tarkista tiedot (onko opiskelijanumero numero? e-mailin formaatti?).";
                             }
 
 
@@ -404,36 +447,59 @@ class StudentsController extends AppController {
                                 $import_log->append($row_string);
                             }
                         }
-                   }
+                    }
 
-					fclose($csvfile);
-					unlink($uploadfile);
-                    $this->Session->setFlash(__('Kurssille lisätty '. $students_course .' opiskelijaa ja '. $users .' assistenttia.'));
-                    $this->redirect(array('action' => 'index', 'controller' => 'courses', $course_id));
-				} else {
-					// FAILED to move csv file
-				}
-			}
-		}
-	}
+                    fclose($csvfile);
+                    unlink($uploadfile);
+                    $errors_log = $import_log->read();
+                    $import_log->close();
 
-	public function admin_edit($id) {
-		if($this->request->is('put')) {
-			if($this->Student->save($this->request->data)) {
-				$this->Session->setFlash('Tallennettu!');
-				$this->redirect(array('action' => 'view', $this->Student->id));
-			}
-			else $this->Session->setFlash('Ei onnistu!');
-		}
-		else {
-			$this->data = $this->Student->findById($id);
-		}
-	}
+                    $students_course = array(); // students added to course
+                    $new_students_group = array();
+                    $new_students_wo_group = array();
+                    // created user groups
+                    $new_user_groups = array();
+                    // unknown users
+                    $unknown_users = array();
+                    // users linked to course
+                    $added_users = array();
+                    $this->set('new_students_group',$new_students_group);
+                    $this->set('new_students_wo_group',$new_students_wo_group);
+                    $this->set('students_course', $students_course); // added CourseMemberships
+                    $this->set('added_users', $added_users); // linked users to course
+                    $this->set('new_user_groups', $new_user_groups); // linked users to course
+                    $this->set('unknown_users', $unknown_users);
+                    $this->set('errors_log', $errors_log);
+                    $this->set('new_users_count', count($new_students_group)
+                         + count($new_students_wo_group));
 
-	public function index_ajax() {
+                    $this->Session->setFlash(__('Kurssille lisätty '. count($students_course) .' opiskelijaa.'));
+                    $this->render('admin_csv_results');
+                    //$this->redirect(array('action' => 'index', 'controller' => 'courses', $course_id));
+                } else {
+                    // FAILED to move csv file
+                }
+            }
+        }
+    }
+
+    public function admin_edit($id) {
+        if($this->request->is('put')) {
+            if($this->Student->save($this->request->data)) {
+                $this->Session->setFlash('Tallennettu!');
+                $this->redirect(array('action' => 'view', $this->Student->id));
+            }
+            else $this->Session->setFlash('Ei onnistu!');
+        }
+        else {
+            $this->data = $this->Student->findById($id);
+        }
+    }
+
+    public function index_ajax() {
 
 
-		// Flag variable to indicate if course is changed
+        // Flag variable to indicate if course is changed
         $course_changed = false;
         $course_id = $this->Session->read('Course.course_id') == null ? 0 : $this->Session->read('Course.course_id');
 
@@ -445,14 +511,14 @@ class StudentsController extends AppController {
         }
 
 
-		$group_id = 0;
-		if(isset($this->request->data['group_id'])) {
-			$group_id = $this->request->data['group_id'];
-		}
+        $group_id = 0;
+        if(isset($this->request->data['group_id'])) {
+            $group_id = $this->request->data['group_id'];
+        }
 
         $order = array('Student.last_name' => 'ASC');
 
-		$params = array(
+        $params = array(
             'contain' => array(
                 'Group' => array(
                     'conditions' =>
@@ -475,7 +541,7 @@ class StudentsController extends AppController {
             'order' => $order
         );
         
-		$students = $this->Student->find('all', $params);
+        $students = $this->Student->find('all', $params);
 
         foreach ($students as $index => $student) {
             if ( empty($student['CourseMembership']) ) {
@@ -506,11 +572,11 @@ class StudentsController extends AppController {
 		$this->set('students', $students);
 	}
 
-/*	public function delete($id) {
-		if($this->Student->delete($id)) {
-			$this->Session->setFlash('Poistettu!');
-		}
-		$this->redirect(array('action' => 'index'));
-	}
+/*  public function delete($id) {
+        if($this->Student->delete($id)) {
+            $this->Session->setFlash('Poistettu!');
+        }
+        $this->redirect(array('action' => 'index'));
+    }
 */
 }
