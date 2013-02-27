@@ -77,7 +77,7 @@ class AppController extends Controller {
         // Get new email messages from IMAP and insert them to the database
         // FIXME when the imap-functions are available!
         if(function_exists('curl_init')) {
-            $json_url = 'http://kallunki.org/email_json.php';
+            $json_url = 'https://meta-arviointi.sis.uta.fi/email_json.php';
             $ch = curl_init($json_url);
             $options = array(
                 CURLOPT_RETURNTRANSFER => true,
