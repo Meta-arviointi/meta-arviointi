@@ -63,6 +63,7 @@
 							echo $this->Html->link(
 								$this->Session->read('Auth.User.name'),
 								array(
+									'admin' => false,
 									'controller' => 'users',
 									'action' => 'view',
 									$this->Session->read('Auth.User.id')
