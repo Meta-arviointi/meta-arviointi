@@ -60,6 +60,12 @@
 					<?php
 						if($this->Session->read('Auth.User')) {
 							echo '<div id="login-details">';
+							$profile_link_classes = 'header-button';
+							if(
+								$this->request->params['controller'] == 'users' &&
+								$this->request->params['action'] == 'view' &&
+								$this->request->params['pass'][0] == $this->Session->read('Auth.User.id')
+							) { $profile_link_classes .= ' selected'; }
 							echo $this->Html->link(
 								$this->Session->read('Auth.User.name'),
 								array(
@@ -68,7 +74,7 @@
 									'action' => 'view',
 									$this->Session->read('Auth.User.id')
 									),
-								array('id' => 'my-profile-link', 'class' => 'header-button')
+								array('id' => 'my-profile-link', 'class' => $profile_link_classes)
 							);
 							echo $this->Html->link(
 								__('Kirjaudu ulos'),
