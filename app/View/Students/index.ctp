@@ -127,7 +127,7 @@ echo $this->element('tab-menu', array('links' => $links));
                     echo '</tr>';
                 }
             } else { // print "nothing available"
-                echo '<tr><td class="empty" colspan="6">' . __('Ei opiskelijoita') . '</td><tr>';
+                echo '<tr><td class="empty" colspan="7">' . __('Ei opiskelijoita') . '</td><tr>';
             }
             echo $this->Form->end();
             ?>

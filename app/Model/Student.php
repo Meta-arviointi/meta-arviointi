@@ -39,44 +39,43 @@ class Student extends AppModel {
         return $this->find('first', array('conditions' => array('student_number' => $bua)));
     }
 
-    /*
-     * returns true, if student ($sid) has been marked to course ($cid) - else false
+    /**
+     * @return CourseMembership if student ($sid) has been marked to course ($cid), else false  
      */
-    public function hasCourseMembership($sid, $cid) {
+    public function student_course_membership($sid, $cid) {
         if (!empty($sid) && !empty($cid)) {
-            $result = $this->CourseMembership->find('first', array('conditions' => array('student_id' => $sid, 'course_id' => $cid)));
-            if (empty($result)) {
-                return false;
-            } else {
-                return true;
-            }
+            // contain only info about CourseMembership
+            $this->CourseMembership->contain();
+            return $this->CourseMembership->find('first', array(
+                'conditions' => array(
+                    'student_id' => $sid,
+                    'course_id' => $cid
+                )
+            ));
+            
         } else {
             return false;
         }
     }
 
-    public function hasCGroup($sid, $cid) {
+    /**
+     * @return Group if student has group in given course, else false/null
+     */
+    public function student_group($sid, $cid) {
         if (!empty($sid) && !empty($cid)) {
-            $result = $this->find('all', array(
+            $result = $this->find('first', array(
                 'conditions' => array(
                     'Student.id' => $sid
                 ),
                 'contain' => array(
                     'Group' => array(
-                        'Group.course_id' => $cid
+                        'conditions' => array(
+                            'Group.course_id' => $cid
+                        )
                     )
                 )
             ));
-            foreach ($result as $index => $student) {
-               if ( empty($student['Group']) ) {
-                   unset($result[$index]);
-                }
-            }
-            if (empty($result)) {
-                return false;
-            } else {
-                return true;
-            }
+            return $result['Group'];
         } else {
             return false;
         }

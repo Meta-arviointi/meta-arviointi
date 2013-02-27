@@ -123,4 +123,29 @@ class User extends AppModel {
     public function find_user($bua) {
         return $this->find('first', array('conditions' => array('basic_user_account' => $bua)));
     }
+
+    /**
+     * Returns all courses that user with $user_id
+     * has attended.
+     */
+    public function user_in_course($user_id, $course_id) {
+        if ( !empty($user_id) && !empty($course_id) ) {
+            $options = array(
+                'conditions' => array(
+                    'id' => $user_id
+                ),
+                'contain' => array(
+                    'Course' => array(
+                        'conditions' => array(
+                            'Course.id' => $course_id
+                        )
+                    )
+                )
+            );
+            $user = $this->find('first',$options);
+            return $user['Course']; // empty array() if false
+        } else {
+            return false;
+        }
+    }
 }
