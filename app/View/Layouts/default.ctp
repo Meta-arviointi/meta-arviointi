@@ -77,13 +77,15 @@
 							echo '</div>';
 
 							echo '<div id="admin-link">';
+							$admin_link_classes = 'header-button';
+							if(!empty($this->request->params['admin'])) $admin_link_classes .= ' selected';
 							echo $this->Html->link(__('Hallinnointi'), array(
 									'admin' => true,
 									'controller' => 'courses',
 									'action' => 'index'
 								), 
 								array(
-									'class' => 'header-button'
+									'class' => $admin_link_classes
 								)
 							);
 							echo '</div>';
