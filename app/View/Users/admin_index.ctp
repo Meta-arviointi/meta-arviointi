@@ -24,6 +24,7 @@ echo $this->element('tab-menu', array('links' => $links));
             <th><?php echo __('Etunimi'); ?></th>
             <th><?php echo __('Kurssi(t)'); ?></th>
             <th><?php echo __('Sähköposti'); ?></th>
+            <?php if ( $admin ) { echo '<th>'. __('Toiminnot') . '</th>'; }?>
         </tr>
         <?php
         foreach($users as $user) {
@@ -44,7 +45,7 @@ echo $this->element('tab-menu', array('links' => $links));
                      )
                 ).'</td>';
             echo '<td>';
-            
+
             foreach($user['Course'] as $userc) {
                 echo $this->Html->link($userc['name'].'<br />',
                 array('controller' => 'courses', 'action' => 'admin_index', $userc['id']),
@@ -58,6 +59,23 @@ echo $this->element('tab-menu', array('links' => $links));
                     $user['User']['id']
                     )
                 ).'</td>';
+            if ( $admin ) {
+                echo '<td>'. $this->Html->link($this->Html->image('edit-action-icon.png',
+                        array('alt' => __('Muokkaa'), 'title' => __('Muokkaa'))),
+                        array(
+                            'admin' => false,
+                            'controller' => 'users',
+                            'action' => 'edit',
+                            $user['User']['id']
+                        ),
+                        array(
+                            'id' => 'edit-user-modal',
+                            'class' => 'modal-link',
+                            'escape' => false
+                        )
+                ); '</td>';    
+            }
+            
         }
         ?>
     </table>
