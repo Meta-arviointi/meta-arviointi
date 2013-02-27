@@ -54,7 +54,6 @@ echo $this->element('tab-menu', array('links' => $links));
 ?>
     </div>
 </div>
-<hr class="row">
 <div class="row">
     <div class="sixcol">
         <?php
