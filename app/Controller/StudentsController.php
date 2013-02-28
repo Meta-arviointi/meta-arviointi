@@ -192,18 +192,23 @@ class StudentsController extends AppController {
                         'fields' => array('student_number', 'id')
                         )
                     );
-
+ 
                     $users_csv = array();
                     $users_gid = array();
                     $users = 0;
-                    $new_students = 0;
+                    $new_students_count = 0;
                     $new_groups = 0;
                     $curr_row = 0;
+                    $has_group = false; // if student gets linked to group
+                    $log_row_count = 0; // rows in log
+
+                    $new_students = array(); // new students created
+                    $old_students = array(); // old students already in system
                     $students_course = array(); // students added to course
-                    // totally new students
-                    $created_students = array();
-                    $new_students_group = array();
-                    $new_students_wo_group = array();
+                    // New students with group
+                    $students_with_group = array();
+                    // New students without group
+                    $students_wo_group = array();
                     // created user groups
                     $new_user_groups = array();
                     // unknown users
@@ -212,13 +217,16 @@ class StudentsController extends AppController {
                     $added_users = array();
                     while(($row = fgetcsv($csvfile)) !== false) {
                         $curr_row++; // increment current row
-                        $row_errors = array();
+                        $row_errors = array(); // all errors in current row
 
                         // $row[0] = sukunimi;etunimi;opnumero;email;assari_ppt
                         $line = explode(';',$row[0]);
                         // Check if we have all needed information
-                                                
-                        if ( count($line) >= 4 ) {
+                        // and validate                                                 
+                        if ( count($line) >= 4 && Validation::alphaNumeric($line[0]) &&
+                            Validation::alphaNumeric($line[1]) &&
+                            Validation::numeric($line[2]) &&
+                            Validation::email($line[3]) ) {
                             // Set information
                             $student_lname = $line[0];
                             $student_fname = $line[1];
@@ -265,7 +273,7 @@ class StudentsController extends AppController {
 
                                     // check if we already know user's group
                                     if ( empty($gid) ) {
-                                        // user's group is unknown
+                                        // user's group is not known
 
                                         // Get user's group in course. False if no group set.
                                         $group = $this->Student->Group->User->user_group($uid, $course_id);
@@ -298,7 +306,7 @@ class StudentsController extends AppController {
                                 } else {
                                    //User not in system
                                     $row_errors[] = "Assistentti ($user_bua) ei järjestelmässä. Lisää assistentti käsin." .
-                                        " Lisätään opiskelijaa ($student_number) järjestelmään...";
+                                        " Lisätään opiskelijaa ($student_number)...";
                                     $unknown_users[] = $user_bua;
                                 } 
                                 
@@ -320,13 +328,14 @@ class StudentsController extends AppController {
                             if ( $sid ) {
 
                                 // Student already saved in system
-
+                                $old_students[] = $this->Student->findById($sid);
+                                $row_errors[] = "Opiskelija ($student_number) oli jo järjestelmässä.";
                                 // Check if student has a group assigned in course
                                 $group = $this->Student->student_group($sid, $course_id);
                                 // Also check that $uid is assigned.
                                 // If not, don't link student to course
                                 if ( !$group && $uid ) { 
-                                    // no group. user id is known. create group linkage
+                                    // student has no group. user id is known. create group linkage
                                     $this->Student->Group->contain('Student');
                                     $group = $this->Student->Group->findById($gid);
                                     $group_students = isset($group['Student']) ? $group['Student'] : array();
@@ -342,6 +351,7 @@ class StudentsController extends AppController {
                                     );
                                     //debug($options);
                                     $this->Student->Group->save($options);
+                                    $has_group = true;
                                     /*debug($data);
                                     $group = $this->Student->Group->findById($gid);
                                     $group_students = $group['Student'];
@@ -351,16 +361,13 @@ class StudentsController extends AppController {
                                     if ( !$uid ) {
                                         // We end up here, if $uid is not known (we can't link
                                         // student to particular group)
-                                        $row_errors[] = "Tuntematon assistentti. Opiskelija ($student_number) lisätään kurssille ilman vastuuryhmää.";
+                                        $row_errors[] = "Tuntematon assistentti. Opiskelijalle ei voida määritellä vastuuryhmää.";
                                     } else {
+                                        // student is already linked to group in course
+                                        // (but we don't know if it's group supervised by $uid,
+                                        // or somebody else. 
                                         $row_errors[] = "Opiskelija ($student_number) on jo liitetty johonkin vastuuryhmään.";
                                     }
-                                    // student is already linked to group in course
-                                    // (but we don't know if it's group supervised by $uid,
-                                    // or somebody else. If it's needed, group's user_id can be found
-                                    // from $group[0][user_id].
-                                    // Atm we skip information as we assume it's enough that student is assigned
-                                    // to some group
                                 }
                                 
                             } else { // STUDENT IS NEW
@@ -381,15 +388,10 @@ class StudentsController extends AppController {
                                         )
                                     ));
                                     if ( $rdata ) {
-                                        $new_students_group[] = array(
-                                            'Student' => array(
-                                                'student_number' => $student_number,
-                                                'last_name' => $student_lname,
-                                                'first_name' => $student_fname,
-                                                'email' => $student_email
-                                            )
-                                        );
-                                    }    
+                                        //$new_students[] =  $rdata;
+                                        $new_students_count++;
+                                        $has_group = true;
+                                    }
                                 } else { // $uid not known, create student w/o group
                                     $this->Student->create();
                                     $rdata = $this->Student->save(array(
@@ -402,16 +404,14 @@ class StudentsController extends AppController {
                                         )
                                     );
                                     if ( $rdata ) {
-                                        $row_errors[] = "Tuntematon assistentti. Uusi opiskelija ($student_number) luotu.".
-                                            " Lisätään kurssille ilman vastuuryhmää.";
-                                        $new_students_wo_group[] = $rdata;
-
+                                        //$new_students[] = $rdata;
+                                        $new_students_count++;
+                                        $has_group = false;
                                     }
                                 }
                                 
                                 // get just saved student's id
                                 $sid = $this->Student->id;
-                                if ( $sid ) $new_students++; // new students created
 
                             }
 
@@ -427,22 +427,35 @@ class StudentsController extends AppController {
                                         )
                                     );
                                     // add student to array of added students
-                                    $students_course[] = $this->Student->findById($sid);
+                                    $this->Student->contain();
+                                    $student = $this->Student->findById($sid);
+                                    $students_course[] = $student;
+                                    if ( $has_group ) {
+                                        $students_with_group[] = $student;
 
+                                    } else {
+                                        $row_errors[] = "Opiskelija ($student_number) lisätty kurssille ilman vastuuryhmää.";
+                                        $students_wo_group[] = $student;
+                                    }
+                                } else {
+                                    $row_errors[] = "Opiskelija ($student_number) oli jo kurssilla.";
                                 }
 
                             } else {
                                 $row_errors[] = "Opiskelijaa ($student_number) ei voitu luoda.".
-                                " Tarkista tiedot (onko opiskelijanumero numero? e-mailin formaatti?).";
+                                " Tarkista tiedot (opiskelijanumero? e-mailin formaatti?).\n".
+                                '       Oliko opiskelija duplikaatti?';
                             }
 
 
                         } else {
-                            $row_errors[] = 'Rivi väärän muotoinen. Oikea muoto: sukunimi;etunimi;opnumero;email[;assari_ppt]';
+                            $row_errors[] = 'Rivi väärän muotoinen. Oikea muoto: sukunimi;etunimi;opnumero;email;assari_ppt'.
+                                "\n". '       Tarkista myös tiedon muoto (esim sähköpostin formaatti, opiskelijanumero).';
                         }
 
                         if ( count($row_errors) > 0 ) {
                             foreach($row_errors as $error) {
+                                $log_row_count++;
                                 $row_string = "Rivi $curr_row: " . $error . "\n";
                                 $import_log->append($row_string);
                             }
@@ -454,27 +467,21 @@ class StudentsController extends AppController {
                     $errors_log = $import_log->read();
                     $import_log->close();
 
-                    $students_course = array(); // students added to course
-                    $new_students_group = array();
-                    $new_students_wo_group = array();
-                    // created user groups
-                    $new_user_groups = array();
-                    // unknown users
-                    $unknown_users = array();
-                    // users linked to course
-                    $added_users = array();
-                    $this->set('new_students_group',$new_students_group);
-                    $this->set('new_students_wo_group',$new_students_wo_group);
+                    // Set information for result-page
+                    $this->set('course_id', $course_id); // course id for link
+                    $this->set('old_students', $old_students);
+                    //$this->set('new_students', $new_students);
+                    //$this->set('students_with_group', $students_with_group);
+                    $this->set('students_wo_group',$students_wo_group);
                     $this->set('students_course', $students_course); // added CourseMemberships
                     $this->set('added_users', $added_users); // linked users to course
-                    $this->set('new_user_groups', $new_user_groups); // linked users to course
                     $this->set('unknown_users', $unknown_users);
                     $this->set('errors_log', $errors_log);
-                    $this->set('new_users_count', count($new_students_group)
-                         + count($new_students_wo_group));
+                    $this->set('new_students_count', $new_students_count);
+                    $this->set('log_row_count', $log_row_count);
 
                     $this->Session->setFlash(__('Kurssille lisätty '. count($students_course) .' opiskelijaa.'));
-                    $this->render('admin_csv_results');
+                    $this->render('/Courses/admin_csv_results');
                     //$this->redirect(array('action' => 'index', 'controller' => 'courses', $course_id));
                 } else {
                     // FAILED to move csv file
