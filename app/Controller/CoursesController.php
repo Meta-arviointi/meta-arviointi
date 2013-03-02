@@ -14,6 +14,8 @@ class CoursesController extends AppController {
     }
 
     public function view($cid = 0) {
+        $this->set('is_admin', $this->Auth->user('is_admin'));
+
         if ( !empty($cid) ) {
             if ( $this->Course->exists($cid) ) {
                 $this->Session->write('Course.course_id', $cid);

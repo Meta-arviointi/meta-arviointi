@@ -67,8 +67,17 @@ class CourseMembershipsController extends AppController {
                             )
                         );
                     }
-
                 }
+
+            } else {
+                $this->Session->setFlash(__('Opiskelijaa ei voitu liittää kurssille'));
+                            $this->redirect(array(
+                                    'admin' => false,
+                                    'controller' => 'courses',
+                                    'action' => 'view',
+                                    $cid
+                            )
+                );
             }
 
         } else {
@@ -156,6 +165,41 @@ class CourseMembershipsController extends AppController {
         $this->set('exercises', $exercises);
         $this->set('users', $users);
         $this->set('student_courses', $student_courses);
+
+    }
+
+    public function delete($cm_id) {
+        $this->CourseMembership->id = $cm_id;
+        if ( $this->CourseMembership->exists() ) {
+            $student_id = $this->CourseMembership->field('student_id');
+            $cid = $this->CourseMembership->field('course_id');
+            $this->CourseMembership->delete($cm_id, false);
+            $this->Session->setFlash(__('Opiskelija poistettu kurssilta'));
+
+            // Delete Student -> Group association
+            $group = $this->CourseMembership->Student->student_group($student_id, $cid);
+            $gid = $group[0]['id'];
+
+            $this->CourseMembership->Student->Group->contain('Student');
+            $group = $this->CourseMembership->Student->Group->findById($gid);
+            $group_students = isset($group['Student']) ? $group['Student'] : array();
+            foreach($group_students as $idx => $student) {
+                if ( intval($student['id']) == intval($student_id) ) {
+                    unset($group_students[$idx]);
+                }
+            }
+            $options = array(
+                'Group' => array(
+                    'id' => $gid
+                ),
+                'Student' => array(
+                    'Student' => $group_students
+                )
+            );
+            $this->CourseMembership->Student->Group->save($options);
+
+            $this->redirect($this->referer());
+        }
 
     }
 

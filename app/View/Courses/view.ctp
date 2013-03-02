@@ -94,6 +94,7 @@ echo $this->element('tab-menu', array('links' => $links));
     echo '        <th>'. __('Opiskelijanumero') .'</th>';
     echo '        <th>'. __('Sähköposti') .'</th>';
     echo '        <th>'. __('Vastuuassistentti') .'</th>';
+    if ( !empty($is_admin) ) { echo '        <th>'. __('Toiminnot') .'</th>';}
     echo '    </tr>';
 
     if ( !empty($course_memberships) ) {
@@ -106,6 +107,23 @@ echo $this->element('tab-menu', array('links' => $links));
             $assistant = isset($student['Student']['Group'][0]['user_id']) ? 
                 $users_list[$student['Student']['Group'][0]['user_id']] : '';
             echo '<td>'. $assistant .'</td>';
+            if ( !empty($is_admin) ) {
+                echo '<td>'. $this->Html->link($this->Html->image('delete-action-icon.png',
+                            array('alt' => __('Poista opiskelija kurssilta'),
+                                'title' => __('Poista opiskelija kurssilta')
+                                )
+                            ),
+                            array(
+                                'controller' => 'course_memberships',
+                                'action' => 'delete',
+                                $student['id']
+                            ),
+                            array(
+                                'escape' => false
+                            )
+                ); '</td>';
+            }
+
         }    
     } else {
         echo '<tr><td class="empty" colspan="5">' . __('Ei opiskelijoita') . '</td><tr>';
