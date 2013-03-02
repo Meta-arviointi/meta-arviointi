@@ -114,9 +114,6 @@ class CoursesController extends AppController {
         );
     }
 
-
-
-
     public function admin_add() {
         if ($this->request->is('post')) {
             $this->Course->create();
@@ -127,6 +124,32 @@ class CoursesController extends AppController {
             } else {
                 $this->Session->setFlash(__('Kurssia ei voitu lisätä. Ole hyvä ja yritä myöhemmin uudestaan.'));
             }
+        }
+    }
+
+
+    public function add_users() {
+        if ( $this->request->is('post') || $this->request->is('put') ) {
+            $this->Course->create();
+            if ( $this->Course->save($this->request->data) ) {
+                $this->Session->setFlash(__('Assistentit tallennettu kurssille'));
+                $this->redirect(array(
+                        'action' => 'view',
+                        $this->Course->field('id')
+                    )
+                );
+            } else {
+                $this->Session->setFlash(__('Tallennus epäonnistui'));
+                $this->redirect($this->referer());
+            }
+
+        } else {
+            $this->data = $this->Course->read(null, $this->Session->read('Course.course_id'));
+            $users = $this->Course->User->find('list', array(
+                    'fields' => array('User.id', 'User.name')
+                )
+            );
+            $this->set('users', $users);
         }
     }
 

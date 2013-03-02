@@ -48,5 +48,27 @@ class Group extends AppModel {
 			return 0;
 		}
 	}
+
+	public function link_student($gid, $sid) {
+		if ( !empty($sid) && !empty($gid) ) {
+			$this->Student->Group->contain('Student');
+            $group = $this->Student->Group->findById($gid);
+            $group_students = isset($group['Student']) ? $group['Student'] : array();
+            array_push($group_students, $sid);
+			$options = array(
+				'Group' => array(
+					'id' => $gid
+				),
+				'Student' => array(
+					'Student' => $group_students
+				)
+			);
+			return $this->save($options);
+
+
+		} else {
+			return false;
+		}
+	}
 }
 ?>

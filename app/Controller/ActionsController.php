@@ -378,7 +378,11 @@ class ActionsController extends AppController {
                 if ( $this->save_many($data) ) {
                     $this->Session->setFlash(__("Uudet toimenpiteet luotu"));
                     $this->redirect(array(
-                        'action' => 'index')
+                            'admin' => false,
+                            'controller' => 'students',
+                            'action' => 'index',
+                            $this->Session->read('Course.course_id')
+                        )
                     );
                 } else {
                     $this->Session->setFlash(__('Toimenpiteiden luonti ei onnistunut'));

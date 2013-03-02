@@ -81,7 +81,7 @@ echo $this->element('tab-menu', array('links' => $links));
     
     echo '</table>';
 
-    echo $this->Html->link('Lisää assistentti', array('action' => 'add', 'controller' => 'users'), array('class' => 'modal-link', 'id' => 'add-user-link'));
+    echo $this->Html->link('Lisää/poista kurssin assistentteja', array('action' => 'add_users', 'controller' => 'courses'), array('class' => 'modal-link', 'id' => 'add-user-link'));
 
     echo '<br/>';
     echo '<br/>';
@@ -112,9 +112,9 @@ echo $this->element('tab-menu', array('links' => $links));
     }
     
     echo '</table>';
-    echo $this->Html->link('Lisää opiskelija', array(
+    echo $this->Html->link('Lisää opiskelija kurssille', array(
                 'action' => 'add',
-                'controller' => 'students'
+                'controller' => 'course_memberships'
             ),
             array(
                 'class' => 'modal-link',

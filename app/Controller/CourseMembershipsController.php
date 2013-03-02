@@ -2,6 +2,87 @@
 class CourseMembershipsController extends AppController {
     public $name = 'CourseMemberships';
 
+
+    public function add() {
+        $cid = $this->Session->read('Course.course_id');
+
+        if ( $this->request->is('post') || $this->request->is('put') ) {
+            $user_id = null;
+            if ( isset($this->request->data['CourseMembership']['User']) ) {
+                $user_id = $this->request->data['CourseMembership']['User'];
+                unset($this->request->data['CourseMembership']);
+            }
+            if ( $this->CourseMembership->saveAssociated($this->request->data) ) {
+                $this->Session->setFlash(__('Opiskelija lisätty kurssille'));
+
+                $sid = $this->CourseMembership->Student->id;
+                $group = $this->CourseMembership->Course->User->user_group($user_id, $cid);
+                if ( !empty($group) ) {
+                    $gid = $group['Group']['id'];
+                    $result = $this->CourseMembership->Student->Group->link_student($gid, $sid);
+                    if ( !empty($result) ) {
+                        $this->redirect(array(
+                                'admin' => false,
+                                'controller' => 'courses',
+                                'action' => 'view',
+                                $cid
+                            )
+                        );
+                    } else {
+                        $this->Session->setFlash(__('Opiskelijaa ei voitu liittää vastuuryhmään'));
+                        $this->redirect(array(
+                                'admin' => false,
+                                'controller' => 'courses',
+                                'action' => 'view',
+                                $cid
+                            )
+                        );
+                    }
+                } else { // Create new group
+                    $result = $this->CourseMembership->Student->Group->save(array(
+                            'Group' => array(
+                                'course_id' => $cid,
+                                'user_id' => $user_id
+                            ),
+                            'Student' => array(
+                                'id' => $sid
+                            )
+                        )
+                    );
+                    if ( !empty($result) ) {
+                        $this->redirect(array(
+                                'admin' => false,
+                                'controller' => 'courses',
+                                'action' => 'view',
+                                $cid
+                            )
+                        );
+                    } else {
+                        $this->Session->setFlash(__('Opiskelijaa ei voitu liittää vastuuryhmään'));
+                        $this->redirect(array(
+                                'admin' => false,
+                                'controller' => 'courses',
+                                'action' => 'view',
+                                $cid
+                            )
+                        );
+                    }
+
+                }
+            }
+
+        } else {
+            $this->set('course_id', $cid);
+
+            $users = $this->CourseMembership->Course->get_users($cid);
+            $users_list = array();
+            foreach( $users['User'] as $user ) {
+                $users_list[$user['id']] = $user['name'];
+            }
+
+            $this->set('users', $users_list);
+        }
+    }
     /**
      * View method displays information of students attendance in
      * selected course.

@@ -54,6 +54,7 @@ echo $this->element('tab-menu', array('links' => $links));
                 foreach( $student['CourseMembership'] as $cm ) {
                     $course_name = $cm['Course']['name'];
                     echo $this->Html->link($course_name, array(
+                            'admin' => false,
                             'controller' => 'course_memberships',
                             'action' => 'view',
                             $cm['id']
@@ -65,6 +66,7 @@ echo $this->element('tab-menu', array('links' => $links));
                 $cm = $student['CourseMembership'][0];
                 $course_name = $cm['Course']['name'];
                 echo $this->Html->link($course_name, array(
+                        'admin' => false,
                         'controller' => 'course_memberships',
                         'action' => 'view',
                         $cm['id']
@@ -79,7 +81,7 @@ echo $this->element('tab-menu', array('links' => $links));
         ?>
     </table>
     <?php echo $this->Html->link(__('Lisää uusi opiskelija'), 
-        array('action' => 'admin_add', 'controller' => 'students'), array('class' => 'modal-link')); ?>
+        array('admin' => false, 'action' => 'add', 'controller' => 'students'), array('class' => 'modal-link')); ?>
     </div>
 </div>
 <script>

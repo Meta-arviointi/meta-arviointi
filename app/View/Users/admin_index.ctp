@@ -81,7 +81,12 @@ echo $this->element('tab-menu', array('links' => $links));
         }
         ?>
     </table>
-    <?php echo $this->Html->link('Lisää uusi assistentti', array('action' => 'admin_add', 'controller' => 'users'), array('class' => 'modal-link', 'id' => 'add-admin-link')); ?>
+    <?php echo $this->Html->link('Lisää uusi assistentti', array(
+            'admin' => false,
+            'action' => 'add',
+            'controller' => 'users'
+        ), array('class' => 'modal-link', 'id' => 'add-admin-link')
+    ); ?>
     </div>
 </div>
 <script>

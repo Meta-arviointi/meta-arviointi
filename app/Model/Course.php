@@ -79,5 +79,27 @@ class Course extends AppModel {
             return false;
         }
     }
+
+    public function get_users($cid = 0, $contain = array()) {
+        if ( $cid > 0 ) {
+            $options = array(
+                'conditions' => array('Course.id' => $cid),
+                'contain' => array(
+                    'User' => array(
+                        'Group' => array(
+                            'conditions' => array('Group.course_id' => $cid)
+                        )
+                    )
+                )
+            );
+
+            if ( !empty($contain) ) {
+                $options['contain'] = $contain;
+            }
+            return $this->find('first', $options);
+        } else {
+            return false;
+        }
+    }
 }
 ?>
