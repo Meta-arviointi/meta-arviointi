@@ -160,12 +160,12 @@ class UsersController extends AppController {
         }
     }
 
-    public function admin_add() {
+    public function add() {
         if ($this->request->is('post')) {
             $this->User->create();
             if ($this->User->save($this->request->data)) {
                 $this->Session->setFlash(__('Käyttäjä lisätty järjestelmään'));
-                $this->redirect(array('action' => 'index'));
+                $this->redirect($this->referer());
             } else {
                 $this->Session->setFlash(__('Käyttäjää ei voitu lisätä järjestelmään, tarkista tiedot.'));
             }

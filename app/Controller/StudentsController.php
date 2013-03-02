@@ -175,21 +175,116 @@ class StudentsController extends AppController {
         $this->set('students', $students);
     }
 
-    public function admin_add() {
+    public function add() {
 
         $course_id = $this->Session->read('Course.course_id');
         $course_id = intval($course_id); // from session, datatype is char
 
         if( $this->request->is('post') ) {
-            if ( empty($this->data['Student']['tmp_file']) ) {
-                // single student
-                if ( $this->Student->save($this->request->data) ) {
-                    $this->redirect(array('action' => 'index', 'controller' => 'courses', $course_id));
-                } else {
-                    $this->Session->setFlash('Opiskelijan tallennus ei onnistunut');
-                    $this->redirect($this->referer());
-                }
-            } else { // CSV IMPORT
+            if ( $this->Student->save($this->request->data) ) {
+                $this->redirect(array('action' => 'index', 'controller' => 'courses', $course_id));
+            } else {
+                $this->Session->setFlash('Opiskelijan tallennus ei onnistunut');
+                $this->redirect($this->referer());
+            }
+        }
+    }
+
+    public function admin_edit($id) {
+        if($this->request->is('put')) {
+            if($this->Student->save($this->request->data)) {
+                $this->Session->setFlash('Tallennettu!');
+                $this->redirect(array('action' => 'view', $this->Student->id));
+            }
+            else $this->Session->setFlash('Ei onnistu!');
+        }
+        else {
+            $this->data = $this->Student->findById($id);
+        }
+    }
+
+    public function index_ajax() {
+
+
+        // Flag variable to indicate if course is changed
+        $course_changed = false;
+        $course_id = $this->Session->read('Course.course_id') == null ? 0 : $this->Session->read('Course.course_id');
+
+        /* If course changed, update group_id to Session
+         * to match user's group in new course.
+         */
+        if ( $course_changed ) {
+            $this->Course->User->set_new_group($this->Auth->user('id'), $course_id);
+        }
+
+
+        $group_id = 0;
+        if(isset($this->request->data['group_id'])) {
+            $group_id = $this->request->data['group_id'];
+        }
+
+        $order = array('Student.last_name' => 'ASC');
+
+        $params = array(
+            'contain' => array(
+                'Group' => array(
+                    'conditions' =>
+                        ($group_id > 0 ? // if
+                            array(
+                                'Group.course_id' => $course_id,
+                                'Group.id' => $group_id
+                                )
+                            : array('Group.course_id' => $course_id) // else
+                        )
+                    ,
+                    'User' => array(
+                        'fields' => 'name'
+                    )
+                 ),
+                'CourseMembership' => array(
+                        'conditions' => array('CourseMembership.course_id' => $course_id)
+                )
+            ),
+            'order' => $order
+        );
+        
+        $students = $this->Student->find('all', $params);
+
+        foreach ($students as $index => $student) {
+            if ( empty($student['CourseMembership']) ) {
+                unset($students[$index]);
+            } else if ( $group_id > 0 && empty($student['Group']) ) {
+                unset($students[$index]);
+            }
+        }
+
+
+        // Loop to fetch all actions related to one student
+        foreach ($students as &$student) {
+            $this->Student->CourseMembership->Action->contain();
+            $student_actions = $this->Student->CourseMembership->Action->find('all', array(
+                    'conditions' => array(
+                        'Action.course_membership_id' => $student['CourseMembership'][0]['id']
+                    )
+                )
+            );
+            // Remove unnecessary depth from arrays that resulted
+            // from call to find('all'), and add actions to
+            // $student['Action'] -array
+            foreach ($student_actions as $action) {
+                $student['Action'][] = $action['Action'];
+            }
+        }
+        
+		$this->set('students', $students);
+	}
+
+    public function import() {
+        $course_id = $this->Session->read('Course.course_id');
+        $course_id = intval($course_id); // from session, datatype is char
+
+        if ( $this->request->is('post') ) {
+            if ( !empty($this->data['Student']['tmp_file']) ) {
                 App::uses('File', 'Utility');
 
                 $uploadfile = WWW_ROOT . 'files/' . basename($this->data['Student']['tmp_file']['name']);
@@ -211,7 +306,7 @@ class StudentsController extends AppController {
                         'fields' => array('student_number', 'id')
                         )
                     );
- 
+
                     $users_csv = array();
                     $users_gid = array();
                     $users = 0;
@@ -504,99 +599,13 @@ class StudentsController extends AppController {
                     //$this->redirect(array('action' => 'index', 'controller' => 'courses', $course_id));
                 } else {
                     // FAILED to move csv file
+                    $this->Session->setFlash(__('Tiedostonsiirrossa tapahtui virhe'));
+                    $this->redirect($this->referer());
                 }
+
             }
         }
     }
-
-    public function admin_edit($id) {
-        if($this->request->is('put')) {
-            if($this->Student->save($this->request->data)) {
-                $this->Session->setFlash('Tallennettu!');
-                $this->redirect(array('action' => 'view', $this->Student->id));
-            }
-            else $this->Session->setFlash('Ei onnistu!');
-        }
-        else {
-            $this->data = $this->Student->findById($id);
-        }
-    }
-
-    public function index_ajax() {
-
-
-        // Flag variable to indicate if course is changed
-        $course_changed = false;
-        $course_id = $this->Session->read('Course.course_id') == null ? 0 : $this->Session->read('Course.course_id');
-
-        /* If course changed, update group_id to Session
-         * to match user's group in new course.
-         */
-        if ( $course_changed ) {
-            $this->Course->User->set_new_group($this->Auth->user('id'), $course_id);
-        }
-
-
-        $group_id = 0;
-        if(isset($this->request->data['group_id'])) {
-            $group_id = $this->request->data['group_id'];
-        }
-
-        $order = array('Student.last_name' => 'ASC');
-
-        $params = array(
-            'contain' => array(
-                'Group' => array(
-                    'conditions' =>
-                        ($group_id > 0 ? // if
-                            array(
-                                'Group.course_id' => $course_id,
-                                'Group.id' => $group_id
-                                )
-                            : array('Group.course_id' => $course_id) // else
-                        )
-                    ,
-                    'User' => array(
-                        'fields' => 'name'
-                    )
-                 ),
-                'CourseMembership' => array(
-                        'conditions' => array('CourseMembership.course_id' => $course_id)
-                )
-            ),
-            'order' => $order
-        );
-        
-        $students = $this->Student->find('all', $params);
-
-        foreach ($students as $index => $student) {
-            if ( empty($student['CourseMembership']) ) {
-                unset($students[$index]);
-            } else if ( $group_id > 0 && empty($student['Group']) ) {
-                unset($students[$index]);
-            }
-        }
-
-
-        // Loop to fetch all actions related to one student
-        foreach ($students as &$student) {
-            $this->Student->CourseMembership->Action->contain();
-            $student_actions = $this->Student->CourseMembership->Action->find('all', array(
-                    'conditions' => array(
-                        'Action.course_membership_id' => $student['CourseMembership'][0]['id']
-                    )
-                )
-            );
-            // Remove unnecessary depth from arrays that resulted
-            // from call to find('all'), and add actions to
-            // $student['Action'] -array
-            foreach ($student_actions as $action) {
-                $student['Action'][] = $action['Action'];
-            }
-        }
-        
-		$this->set('students', $students);
-	}
 
 /*  public function delete($id) {
         if($this->Student->delete($id)) {

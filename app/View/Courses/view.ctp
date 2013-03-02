@@ -20,7 +20,8 @@ echo $this->element('tab-menu', array('links' => $links));
 <?php
 
     echo '<h1>'.$course['name'].'</h1>';
-    echo $this->Time->Format('d-m-Y', $course['starttime']) .'-'. $this->Time->Format('d-m-Y', $course['endtime']);
+    echo '<p class="course-dates">' .__('Kurssi alkaa').': '. $this->Time->Format('j.n.Y', $course['starttime']) . '</p>';
+    echo '<p class="course-dates">' .__('Kurssi päättyy').': '. $this->Time->Format('j.n.Y', $course['endtime']) . '</p>';
 
     echo '<h2>Harjoitukset</h2>';
     echo '<table class="data-table">';
@@ -80,7 +81,7 @@ echo $this->element('tab-menu', array('links' => $links));
     
     echo '</table>';
 
-    echo $this->Html->link('Lisää assistentti', array('action' => 'admin_add', 'controller' => 'users'), array('class' => 'modal-link', 'id' => 'add-user-link'));
+    echo $this->Html->link('Lisää assistentti', array('action' => 'add', 'controller' => 'users'), array('class' => 'modal-link', 'id' => 'add-user-link'));
 
     echo '<br/>';
     echo '<br/>';
@@ -112,7 +113,7 @@ echo $this->element('tab-menu', array('links' => $links));
     
     echo '</table>';
     echo $this->Html->link('Lisää opiskelija', array(
-                'action' => 'admin_add',
+                'action' => 'add',
                 'controller' => 'students'
             ),
             array(
@@ -124,7 +125,14 @@ echo $this->element('tab-menu', array('links' => $links));
     echo '<div id="csv-upload">';
     echo $this->Form->label(__('Lisää opiskelijat CSV-tiedostosta'));
     echo '<div>Rivit muodossa: sukunimi;etunimi;opnumero;email;assari_ppt</div>';
-    echo $this->Form->create('Student', array('type' => 'file'));
+    echo $this->Form->create('Student', array(
+            'type' => 'file',
+            'url' => array(
+                'controller' => 'students',
+                'action' => 'import'
+            )
+        )
+    );
     echo $this->Form->file('tmp_file');
     echo $this->Form->end('Lähetä');
     echo '</div>';

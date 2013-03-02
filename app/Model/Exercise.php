@@ -1,10 +1,10 @@
 <?php
 
 class Exercise extends AppModel {
-	public $name = 'Exercise';
-	
-	public $belongsTo = array('Course');
-	public $hasAndBelongsToMany = array('Action');
+    public $name = 'Exercise';
+    
+    public $belongsTo = array('Course');
+    public $hasAndBelongsToMany = array('Action');
 
     public $validate = array(
         'exercise_number' => array(
@@ -20,7 +20,7 @@ class Exercise extends AppModel {
         'exercise_name' => array(
             'required' => array(
                 'rule' => array(
-                	'notEmpty'
+                    'notEmpty'
                 ), 
                 'message' => 'Anna harjoituksen nimi'
             ),
@@ -32,7 +32,7 @@ class Exercise extends AppModel {
         'starttime' => array(
             'required' => array(
                 'rule' => array(
-                	'notEmpty'
+                    'notEmpty'
                 ), 
                 'message' => 'Anna harjoituksen alkuajankohta'
             ),
@@ -44,7 +44,7 @@ class Exercise extends AppModel {
         'endtime' => array(
             'required' => array(
                 'rule' => array(
-                	'notEmpty'
+                    'notEmpty'
                 ), 
                 'message' => 'Anna harjoituksen loppuajankohta'
             ),
@@ -56,7 +56,7 @@ class Exercise extends AppModel {
         'review_starttime' => array(
             'required' => array(
                 'rule' => array(
-                	'notEmpty'
+                    'notEmpty'
                 ), 
                 'message' => 'Harjoituksen arviointiaika vaaditaan'
             ),
@@ -68,7 +68,7 @@ class Exercise extends AppModel {
         'review_endtime' => array(
             'required' => array(
                 'rule' => array(
-                	'notEmpty'
+                    'notEmpty'
                 ), 
                 'message' => 'Harjoituksen arviointiaika vaaditaan'
             ),
@@ -80,13 +80,13 @@ class Exercise extends AppModel {
     );
 
     public function compareDate($start, $end) {
-    	return strtotime($start) < strtotime($end);
+        return strtotime($start) < strtotime($end);
     }
 
-	// Virtual field used in find('list') operations to
-	// get proper options for html form <select>-tag
-	public $virtualFields = array(
-		'exercise_string' => '\'H\' || Exercise.exercise_number || \': \'  || Exercise.exercise_name'
-	);
+    // Virtual field used in find('list') operations to
+    // get proper options for html form <select>-tag
+    public $virtualFields = array(
+        'exercise_string' => '\'H\' || Exercise.exercise_number || \': \'  || Exercise.exercise_name'
+    );
 }
 ?>
