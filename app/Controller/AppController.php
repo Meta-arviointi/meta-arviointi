@@ -68,27 +68,31 @@ class AppController extends Controller {
                 $this->Session->write('Course.course_id', $this->_course['Course']['id']);
                 //$this->redirect(array('course_id' => $this->_course['Course']['id']));
         }
-
         // PRINT COURSE SELECTION DROPDOWN LIST TO HEADERBAR
         // Default is to print, override in controller to prevent print
         $this->set('course_selection', true);
+        
+        $uid = $this->Auth->user('id');
+        if ( !empty($uid) ) {
 
-        // Get all courses user has attended
-        $courses = $this->User->user_courses($this->Auth->user('id'));
+            // Get all courses user has attended
+            $courses = $this->User->user_courses($uid);
 
-        $users_courses = array();
-        // Iterate over courses and populate array ready to be used in 
-        // selection list in courses/index/-view
-        // format is Course.id as key and Course.name as value (like find('list'))
-        foreach($courses as $course) {
-            $users_courses[$course['id']] = $course['name'];
+            $users_courses = array();
+            // Iterate over courses and populate array ready to be used in 
+            // selection list in courses/index/-view
+            // format is Course.id as key and Course.name as value (like find('list'))
+            foreach($courses as $course) {
+                $users_courses[$course['id']] = $course['name'];
+            }
+
+            // THIS DROP-DOWN IS PRINTED TO LAYOUT, UNLESS 'course_selection'
+            // IS SET TO false in Controller!!!
+
+            // Set array to be used in drop-down selection
+            $this->set('users_courses', $users_courses);    
         }
-
-        // THIS DROP-DOWN IS PRINTED TO LAYOUT, UNLESS 'course_selection'
-        // IS SET TO false in Controller!!!
-
-        // Set array to be used in drop-down selection
-        $this->set('users_courses', $users_courses);
+        
     }
 
     public function beforeRender() {

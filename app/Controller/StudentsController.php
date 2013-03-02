@@ -177,7 +177,7 @@ class StudentsController extends AppController {
 
     public function admin_add() {
 
-        $course_id = $this->Session->read('Course.admin_course');
+        $course_id = $this->Session->read('Course.course_id');
         $course_id = intval($course_id); // from session, datatype is char
 
         if( $this->request->is('post') ) {

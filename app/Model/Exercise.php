@@ -7,12 +7,22 @@ class Exercise extends AppModel {
 	public $hasAndBelongsToMany = array('Action');
 
     public $validate = array(
+        'exercise_number' => array(
+            'required' => array(
+                'rule' => 'notEmpty',
+                'message' => 'Harjoitusnumero vaaditaan'
+            ),
+            'number' => array(
+                'rule' => 'numeric',
+                'message' => 'Harjoitusnumeron täytyy olla numero'
+            )
+        ),
         'exercise_name' => array(
             'required' => array(
                 'rule' => array(
                 	'notEmpty'
                 ), 
-                'message' => 'Exercise name is required'
+                'message' => 'Anna harjoituksen nimi'
             ),
             'dateformat' => array(
                 'rule' => array('datetime', 'dmy'),
@@ -24,7 +34,7 @@ class Exercise extends AppModel {
                 'rule' => array(
                 	'notEmpty'
                 ), 
-                'message' => 'Exercise start time is required'
+                'message' => 'Anna harjoituksen alkuajankohta'
             ),
             'dateformat' => array(
                 'rule' => array('datetime', 'dmy'),
@@ -36,7 +46,7 @@ class Exercise extends AppModel {
                 'rule' => array(
                 	'notEmpty'
                 ), 
-                'message' => 'Exercise end time is required'
+                'message' => 'Anna harjoituksen loppuajankohta'
             ),
             'dateformat' => array(
                 'rule' => array('datetime', 'dmy'),
@@ -48,7 +58,7 @@ class Exercise extends AppModel {
                 'rule' => array(
                 	'notEmpty'
                 ), 
-                'message' => 'Review start time is required'
+                'message' => 'Harjoituksen arviointiaika vaaditaan'
             ),
             'dateformat' => array(
                 'rule' => array('datetime', 'dmy'),
@@ -60,7 +70,7 @@ class Exercise extends AppModel {
                 'rule' => array(
                 	'notEmpty'
                 ), 
-                'message' => 'Review end time is required'
+                'message' => 'Harjoituksen arviointiaika vaaditaan'
             ),
             'dateformat' => array(
                 'rule' => array('datetime', 'dmy'),
