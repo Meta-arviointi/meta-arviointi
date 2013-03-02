@@ -1,10 +1,10 @@
 <div class="row">
     <div class="twelvecol last">
  <?php
-    echo '&larr; '.  $this->Html->link(__('Takaisin hallinnointiin'), array(
-            'admin' => true,
+    echo '&larr; '.  $this->Html->link(__('Takaisin kurssin hallinnointiin'), array(
+            'admin' => false,
             'controller' => 'courses',
-            'action' => 'index',
+            'action' => 'view',
             $course_id
         )
     );

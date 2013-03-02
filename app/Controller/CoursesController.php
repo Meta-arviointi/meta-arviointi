@@ -6,10 +6,10 @@ class CoursesController extends AppController {
      * Index method prints information about course and it's
      * attendees.
      */
-    public function admin_index($cid = 0) {
+    public function admin_index() {
         // don't print course_selection drop-down in admin_index
         $this->set('course_selection', false);
-        $courses = $this->Course->get_courses($cid);
+        $courses = $this->Course->get_courses(0);
         $this->set('courses', $courses);
     }
 
