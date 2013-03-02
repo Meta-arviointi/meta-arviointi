@@ -106,6 +106,7 @@ class CoursesController extends AppController {
 
         // Redirect to index() with $course_id
         $this->redirect(array(
+                'admin' => false,
                 'controller' => 'courses',
                 'action' => 'view',
                 $course_id
@@ -120,8 +121,9 @@ class CoursesController extends AppController {
         if ($this->request->is('post')) {
             $this->Course->create();
             if ($this->Course->save($this->request->data)) {
-                $this->Session->setFlash(__('Kurssi lisätty'));
-                $this->redirect(array('action' => 'index', $this->Course->id));
+                $name = $this->Course->field('name');
+                $this->Session->setFlash(__("Kurssi '$name' lisätty"));
+                $this->redirect(array('admin' => false, 'action' => 'view', $this->Course->id));
             } else {
                 $this->Session->setFlash(__('Kurssia ei voitu lisätä. Ole hyvä ja yritä myöhemmin uudestaan.'));
             }

@@ -8,6 +8,8 @@ class CourseMembershipsController extends AppController {
      */
     public function view($id) {
         //debug($this->request);
+        // Don't print course_selection drop-down to layout
+        $this->set('course_selection', false);
 
         /* Load ActionType-model to get action types for selection list */
         $this->loadModel('ActionType');
