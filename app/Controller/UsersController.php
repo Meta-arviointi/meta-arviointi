@@ -101,6 +101,7 @@ class UsersController extends AppController {
 	    );
 	    $users = $this->User->find('all', $params);
 	    $this->set('users', $users);
+        $this->set('user_logins', $this->User->find('list', array('fields' => array('User.id', 'User.basic_user_account'))));
     }
 
 

@@ -23,6 +23,7 @@ echo $this->element('tab-menu', array('links' => $links));
         <tr>
             <th><?php echo __('Sukunimi'); ?></th>
             <th><?php echo __('Etunimi'); ?></th>
+            <th><?php echo __('Tunnus'); ?></th>
             <th><?php echo __('Sähköposti'); ?></th>
             <th><?php echo __('Kurssit'); ?></th>
             <?php if ( $admin ) { echo '<th>'. __('Toiminnot') . '</th>'; }?>
@@ -44,6 +45,7 @@ echo $this->element('tab-menu', array('links' => $links));
                      $user['User']['id']
                      )
                 ).'</td>';
+            echo '<td>'.$user_logins[$user['User']['id']].'</td>';
 
             echo '<td>'.$this->Html->link($user['User']['email'], 
                 array('admin' => false, 
