@@ -120,28 +120,44 @@ class UsersController extends AppController {
     }
 
     public function edit($id = null) {
-        if ( $id == $this->Auth->user('id') || $this->Auth->user('is_admin') ) {
-            $this->User->id = $id;
-            if ($this->User->exists()) {
-                $user = $this->User->read(null, $id);
-                $this->set('user', $user);
-                $this->data = $user;
-
-            } else {
-                throw new NotFoundException(__('Invalid user'));
+        if ( $this->request->is('post') || $this->request->is('put') ) {
+            // Data from form, try to save
+            // Make sure that old password won't be overwritten
+            if ( empty($this->request->data['User']['password']) ) {
+                unset($this->request->data['User']['password']);
             }
+            if ( $this->User->save($this->request->data) ) {
+                $this->Session->setFlash(__('Käyttäjän tiedot päivitetty'));
+                $this->redirect(array('action' => 'view', $this->User->id));
+            } else {
+                $this->Session->setFlash(__('Tietojen tallennus epäonnistui'));
+            }
+
         } else {
-            $this->Session->setFlash(__('Ei riittäviä oikeuksia'));
-            // HUOM. Jos kirjoittaa urlilla /users/view/x, ainakaan
-            // Firefox ei lähetä HTTP_REFERER kenttää headerissa.
-            // Silloin ao. redirect menee '/'. Referer toimii Firefoxissa
-            // jos on painettu linkkiä. 
-            $this->redirect($this->referer());
+            if ( $id == $this->Auth->user('id') || $this->Auth->user('is_admin') ) {
+                $this->User->id = $id;
+                if ($this->User->exists()) {
+                    $user = $this->User->read(null, $id);
+                    // No default password
+                    unset($user['User']['password']);
+                    $this->set('user', $user);
+                    $this->data = $user;
+                    $this->set('referer', $this->referer());
+                } else {
+                    throw new NotFoundException(__('Invalid user'));
+                }
+            } else {
+                $this->Session->setFlash(__('Ei riittäviä oikeuksia'));
+                // HUOM. Jos kirjoittaa urlilla /users/view/x, ainakaan
+                // Firefox ei lähetä HTTP_REFERER kenttää headerissa.
+                // Silloin ao. redirect menee '/'. Referer toimii Firefoxissa
+                // jos on painettu linkkiä.
+                $this->redirect($this->referer());
+            }
         }
     }
 
     public function admin_add() {
-
         if ($this->request->is('post')) {
             $this->User->create();
             if ($this->User->save($this->request->data)) {
@@ -153,23 +169,6 @@ class UsersController extends AppController {
         }
     }
 /*
-    public function edit($id = null) {
-        $this->User->id = $id;
-        if (!$this->User->exists()) {
-            throw new NotFoundException(__('Invalid user'));
-        }
-        if ($this->request->is('post') || $this->request->is('put')) {
-            if ($this->User->save($this->request->data)) {
-                $this->Session->setFlash(__('The user has been saved'));
-                $this->redirect(array('action' => 'index'));
-            } else {
-                $this->Session->setFlash(__('The user could not be saved. Please, try again.'));
-            }
-        } else {
-            $this->request->data = $this->User->read(null, $id);
-            unset($this->request->data['User']['password']);
-        }
-    }
 
     public function delete($id = null) {
         if (!$this->request->is('post')) {
