@@ -2,7 +2,7 @@
 <?php
     echo $this->Form->create(false, array(
             'type' => 'get',
-            'action' => 'index_rdr',
+            'action' => $this->params['action'].'_rdr',
             'id' => 'UserCourseSelection'
         )
     );

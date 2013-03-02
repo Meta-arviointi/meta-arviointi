@@ -3,7 +3,13 @@
 <?php 
 $links = array(
         array('text' => __('Opiskelijat'), 'url' => array('controller' => 'students')),
-        array('text' => __('Toimenpiteet'), 'url' => array('controller' => 'actions'), 'options' => array('class' => 'selected'))
+        array('text' => __('Toimenpiteet'), 'url' => array('controller' => 'actions'), 'options' => array('class' => 'selected')),
+        array('text' => __('Kurssi'), 'url' => array(
+                'controller' => 'courses',
+                'action' => 'view',
+                $this->Session->read('Course.course_id')
+            )
+        )
 );
 echo $this->element('tab-menu', array('links' => $links)); 
 ?>

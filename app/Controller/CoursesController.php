@@ -88,6 +88,30 @@ class CoursesController extends AppController {
         }
 
     }
+    /**
+     * Redirects to view-method.
+     * Function is called from select-list Forms.
+     * It takes $course_id from request and passes it to
+     * view-method (above).
+     */
+    public function view_rdr() {
+        // Init. variable to make sure it's not null at the end
+        $course_id = $this->Session->read('Course.course_id');
+        // Check if request is post
+        if ( $this->request->is('post') ) {
+            $course_id = $this->request->data['course_id'];
+        } else if ( $this->request->is('get') ) { // .. or get
+            $course_id = $this->request->query['course_id'];
+        }
+
+        // Redirect to index() with $course_id
+        $this->redirect(array(
+                'controller' => 'courses',
+                'action' => 'view',
+                $course_id
+            )
+        );
+    }
 
 
 
