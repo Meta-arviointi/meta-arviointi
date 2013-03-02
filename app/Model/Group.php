@@ -28,5 +28,25 @@ class Group extends AppModel {
 		}
 
 	}
+
+	/**
+	 * @return Count of students in group
+	 */
+	public function students_count($group_id) {
+		if ( !empty($group_id) ) {
+			$result = $this->find('first', array(
+					'conditions' => array(
+						'Group.id' => $group_id
+					),
+					'contain' => array(
+						'Student'
+					)
+				)
+			);
+			return count($result['Student']);
+		} else {
+			return 0;
+		}
+	}
 }
 ?>

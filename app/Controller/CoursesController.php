@@ -7,98 +7,84 @@ class CoursesController extends AppController {
      * attendees.
      */
     public function admin_index($cid = 0) {
+        $courses = $this->Course->get_courses($cid);
+        $this->set('courses', $courses);
+    }
 
-/*
-array(
-    'conditions' => array('Model.field' => $thisValue), //array of conditions
-    'recursive' => 1, //int
-    'fields' => array('Model.field1', 'DISTINCT Model.field2'), //array of field names
-    'order' => array('Model.created', 'Model.field3 DESC'), //string or array defining order
-    'group' => array('Model.field'), //fields to GROUP BY
-    'limit' => n, //int
-    'page' => n, //int
-    'offset' => n, //int
-    'callbacks' => true //other possible values are false, 'before', 'after'
-)*/
-    if ($cid > 0) {
-        $this->Session->write('Course.admin_course', $cid);    
-
-        $order = array('Student.last_name' => 'ASC');
-        $students = $this->Course->CourseMembership->Student->find('all', array(
-            'contain' => array(
-                'Group' => array(
-                    'conditions' => array(
-                        'Group.course_id' => $cid
+    public function view($cid = 0) {
+        if ( !empty($cid) ) {
+            if ( $this->Course->exists($cid) ) {
+                $this->Session->write('Course.course_id', $cid);
+                $contain = array(
+                    'Exercise' => array(
+                        'conditions' => array(
+                            'Exercise.course_id' => $cid
+                        )
                     ),
                     'User' => array(
-                        'fields' => 'name'
+                        'Group' => array(
+                            'conditions' => array(
+                                'Group.course_id' => $cid
+                            )
+                        )
+                    ),
+                    'CourseMembership' => array(
+                        'conditions' => array(
+                            'CourseMembership.course_id' => $cid
+                        ),
+                        'Student' => array(
+                            'order' => array(
+                                'Student.last_name' => 'ASC'
+                            ),
+                            'Group' => array(
+                                'conditions' => array(
+                                    'Group.course_id' => $cid
+                                )
+                            )
+                        )
                     )
-                ),
-                'CourseMembership' => array(
-                    'conditions' => array(
-                        'CourseMembership.course_id' => $cid
+                );
+
+                $course_data = $this->Course->get_course($cid, $contain);
+                $course = $course_data['Course'];
+                $exercises = $course_data['Exercise'];
+                $users = $course_data['User'];
+                $course_memberships = $course_data['CourseMembership'];
+
+                $group_count = array();
+                foreach($users as $user) {
+                    if ( !empty($user['Group']) ) {
+                        $group_id = $user['Group'][0]['id'];
+                        $group_count[$user['id']] = $this->Course->Group->students_count($group_id);    
+                    }  
+                }
+
+                $users_list = $this->Course->User->find('list', array(
+                        'fields' => array(
+                            'User.id',
+                            'User.name'
+                        )
                     )
-                )
-            ),
-            'order' => $order
-        ));
-    } else {
-        $this->Session->write('Course.admin_course', '0');
-    }
+                );
 
-	$courses = $this->Course->get_courses($cid);
+                $this->set('group_count', $group_count);
+                $this->set('users_list', $users_list);
+                $this->set('course', $course);
+                $this->set('exercises', $exercises);
+                $this->set('users', $users);
+                $this->set('course_memberships', $course_memberships);
 
-    $course_groups = array();
-    $exercise_list = array();
-    $users_list = array();
-    $groups = array();
-    $quitcount = '0';
 
-    foreach($courses as $course) {
-        $course_groups[$course['Course']['id']] = $course['Course']['name'];
-        $exercise_list = $course['Exercise'];
-        $users_list = $course['User'];
-    }
-
-    foreach($users_list as $index => $stuff) {
-        if ($stuff['is_admin'] == '1') { 
-            unset($users_list[$index]);
-        }
-    }
-
-	if ($cid > 0) {
-        foreach($students as $index => $stuff) {
-            if (empty($stuff['CourseMembership'])) {
-                unset($students[$index]);
             } else {
-                foreach($stuff['CourseMembership'] as $coursem) {
-                    if ($coursem['quit_id'] > '0') {
-                        $quitcount++;
-                    }
-                }
-                foreach($stuff['Group'] as $grouploop) {
-                    $uid = $grouploop['user_id'];
-                    if (isset($groups[$uid])) {
-                        $groups[$uid]++;
-                    } else {
-                        $groups[$uid] = '1';
-                    }
-                }
+                $this->Session->setFlash(__('Tuntematon kurssi'));
+                $this->redirect($this->referer());    
             }
-        }
-		$this->set('single_course', 'true');
-        $this->set('scount', count($students));
-        $this->set('acount', count($users_list));
-        $this->set('quitcount', $quitcount);
-        $this->set('actioncount', 'hardcode 0');
-        $this->set('exercise_list', $exercise_list);
-        $this->set('users_list', $users_list);
-        $this->set('students_list', $students);
-        $this->set('groups', $groups);
-    }
 
-	$this->set('courses', $courses);
-        $this->set('course_groups', $course_groups);
+        } else {
+            $this->Session->setFlash(__('Tuntematon kurssi'));
+            $this->redirect($this->referer());
+        }
+
     }
 
 

@@ -51,5 +51,22 @@ class Course extends AppModel {
         }
         return $this->find('all', $params);
     }
+
+    /**
+     * Return requested course. Possible to add contain parameters.
+     * @return Course, or false if $cid was omitted
+     */
+    public function get_course($cid = 0, $contain = array()) {
+        if ( $cid > 0 ) {
+            $options = array('conditions' => array('Course.id' => $cid));
+            if ( !empty($contain) ) {
+                $options['contain'] = $contain;
+            }
+            return $this->find('first', $options);
+        } else {
+            return false;
+        }
+        
+    }
 }
 ?>

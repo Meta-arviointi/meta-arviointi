@@ -96,7 +96,19 @@
 								)
 							);
 							echo '</div>';
-
+							echo '<div id="courses-link">';
+							$courses_link_classes = 'header-button';
+							if(empty($this->request->params['admin'])) $courses_link_classes .= ' selected';
+							echo $this->Html->link(__('Kurssit'), array(
+									'admin' => false,
+									'controller' => 'students',
+									'action' => 'index'
+								), 
+								array(
+									'class' => $courses_link_classes
+								)
+							);
+							echo '</div>';
 							echo '<div id="mail-indicator">';
 							echo '<a href="#" class="header-button">';
 							echo count($email_notifications);
