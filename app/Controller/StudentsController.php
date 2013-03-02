@@ -3,7 +3,7 @@ class StudentsController extends AppController {
 
     public $name = 'Students';
 
-        public function index($course_id = 0) {
+    public function index($course_id = 0) {
         // Flag variable to indicate if course is changed
         $course_changed = false;
 
@@ -154,6 +154,35 @@ class StudentsController extends AppController {
                 $course_id
             )
         );
+    }
+
+    public function view($id = null) {
+        if ( !empty($id) ) {
+            $this->Student->id = $id;
+            if ($this->Student->exists()) {
+                $this->set('student', $this->Student->read(null, $id));
+                $this->set('referer', $this->referer());
+            } else {
+                $this->Session->setFlash(__('Tuntematon opiskelija'));
+                $this->redirect($this->referer());
+            }
+        } else {
+            $this->Session->setFlash(__('Tuntematon opiskelija'));
+            $this->redirect($this->referer());
+        }
+    }
+
+    public function admin_index() {
+        $admin = $this->Auth->user('is_admin');
+        $this->set('admin', $admin);
+
+        $contain = array(
+            'CourseMembership' => array(
+                'Course'
+            )
+        );
+        $students = $this->Student->find('all', array('contain' => $contain));
+        $this->set('students', $students);
     }
 
     public function admin_add() {

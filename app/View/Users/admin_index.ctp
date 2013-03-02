@@ -3,7 +3,8 @@
 <?php 
 $links = array(
         array('text' => __('Kurssit'), 'url' => array('controller' => 'courses')),
-        array('text' => __('Assistentit'), 'url' => array('controller' => 'users'), 'options' => array('class' => 'selected'))
+        array('text' => __('Assistentit'), 'url' => array('controller' => 'users'), 'options' => array('class' => 'selected')),
+        array('text' => __('Opiskelijat'), 'url' => array('controller' => 'students'))
 );
 echo $this->element('tab-menu', array('links' => $links)); 
 ?>
@@ -22,13 +23,12 @@ echo $this->element('tab-menu', array('links' => $links));
         <tr>
             <th><?php echo __('Sukunimi'); ?></th>
             <th><?php echo __('Etunimi'); ?></th>
-            <th><?php echo __('Kurssi(t)'); ?></th>
             <th><?php echo __('Sähköposti'); ?></th>
+            <th><?php echo __('Kurssit'); ?></th>
             <?php if ( $admin ) { echo '<th>'. __('Toiminnot') . '</th>'; }?>
         </tr>
         <?php
         foreach($users as $user) {
-// lisää controlleriin data admin booleanista, tänne if tarkistus onko admin - pois listasta jos on?
             echo '<tr>';
             echo '<td>'.$this->Html->link($user['User']['last_name'], 
                 array('admin' => false,
@@ -44,14 +44,7 @@ echo $this->element('tab-menu', array('links' => $links));
                      $user['User']['id']
                      )
                 ).'</td>';
-            echo '<td>';
 
-            foreach($user['Course'] as $userc) {
-                echo $this->Html->link($userc['name'].'<br />',
-                array('controller' => 'courses', 'action' => 'admin_index', $userc['id']),
-                array('escape' => false));
-            }
-            echo '</td>';
             echo '<td>'.$this->Html->link($user['User']['email'], 
                 array('admin' => false, 
                     'controller' => 'users', 
@@ -59,6 +52,15 @@ echo $this->element('tab-menu', array('links' => $links));
                     $user['User']['id']
                     )
                 ).'</td>';
+
+            echo '<td>';
+            foreach($user['Course'] as $userc) {
+                echo $this->Html->link($userc['name'].'<br />',
+                array('controller' => 'courses', 'action' => 'admin_index', $userc['id']),
+                array('escape' => false));
+            }
+            echo '</td>';
+
             if ( $admin ) {
                 echo '<td>'. $this->Html->link($this->Html->image('edit-action-icon.png',
                         array('alt' => __('Muokkaa'), 'title' => __('Muokkaa'))),

@@ -3,7 +3,8 @@
 <?php 
 $links = array(
         array('text' => __('Kurssit'), 'url' => array('controller' => 'courses'), 'options' => array('class' => 'selected')),
-        array('text' => __('Assistentit'), 'url' => array('controller' => 'users'))
+        array('text' => __('Assistentit'), 'url' => array('controller' => 'users')),
+        array('text' => __('Opiskelijat'), 'url' => array('controller' => 'students'))
 );
 echo $this->element('tab-menu', array('links' => $links)); 
 ?>
