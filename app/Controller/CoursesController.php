@@ -7,6 +7,8 @@ class CoursesController extends AppController {
      * attendees.
      */
     public function admin_index($cid = 0) {
+        // don't print course_selection drop-down in admin_index
+        $this->set('course_selection', false);
         $courses = $this->Course->get_courses($cid);
         $this->set('courses', $courses);
     }
@@ -56,7 +58,7 @@ class CoursesController extends AppController {
                     if ( !empty($user['Group']) ) {
                         $group_id = $user['Group'][0]['id'];
                         $group_count[$user['id']] = $this->Course->Group->students_count($group_id);    
-                    }  
+                    }
                 }
 
                 $users_list = $this->Course->User->find('list', array(
@@ -77,7 +79,7 @@ class CoursesController extends AppController {
 
             } else {
                 $this->Session->setFlash(__('Tuntematon kurssi'));
-                $this->redirect($this->referer());    
+                $this->redirect($this->referer());
             }
 
         } else {

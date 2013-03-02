@@ -35,7 +35,7 @@ class AppController extends Controller {
 
     public $helpers = array('Form', 'Html', 'Session', 'Less', 'Coffee', 'Paginator');
 
-    public $uses = array('Course');
+    public $uses = array('Course', 'User');
 
     private $_course;
 
@@ -71,6 +71,23 @@ class AppController extends Controller {
         // PRINT COURSE SELECTION DROPDOWN LIST TO HEADERBAR
         // Default is to print, override in controller to prevent print
         $this->set('course_selection', true);
+
+        // Get all courses user has attended
+        $courses = $this->User->user_courses($this->Auth->user('id'));
+
+        $users_courses = array();
+        // Iterate over courses and populate array ready to be used in 
+        // selection list in courses/index/-view
+        // format is Course.id as key and Course.name as value (like find('list'))
+        foreach($courses as $course) {
+            $users_courses[$course['id']] = $course['name'];
+        }
+
+        // THIS DROP-DOWN IS PRINTED TO LAYOUT, UNLESS 'course_selection'
+        // IS SET TO false in Controller!!!
+
+        // Set array to be used in drop-down selection
+        $this->set('users_courses', $users_courses);
     }
 
     public function beforeRender() {

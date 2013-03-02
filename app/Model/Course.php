@@ -66,7 +66,6 @@ class Course extends AppModel {
         } else {
             return false;
         }
-        
     }
 }
 ?>

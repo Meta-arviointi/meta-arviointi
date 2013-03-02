@@ -70,6 +70,9 @@ class UsersController extends AppController {
 
 
     public function admin_index() {
+        // Don't print course_selection drop-down to layout
+        $this->set('course_selection', false);
+
         $admin = $this->Auth->user('is_admin');
         $this->set('admin', $admin);
         
