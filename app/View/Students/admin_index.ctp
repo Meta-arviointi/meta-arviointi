@@ -61,19 +61,23 @@ echo $this->element('tab-menu', array('links' => $links));
                         )
                     );
                     echo '<br/>';
-                }    
-            } else { // only one CourseMembership
-                $cm = $student['CourseMembership'][0];
-                $course_name = $cm['Course']['name'];
-                echo $this->Html->link($course_name, array(
-                        'admin' => false,
-                        'controller' => 'course_memberships',
-                        'action' => 'view',
-                        $cm['id']
-                    )
-                );
+                }
+            } else { // only one OR zero CourseMembership
+                if ( !empty($student['CourseMembership']) ) {
+                    $cm = $student['CourseMembership'][0];
+                    $course_name = $cm['Course']['name'];
+                    echo $this->Html->link($course_name, array(
+                            'admin' => false,
+                            'controller' => 'course_memberships',
+                            'action' => 'view',
+                            $cm['id']
+                        )
+                    );
+                } else {
+                    echo __('Ei kursseilla');
+                }
+
             }
-            
             echo '</td>';
             echo '</tr>';
         }

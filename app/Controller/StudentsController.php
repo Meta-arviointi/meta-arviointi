@@ -171,7 +171,11 @@ class StudentsController extends AppController {
                 'Course'
             )
         );
-        $students = $this->Student->find('all', array('contain' => $contain));
+        $options = array(
+            'order' => 'last_name ASC',
+            'contain' => $contain
+        );
+        $students = $this->Student->find('all', $options);
         $this->set('students', $students);
     }
 
