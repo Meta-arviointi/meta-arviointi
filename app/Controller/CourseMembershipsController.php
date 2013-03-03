@@ -25,8 +25,6 @@ class CourseMembershipsController extends AppController {
                 unset($this->request->data['CourseMembership']);
             }
             if ( $this->CourseMembership->saveAssociated($this->request->data) ) {
-                
-
                 $sid = $this->CourseMembership->Student->id;
                 // Check if Student was selected for group
                 if ( !empty($user_id) ) {
@@ -122,8 +120,37 @@ class CourseMembershipsController extends AppController {
         }
     }
 
-    public function create_many($course_id = 0) {
+    public function admin_create_many($course_id = 0) {
         if ( $this->request->is('post') ) {
+            // Check if more than one Student is submitted
+            $students = $this->request->data['Student'];
+            unset($this->request->data['Student']);
+            $returns = array();
+            $errors = array();
+            
+            // data for saving
+            foreach($students as $student => $sid) {
+                $data = array();
+                $data['course_id'] = $this->request->data['Course']['id'];
+                $data['User'] = $this->request->data['User'];
+                $data['student_id'] = $sid;                
+                $return = $this->save_many($data);
+                if ( !empty($return) ) {
+                    $returns[] = $return;
+                } else {
+                    $errors[] = $sid;
+                }
+            }
+            $succ_count = count($returns);
+            $err_count = count($errors);
+            $this->Session->setFlash("$succ_count opiskelijaa lisätty kurssille ($err_count epäonnistui)");
+            $this->redirect(array(
+                    'admin' => false,
+                    'controller' => 'courses',
+                    'action' => 'view',
+                    $this->request->data['Course']['id']
+                )
+            );
 
         } else {
             $courses = $this->CourseMembership->Course->find('list', array(
@@ -132,13 +159,64 @@ class CourseMembershipsController extends AppController {
             );
             $this->set('courses', $courses);
             if ( $course_id > 0 ) {
-                
-                $results = $this->CourseMemberhip->Course->get_users($course_id, array('User'));
-                
-                $this->set('user_groups', $user_groups);
+                $users = $this->CourseMembership->Course->get_users($course_id);
+                $users_list = array();
+                foreach( $users['User'] as $user ) {
+                    $users_list[$user['id']] = $user['name'];
+                }
+                $this->set('users', $users_list);
+                $this->render('/Elements/user-selection');
             }
 
         }
+    }
+
+    public function save_many($data) {
+        $user_id = null;
+        if ( isset($data['User']) ) {
+            $user_id = $data['User'];
+            unset($data['User']);
+        }
+        $cid = $data['course_id'];
+        //krsort($data);
+        $this->CourseMembership->create();
+        if ( $this->CourseMembership->save($data) ) {
+            $sid = $data['student_id'];
+            // Check if Student was selected for group
+            if ( !empty($user_id) ) {
+                $group = $this->CourseMembership->Course->User->user_group($user_id, $cid);
+                if ( !empty($group) ) {
+                    $gid = $group['Group']['id'];
+                    $result = $this->CourseMembership->Student->Group->link_student($gid, $sid);
+                    if ( !empty($result) ) {
+                        return $sid;
+                    } else {
+                        return $sid;
+                    }
+                } else { // Create new group
+                    $result = $this->CourseMembership->Student->Group->save(array(
+                            'Group' => array(
+                                'course_id' => $cid,
+                                'user_id' => $user_id
+                            ),
+                            'Student' => array(
+                                'id' => $sid
+                            )
+                        )
+                    );
+                    if ( !empty($result) ) {
+                        return $sid;
+                    } else {
+                        $sid;
+                    }
+                }
+            } else { // Student was linked to course, but not to a group
+                return $sid;
+            }
+        } else {
+            return false;
+        }
+
     }
 
     /**
