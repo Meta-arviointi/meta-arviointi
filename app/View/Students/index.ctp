@@ -58,8 +58,7 @@ echo $this->element('tab-menu', array('links' => $links));
     // Selection for assistent groups
     echo $this->Form->create(false, array('id' => 'StudentIndexFilters', 'type' => 'get', 'data-target' => 'StudentsList'));
     echo $this->Form->label('group', 'Vastuuryhmä');
-    echo $this->Form->select('group_id', $user_groups, array('div' => false, 'empty' => array(0 => 'Kaikki'), 'default' => $group_id));
-    echo $this->Form->input('filter', array('div' => false, 'label' => __('Suodata'), 'id' => 'TextFilterKeyword'));
+    echo $this->Form->select('group', $user_groups, array('div' => false, 'empty' => array('' => 'Kaikki')));
     echo $this->Form->end();
 
     echo $this->Html->link(__('Lisää toimenpide valituille'),array(
@@ -94,35 +93,40 @@ echo $this->element('tab-menu', array('links' => $links));
         </thead>
         <tbody>
             <?php
-            if ( !empty($students) ) { // check if not empty
-                foreach($students as $student) {
-                    echo '<tr class="table-content">';
-                    echo '<td>' . $this->Form->checkbox('CourseMembership.'.$student['CourseMembership'][0]['id'], array(
-                                'value' => $student['CourseMembership'][0]['id'],
+            if ( !empty($memberships) ) { // check if not empty
+                foreach($memberships as $membership) {
+                    $student_group_id = 0;
+                    if(!empty($membership['Student']['Group'])) $student_group_id = $membership['Student']['Group'][0]['id'];
+                    echo '<tr class="table-content" data-group="'.$student_group_id.'">';
+                    echo '<td>' . $this->Form->checkbox('CourseMembership.'.$membership['CourseMembership']['id'], array(
+                                'value' => $membership['CourseMembership']['id'],
                                 'hiddenField' => false
                             )
                         ) . '</td>';
-                    echo '<td>'.$this->Html->link($student['Student']['last_name'],
-                        array('controller' => 'course_memberships', 'action' => 'view', $student['CourseMembership'][0]['id'])).'</td>';
-                    echo '<td>'.$this->Html->link($student['Student']['first_name'],
-                        array('controller' => 'course_memberships', 'action' => 'view', $student['CourseMembership'][0]['id'])).'</td>';
-                    echo '<td>'.$student['Student']['student_number'].'</td>';
+                    
+                    echo '<td>'.$this->Html->link($membership['Student']['last_name'],
+                        array('controller' => 'course_memberships', 'action' => 'view', $membership['CourseMembership']['id'])).'</td>';
 
-                    /* If student belongs to a group, print assistant name */
-                    if ( isset($student['Group'][0]['User']) ) {
-                        echo '<td>'.$student['Group'][0]['User']['name'].'</td>';
+                    echo '<td>'.$this->Html->link($membership['Student']['first_name'],
+                        array('controller' => 'course_memberships', 'action' => 'view', $membership['CourseMembership']['id'])).'</td>';
+                    echo '<td>'.$membership['Student']['student_number'].'</td>';
+
+                    // If student belongs to a group, print assistant name
+                    if ( isset($membership['Student']['Group'][0]['User']) ) {
+                        echo '<td>'.$membership['Student']['Group'][0]['User']['name'].'</td>';
                     } else {
-                        /* If not in any group, leave cell empty */
+                        // If not in any group, leave cell empty
                         echo '<td><em>' . __('(ei määritelty)') .'</em></td>';
 
                     }
-                    echo '<td>'.(isset($student['Action']) ? count($student['Action']) : 0).'</td>';
+
+                    echo '<td>'.(isset($membership['Action']) ? count($membership['Action']) : 0).'</td>';
                     echo '<td>'. $this->Html->link($this->Html->image('edit-action-icon.png',
                             array('alt' => __('Lisää toimenpide'), 'title' => __('Lisää toimenpide'))),
                             array(
                                 'controller' => 'actions',
                                 'action' => 'create',
-                                $student['CourseMembership'][0]['id']
+                                $membership['CourseMembership']['id']
                             ),
                             array(
                                 'id' => 'quick-action',
@@ -130,6 +134,7 @@ echo $this->element('tab-menu', array('links' => $links));
                                 'escape' => false
                             )
                     ); '</td>';
+                    
                     echo '</tr>';
                 }
             } else { // print "nothing available"

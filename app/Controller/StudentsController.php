@@ -27,76 +27,19 @@ class StudentsController extends AppController {
             $this->Student->Group->User->set_new_group($this->Auth->user('id'), $course_id);
         }
 
-
-        $group_id = null;
-        // Check if get-request has 'group_id'.
-        // If so, set it to session 'User.group_id'
-        if (isset($this->request->query['group_id'])) {
-            $group_id = $this->request->query['group_id'];
-            $this->Session->write('User.group_id', $group_id);
-        } else { // No variable in get-request, take group_id from session
-            // Read group_id from session, if 'null' group_id = 0.
-            $group_id = $this->Session->read('User.group_id') == null ? 0 : $this->Session->read('User.group_id');
-        }
-
-        //debug($this->request);
-        //debug($this->Session->read());
-        $order = array('Student.last_name' => 'ASC');
-        $students = $this->Student->find('all', array(
-                'contain' => array(
+        $memberships = $this->Student->CourseMembership->find('all', array(
+            'conditions' => array('CourseMembership.course_id' => $course_id),
+            'contain' => array(
+                'Student' => array(
                     'Group' => array(
-                        'conditions' =>
-                            ($group_id > 0 ? // if
-                                array(
-                                    'Group.course_id' => $course_id,
-                                    'Group.id' => $group_id
-                                    )
-                                : array('Group.course_id' => $course_id) // else
-                            )
-                        ,
-                        'User' => array(
-                            'fields' => 'name'
-                        )
-                     ),
-                    'CourseMembership' => array(
-                            'conditions' => array('CourseMembership.course_id' => $course_id)
+                        'User'
                     )
                 ),
-                'order' => $order
+                'Action',
+                'EmailMessage'
             )
-        );
-
-        /*
-         * Delete students that don't belong to current course.
-         * Delete also if student don't belong to selected group.
-         * If $group_id = 0, show also students who don't have group.
-         * ['Group'] or ['CourseMembership'] is empty array.
-         */
-        foreach ($students as $index => $student) {
-            if ( empty($student['CourseMembership']) ) {
-                unset($students[$index]);
-            } else if ( $group_id > 0 && empty($student['Group']) ) {
-                unset($students[$index]);
-            }
-        }
-
-        // Loop to fetch all actions related to one student
-        foreach ($students as &$student) {
-            $this->Student->CourseMembership->Action->contain();
-            $student_actions = $this->Student->CourseMembership->Action->find('all', array(
-                    'conditions' => array(
-                        'Action.course_membership_id' => $student['CourseMembership'][0]['id']
-                    )
-                )
-            );
-            // Remove unnecessary depth from arrays that resulted
-            // from call to find('all'), and add actions to
-            // $student['Action'] -array
-            foreach ($student_actions as $action) {
-                $student['Action'][] = $action['Action'];
-            }
-        }
-
+        ));
+        //print_r($memberships); die();
 
         // Call Group-model to return groups with assistant names
         // in given course ($course_id from Session)
@@ -111,11 +54,7 @@ class StudentsController extends AppController {
 
         // Group selection (for drop-down selection)
         $this->set('user_groups', $user_groups);
-        $this->set('students', $students);
-        // Group_id visible for view
-        $this->set('group_id', $group_id);
-
-
+        $this->set('memberships', $memberships);
     }
 
     /**
