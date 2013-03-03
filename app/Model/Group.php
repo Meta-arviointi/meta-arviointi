@@ -51,8 +51,8 @@ class Group extends AppModel {
 
 	public function link_student($gid, $sid) {
 		if ( !empty($sid) && !empty($gid) ) {
-			$this->Student->Group->contain('Student');
-            $group = $this->Student->Group->findById($gid);
+			$this->contain('Student');
+            $group = $this->findById($gid);
             $group_students = isset($group['Student']) ? $group['Student'] : array();
             array_push($group_students, $sid);
 			$options = array(
@@ -64,8 +64,30 @@ class Group extends AppModel {
 				)
 			);
 			return $this->save($options);
+		} else {
+			return false;
+		}
+	}
 
-
+	public function unlink_student($gid, $sid) {
+		if ( !empty($sid) && !empty($gid) ) {
+			$this->contain('Student');
+            $group = $this->findById($gid);
+            $group_students = isset($group['Student']) ? $group['Student'] : array();
+            foreach($group_students as $idx => $student) {
+                if ( intval($student['id']) == intval($sid) ) {
+                    unset($group_students[$idx]);
+                }
+            }
+            $options = array(
+                'Group' => array(
+                    'id' => $gid
+                ),
+                'Student' => array(
+                    'Student' => $group_students
+                )
+            );
+            $this->save($options);
 		} else {
 			return false;
 		}

@@ -127,13 +127,13 @@ class CourseMembershipsController extends AppController {
             unset($this->request->data['Student']);
             $returns = array();
             $errors = array();
-            
+
             // data for saving
             foreach($students as $student => $sid) {
                 $data = array();
                 $data['course_id'] = $this->request->data['Course']['id'];
                 $data['User'] = $this->request->data['User'];
-                $data['student_id'] = $sid;                
+                $data['student_id'] = $sid;
                 $return = $this->save_many($data);
                 if ( !empty($return) ) {
                     $returns[] = $return;
@@ -307,24 +307,7 @@ class CourseMembershipsController extends AppController {
             $group = $this->CourseMembership->Student->student_group($student_id, $cid);
             $gid = $group[0]['id'];
 
-            $this->CourseMembership->Student->Group->contain('Student');
-            $group = $this->CourseMembership->Student->Group->findById($gid);
-            $group_students = isset($group['Student']) ? $group['Student'] : array();
-            foreach($group_students as $idx => $student) {
-                if ( intval($student['id']) == intval($student_id) ) {
-                    unset($group_students[$idx]);
-                }
-            }
-            $options = array(
-                'Group' => array(
-                    'id' => $gid
-                ),
-                'Student' => array(
-                    'Student' => $group_students
-                )
-            );
-            $this->CourseMembership->Student->Group->save($options);
-
+            $this->CourseMembership->Student->Group->unlink_student($gid,$student_id);
             $this->redirect($this->referer());
         }
 
