@@ -47,6 +47,9 @@ $(document).ready ->
             $('.modal-content').load link.attr('href')
             false
 
+    $(window).keyup (e) ->
+        $('.modal').fadeOut 100 if e.keyCode == 27
+
     $('.collapsable').hide()
 
     $('.decollapse-toggle').click ->
