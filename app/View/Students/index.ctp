@@ -152,3 +152,14 @@ echo $this->element('tab-menu', array('links' => $links));
         $('#StudentsList tr.table-content:has(td:contains('+$(this).val()+'))').show();
     });
 </script>
+
+<?php
+    if($this->Session->read('User.group_id')) { ?>
+        <script>
+            if(window.location.hash == '') {
+                window.location.hash = 'StudentsList[group]='+<?php echo $this->Session->read('User.group_id'); ?>;
+            }
+        </script>
+    <?php }
+?>
+
