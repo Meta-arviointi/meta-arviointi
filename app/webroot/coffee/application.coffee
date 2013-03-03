@@ -35,20 +35,34 @@ window.datepickerDefaults = {
 $(document).ready ->
     $.scrollTo 0
 
+    modal = $('.modal')
+    body = $('body')
+
+    showModal = ->
+        modal.fadeIn 100
+        body.addClass 'modal-visible'
+        return
+
+    hideModal = ->
+        modal.fadeOut 100
+        body.removeClass 'modal-visible'
+        return
+
     $('.modal').hide()
+
     $('.modal-close, .modal-overlay').click -> 
-        $(this).parents('.modal').fadeOut 100
+        hideModal()
         false
 
     $('.modal-link').each ->
         link = $(this)
         link.click ->
-            $('.modal').fadeIn 100
+            showModal()
             $('.modal-content').load link.attr('href')
             false
 
     $(window).keyup (e) ->
-        $('.modal').fadeOut 100 if e.keyCode == 27
+        hideModal() if e.keyCode == 27
 
     $('.collapsable').hide()
 
