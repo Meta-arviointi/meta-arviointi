@@ -279,6 +279,9 @@ class StudentsController extends AppController {
 		$this->set('students', $students);
 	}
 
+    /**
+     * CSV import
+     */
     public function import() {
         $course_id = $this->Session->read('Course.course_id');
         $course_id = intval($course_id); // from session, datatype is char
@@ -421,7 +424,11 @@ class StudentsController extends AppController {
                                    //User not in system
                                     $row_errors[] = "Assistentti ($user_bua) ei järjestelmässä. Lisää assistentti käsin." .
                                         " Lisätään opiskelijaa ($student_number)...";
-                                    $unknown_users[] = $user_bua;
+                                    // check if user already in unknown users
+                                    if ( !in_array($user_bua, $unknown_users) ) {
+                                        // new user, add to unknown list
+                                        $unknown_users[] = $user_bua;
+                                    }
                                 } 
                                 
                             } else {
