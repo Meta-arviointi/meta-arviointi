@@ -286,6 +286,74 @@ class StudentsController extends AppController {
 		$this->set('students', $students);
 	}
 
+    public function set_groups($cid = 0) {
+        if ( $cid <= 0 ) {
+            $cid = $this->Session->read('Course.course_id');
+        }
+        if ( $this->request->is('post') ) {
+            $students = $this->request->data['Student'];
+            $uid = $this->request->data['User']['id'];
+            $group = $this->Student->Group->User->user_group($uid, $cid);
+            $succ = 0;
+            $err = 0;
+            if ( !empty($group) ) {
+                $gid = $group['Group']['id'];
+            } else { // user has no group
+                // Create new group for user $uid
+                $this->Student->Group->create();
+                $this->Student->Group->save(array(
+                    'course_id' => $cid, 
+                    'user_id' => $uid
+                    )
+                );
+                // set $gid
+                $gid = $this->Student->Group->id;
+            }
+            if ( !empty($gid) ) {
+                foreach($students as $student => $sid) {
+                    $sgroup = $this->Student->student_group($sid, $cid);
+                    $duplicate = false;
+                    if ( !empty($sgroup) ) {
+                        // remove old group 
+                        $sgid = $sgroup[0]['id'];
+                        if ( $sgid != $gid ) {
+                            $this->Student->Group->unlink_student($sgid, $sid);
+                        } else {
+                            // this user is already linked to this group
+                            $duplicate = true;
+                        }
+                    }
+                    if ( !$duplicate ) {
+                        // link student to selected group (different from current)
+                        $return = $this->Student->Group->link_student($gid, $sid);
+                        if ( $return ) {
+                            $succ++;
+                        } else {
+                            $err++;
+                        }
+                    }
+                }
+            }
+            $this->Session->setFlash("$succ opiskelijan vastuuryhmä päivitetty ($err epäonnistui)");
+            $this->redirect(array(
+                    'controller' => 'courses',
+                    'action' => 'view',
+                    $cid
+                )
+            );
+        } else { // normal request, get data for Form
+            // get users in course
+            $users = $this->Student->CourseMembership->Course->get_users($cid);
+            $users_list = array();
+            // make drop-down
+            foreach( $users['User'] as $user ) {
+                $users_list[$user['id']] = $user['name'];
+            }
+
+            $this->set('users', $users_list);
+        }
+    }
+
     /**
      * CSV import
      */
@@ -477,14 +545,8 @@ class StudentsController extends AppController {
                                             'Student' => $group_students
                                         )
                                     );
-                                    //debug($options);
                                     $this->Student->Group->save($options);
                                     $has_group = true;
-                                    /*debug($data);
-                                    $group = $this->Student->Group->findById($gid);
-                                    $group_students = $group['Student'];
-                                    debug($group_students);
-                                    exit;*/
                                 } else {
                                     if ( !$uid ) {
                                         // We end up here, if $uid is not known (we can't link

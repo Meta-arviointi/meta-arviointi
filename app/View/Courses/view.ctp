@@ -1,3 +1,34 @@
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#CreateManyLink').addClass('disabled');
+        var n = $('#EditStudentGroups').find('input[type="checkbox"]:checked').length;
+        if ( n > 0 ) {
+            $('#CreateManyLink').removeClass('disabled');
+        }
+
+        $('#CreateManyLink').click(function(event) {
+            event.preventDefault();
+            if ( $(this).hasClass('disabled')) {
+                return false
+            } else {
+                return true;
+            }
+        });
+
+        $('#EditStudentGroups').find('input[type="checkbox"]').each(function() {
+            var chkbox = this;
+            $(chkbox).click(function() {
+                var n = $('#EditStudentGroups').find('input[type="checkbox"]:checked').length;
+                if ( n == 0 ) {
+                    $('#CreateManyLink').addClass('disabled');
+                } else {
+                    $('#CreateManyLink').removeClass('disabled');
+                }
+            })
+        });
+
+    });
+</script>
 <div class="row">
     <div class="twelveol">
 <?php 
@@ -85,10 +116,30 @@ echo $this->element('tab-menu', array('links' => $links));
 
     echo '<br/>';
     echo '<br/>';
+
     
+        
     echo '<h2>'.__('Opiskelijat').'</h2>';
+
+    echo $this->Form->create(false, array('id' => 'EditStudentGroups',
+            'url' => array('controller' => 'actions', 'action' => 'add'),
+            'inputDefaults' => array(
+                'label' => false,
+                'div' => false
+            )
+        )
+    );
+    echo $this->Html->link(__('Liitä valitut opiskelijat vastuuryhmään'),array(
+            'controller' => 'students',
+            'action' => 'set_groups'
+            ),
+            array('class' => 'modal-link',
+                'id' => 'CreateManyLink'
+            )
+    );
     echo '<table class="data-table">';
     echo '    <tr>';
+    echo '        <th></th>';
     echo '        <th>'. __('Etunimi') .'</th>';
     echo '        <th>'. __('Sukunimi') .'</th>';
     echo '        <th>'. __('Opiskelijanumero') .'</th>';
@@ -100,6 +151,11 @@ echo $this->element('tab-menu', array('links' => $links));
     if ( !empty($course_memberships) ) {
         foreach($course_memberships as $student) {
             echo '<tr>';
+            echo '<td>' . $this->Form->checkbox('Student.'.$student['Student']['id'], array(
+                                'value' => $student['Student']['id'],
+                                'hiddenField' => false
+                            )
+                        ) . '</td>';
             echo '<td>'. $student['Student']['first_name'] .'</td>';
             echo '<td>'. $student['Student']['last_name'] .'</td>';
             echo '<td>'. $student['Student']['student_number'] .'</td>';
@@ -123,13 +179,12 @@ echo $this->element('tab-menu', array('links' => $links));
                             )
                 ); '</td>';
             }
-
         }    
     } else {
         echo '<tr><td class="empty" colspan="5">' . __('Ei opiskelijoita') . '</td><tr>';
     }
-    
     echo '</table>';
+
     echo $this->Html->link('Lisää uusi opiskelija kurssille', array(
                 'action' => 'add',
                 'controller' => 'course_memberships'
