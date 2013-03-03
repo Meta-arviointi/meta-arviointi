@@ -23,7 +23,7 @@
                 state[id] = params
                 $.bbq.pushState state
 
-            $(window).bind 'hashchange', (e) ->
+            updateTable = ->
                 state = $.bbq.getState id
 
                 for key, val of state
@@ -34,4 +34,10 @@
                     for key, val of state
                         show = false if val != '' && $(this).attr('data-' + key) != val
                     $(this).toggle show
+
+            $(window).bind 'hashchange', (e) ->
+                updateTable()
+
+            #initial filtering on page load
+            updateTable()
 )(jQuery)
