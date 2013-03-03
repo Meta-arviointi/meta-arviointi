@@ -130,7 +130,7 @@ echo $this->element('tab-menu', array('links' => $links));
     }
     
     echo '</table>';
-    echo $this->Html->link('Lisää opiskelija kurssille', array(
+    echo $this->Html->link('Lisää uusi opiskelija kurssille', array(
                 'action' => 'add',
                 'controller' => 'course_memberships'
             ),

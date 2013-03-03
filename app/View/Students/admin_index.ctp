@@ -18,9 +18,18 @@ echo $this->element('tab-menu', array('links' => $links));
     echo '<pre>';
     //debug($students[1]);
     echo '</pre>';
+    echo $this->Form->create(false, array('id' => 'CreateManyCourseMemberships',
+            'url' => array('controller' => 'actions', 'action' => 'add'),
+            'inputDefaults' => array(
+                'label' => false,
+                'div' => false
+            )
+        )
+    );
 ?>
     <table class="data-table" id="StudentsList">
         <tr>
+            <th></th><!--checkboxes -->
             <th><?php echo __('Sukunimi'); ?></th>
             <th><?php echo __('Etunimi'); ?></th>
             <th><?php echo __('Opiskelijanumero'); ?></th>
@@ -79,6 +88,8 @@ echo $this->element('tab-menu', array('links' => $links));
 
             }
             echo '</td>';
+            if ( !empty($admin) ) {
+            }
             echo '</tr>';
         }
          
