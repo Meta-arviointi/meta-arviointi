@@ -9,12 +9,12 @@ class CourseMembershipsController extends AppController {
      * where $sid is Student.id
      */
     public function add($sid = 0) {
+        $cid = $this->Session->read('Course.course_id');
         if ( isset($this->request->data['Course']['id']) ) {
             $cid = $this->request->data['Course']['id'];
         } else {
-            $cid = $this->Session->read('Course.course_id');    
+            
         }
-        
 
         if ( $this->request->is('post') || $this->request->is('put') ) {
             $user_id = null;
@@ -122,6 +122,24 @@ class CourseMembershipsController extends AppController {
         }
     }
 
+    public function create_many($course_id = 0) {
+        if ( $this->request->is('post') ) {
+
+        } else {
+            $courses = $this->CourseMembership->Course->find('list', array(
+                    'fields' => array('Course.id', 'Course.name')
+                )
+            );
+            $this->set('courses', $courses);
+            if ( $course_id > 0 ) {
+                
+                $results = $this->CourseMemberhip->Course->get_users($course_id, array('User'));
+                
+                $this->set('user_groups', $user_groups);
+            }
+
+        }
+    }
 
     /**
      * View method displays information of students attendance in

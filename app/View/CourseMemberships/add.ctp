@@ -11,7 +11,7 @@
             )
         );
         echo $this->Form->input('Student.id', array('type' => 'hidden', 'disabled' => false));
-    else {
+    } else {
         echo "<h1>".__('Lisää uusi opiskelija kurssille')."</h1>";
         echo $this->Form->create('CourseMembership');
     }
