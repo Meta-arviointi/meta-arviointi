@@ -110,7 +110,11 @@ class StudentsController extends AppController {
                 'Course'
             )
         );
-        $students = $this->Student->find('all', array('contain' => $contain));
+        $options = array(
+            'order' => 'last_name ASC',
+            'contain' => $contain
+        );
+        $students = $this->Student->find('all', $options);
         $this->set('students', $students);
     }
 
@@ -121,7 +125,10 @@ class StudentsController extends AppController {
 
         if( $this->request->is('post') ) {
             if ( $this->Student->save($this->request->data) ) {
-                $this->redirect(array('action' => 'index', 'controller' => 'courses', $course_id));
+                $fname = $this->Student->field('first_name');
+                $lname = $this->Student->field('last_name');
+                $this->Session->setFlash("Opiskelija $fname $lname lisätty järjestelmäään");
+                $this->redirect($this->referer());
             } else {
                 $this->Session->setFlash('Opiskelijan tallennus ei onnistunut');
                 $this->redirect($this->referer());

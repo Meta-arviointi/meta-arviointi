@@ -241,7 +241,7 @@ class UsersController extends AppController {
         }
     }
 
-    public function test() {
+    public function test($uid) {
         //debug($this->User->get_last_course($course_id));
         //debug($this->User->Action->new_actions());
         //debug($this->User->Action->new_actions_count());
@@ -251,17 +251,8 @@ class UsersController extends AppController {
         // course_id as parameter
         //debug($this->User->Action->open_actions();
         // course_id from session, contain also Student
-        //debug($this->User->Action->open_actions(null, array('Student')));
-        $unknown_users = array();
-        $unknown_users[] = 'asd';
-        $unknown_users[] = 'ada';
-        $unknown_users[] = 'asda';
-        if ( !in_array('ada', $unknown_users) ) {
-            debug($unknown_users);
-        } else {
-            echo 'fuuk';
-        }
-        exit;
+        debug($this->User->user_group($uid, $this->Session->read('Course.course_id')));
+        
     }
 
     public function student_test($sid) {

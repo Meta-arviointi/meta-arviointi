@@ -146,12 +146,32 @@ class CoursesController extends AppController {
             }
 
         } else {
-            $this->data = $this->Course->read(null, $this->Session->read('Course.course_id'));
+            $cid = $this->Session->read('Course.course_id');
+            $this->data = $this->Course->read(null, $cid);
             $users = $this->Course->User->find('list', array(
                     'fields' => array('User.id', 'User.name')
                 )
             );
+
+            // Check if user has group in current course, and if
+            // group has students. If so, user can't be deleted from Course.
+            // (checkbox disabled)
+            $user_groups = array(); // list of user's that can't be deleted
+            foreach($users as $uid => $name) {
+                // get group
+                $group = $this->Course->User->user_group($uid, $cid);
+                if ( !empty($group) ) {
+                    $gid = $group['Group']['id'];
+                    $count = $this->Course->Group->students_count($gid);
+                    // If there are students in group, add uid to list
+                    if ( $count > 0 ) {
+                        $user_groups[] = $uid;
+                    }
+                }
+
+            }
             $this->set('users', $users);
+            $this->set('user_groups', $user_groups);
         }
     }
 
