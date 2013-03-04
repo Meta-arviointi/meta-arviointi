@@ -4,7 +4,8 @@
 $links = array(
         array('text' => __('Kurssit'), 'url' => array('controller' => 'courses'), 'options' => array('class' => 'selected')),
         array('text' => __('Assistentit'), 'url' => array('controller' => 'users')),
-        array('text' => __('Opiskelijat'), 'url' => array('controller' => 'students'))
+        array('text' => __('Opiskelijat'), 'url' => array('controller' => 'students')),
+        array('text' => __('Viestipohjat'), 'url' => array('controller' => 'action_email_templates'))
 );
 echo $this->element('tab-menu', array('links' => $links)); 
 ?>
