@@ -29,4 +29,24 @@ class ExercisesController extends AppController {
             $this->set('next_number', $last_number + 1);
         }
     }
+
+    public function edit_many() {
+        if ( $this->request->is('put') || $this->request->is('post') ) {
+            if ( $this->Exercise->saveMany($this->request->data['Exercise']) ) {
+                $this->Session->setFlash('Harjoitukset tallennettu');
+                $this->redirect(array(
+                    'controller' => 'courses',
+                    'action' => 'view',
+                    $this->Session->read('Course.course_id')
+                ));
+            } else {
+                $this->Session->setFlash('Harjoitusten tallennus epäonnistui');
+                $this->redirect(array(
+                    'controller' => 'courses',
+                    'action' => 'view',
+                    $this->Session->read('Course.course_id')
+                ));
+            }
+        }
+    }
 }

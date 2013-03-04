@@ -176,15 +176,10 @@ class ActionsController extends AppController {
                     ? $id = $this->Action->id : $id = $this->request->data['Action']['id'];
                 $this->Session->setFlash(__("Toimenpide (id: $id) tallennettu!"));
 
-                /* Redirect to course_membership/view page
+                /* Redirect to  referer
+                 * course_membership/view page or students/index
                  */
-                $this->redirect(array(
-                        'controller' => 'course_memberships',
-                        'action' => 'view',
-                        $this->Action->field('course_membership_id'),
-                        '?' => array('scroll_to' => 'action'.$id)
-                     )
-                );            
+                $this->redirect($this->referer());
             } else {
                 $this->Session->setFlash(__("Toimenpidettä ei voitu tallentaa (valittiinko harjoituksia?)"));
                 $this->redirect($this->referer());

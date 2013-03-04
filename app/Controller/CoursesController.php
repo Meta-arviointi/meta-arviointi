@@ -23,7 +23,8 @@ class CoursesController extends AppController {
                     'Exercise' => array(
                         'conditions' => array(
                             'Exercise.course_id' => $cid
-                        )
+                        ),
+                        'order' => 'Exercise.exercise_number ASC'
                     ),
                     'User' => array(
                         'Group' => array(
@@ -70,13 +71,24 @@ class CoursesController extends AppController {
                         )
                     )
                 );
-
+                $edit = isset($this->request->query['edit']) ? $this->request->query['edit'] : null;
+                if ( $edit ) {
+                    if ( !strcmp($edit, 'exercises') ) {
+                        $this->set('edit_exercises', true);
+                        $this->data = $exercises;
+                    } else {
+                        $this->set('edit_exercises', false);
+                    }
+                } else {
+                    $this->set('edit_exercises', false);
+                }
                 $this->set('group_count', $group_count);
                 $this->set('users_list', $users_list);
                 $this->set('course', $course);
                 $this->set('exercises', $exercises);
                 $this->set('users', $users);
                 $this->set('course_memberships', $course_memberships);
+                $this->set('course_id', $cid);
 
 
             } else {

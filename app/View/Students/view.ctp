@@ -18,19 +18,15 @@
                     echo '</div>';
                 }
                 echo '</div>';
-                /*
+                
                 echo $this->Html->link(__('Muokkaa'), array(
                         'admin' => false,
                         'controller' => 'students',
                         'action' => 'edit',
                         $student['Student']['id']
                     )
-                );*/
-                if ( !empty($referer) ) {
-                    echo $this->Html->link(__('Takaisin'), $referer);
-                } else {
-                    echo $this->Html->link(__('Takaisin'), array('controller' => 'students', 'action' => 'index'));
-                }
+                );
+
             ?>
         </div>
     </div>
