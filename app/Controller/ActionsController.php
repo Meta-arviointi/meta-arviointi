@@ -91,6 +91,13 @@ class ActionsController extends AppController {
             'order' => 'Exercise.exercise_number'
         )));
 
+        $this->set('action_types', $this->Action->ActionType->find('list', array(
+            'conditions' => array(
+                'active' => true
+            ),
+            'fields' => array('id', 'name'),
+            'order' => 'ActionType.name'
+        )));
 
         // Get all courses user has attended
         // TODO: what if user isadmin?
