@@ -39,11 +39,14 @@ echo $this->element('tab-menu', array('links' => $links));
 
     echo $this->Form->end();
     
+
+    echo $this->Form->create(false, array('id' => 'SelectActions'));
     ?>
 
     <table class="data-table" id="ActionsList">
         <thead>
             <tr class="table-header">
+                <th></th>
                 <th><?php echo __('Tyyppi'); ?></th>
                 <th><?php echo __('Harjoitus'); ?></th>
                 <th><?php echo __('Opiskelija'); ?></th>
@@ -90,6 +93,15 @@ echo $this->element('tab-menu', array('links' => $links));
                     data-exercise="'.implode(',', $ex_ids).'"
                     data-resolved="'. ((!empty($action['Action']['handled_id'])) ? 'true' : 'false') .'"
                     >';
+
+
+                echo '<td>' . $this->Form->checkbox('Action.', array(
+                            'value' => $action['Action']['id'],
+                            'hiddenField' => false
+                        )
+                    ) . '</td>';
+                
+
                 echo '<td>' . $this->Html->link($action['ActionType']['name'], 
                     array(
                         'controller' => 'course_memberships',
@@ -112,11 +124,14 @@ echo $this->element('tab-menu', array('links' => $links));
                 echo '</tr>';
             }
         } else { // print "nothing available"
-            echo '<tr><td class="empty" colspan="5">' . __('Ei toimenpiteitä') . '</td><tr>';
+            echo '<tr><td class="empty" colspan="6">' . __('Ei toimenpiteitä') . '</td><tr>';
         }
 
         ?>
         </tbody>
     </table>
+    <?php
+    echo $this->Form->end();
+    ?>
     </div>
 </div>
