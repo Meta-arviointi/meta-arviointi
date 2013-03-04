@@ -185,7 +185,7 @@ echo $this->element('tab-menu', array('links' => $links));
         echo '<tr><td class="empty" colspan="5">' . __('Ei opiskelijoita') . '</td><tr>';
     }
     echo '</table>';
-
+    echo $this->Form->end();
     echo $this->Html->link('Lisää uusi opiskelija kurssille', array(
                 'action' => 'add',
                 'controller' => 'course_memberships'
