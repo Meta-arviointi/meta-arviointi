@@ -38,8 +38,9 @@
                 foreach($user['Course'] as $course) {
                     echo '<h3>' . $this->Html->link($course['name'],
                         array(
+                            'admin' => false,
                             'controller' => 'courses',
-                            'action' => 'index',
+                            'action' => 'view',
                             $course['id']
                         )
                     ) . '</h3>' . "\n";

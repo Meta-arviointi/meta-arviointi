@@ -49,7 +49,6 @@ echo $this->element('tab-menu', array('links' => $links));
 <div class="row">
     <div class="twelvecol last">
 <?php
-
     echo '<h1>'.$course['name'].'</h1>';
     echo '<p class="course-dates">' .__('Kurssi alkaa').': '. $this->Time->Format('j.n.Y', $course['starttime']) . '</p>';
     echo '<p class="course-dates">' .__('Kurssi päättyy').': '. $this->Time->Format('j.n.Y', $course['endtime']) . '</p>';
@@ -68,23 +67,30 @@ echo $this->element('tab-menu', array('links' => $links));
     echo '        <th>'. __('Aukeaa') .'</th>';
     echo '        <th>'. __('Palautus') .'</th>';
     echo '    </tr>';
-    if ( !empty($exercises) ) {
-        foreach($exercises as $exercise) {
-            echo '<tr>';
-            echo '<td>'. $exercise['exercise_string'] .'</td>';
-            echo '<td>'. $this->Time->Format('j.n.Y G:i', $exercise['starttime']) .'</td>';
-            echo '<td>'. $this->Time->Format('j.n.Y G:i', $exercise['endtime']) .'</td>';
-            echo '<td>'. $this->Time->Format('j.n.Y G:i', $exercise['review_starttime']) .'</td>';
-            echo '<td>'. $this->Time->Format('j.n.Y G:i', $exercise['review_endtime']) .'</td>';
-        }    
+    if ( $edit_exercises ) {
+
+
     } else {
-         echo '<tr><td class="empty" colspan="5">' . __('Ei harjoituksia') . '</td><tr>';
+        if ( !empty($exercises) ) {
+            foreach($exercises as $exercise) {
+                echo '<tr>';
+                echo '<td>'. $exercise['exercise_string'] .'</td>';
+                echo '<td>'. $this->Time->Format('j.n.Y G:i', $exercise['starttime']) .'</td>';
+                echo '<td>'. $this->Time->Format('j.n.Y G:i', $exercise['endtime']) .'</td>';
+                echo '<td>'. $this->Time->Format('j.n.Y G:i', $exercise['review_starttime']) .'</td>';
+                echo '<td>'. $this->Time->Format('j.n.Y G:i', $exercise['review_endtime']) .'</td>';
+            }    
+        } else {
+             echo '<tr><td class="empty" colspan="5">' . __('Ei harjoituksia') . '</td><tr>';
+        }    
     }
+    
     
 
     echo '</table>';
     echo $this->Html->link('Lisää harjoitus', array('action' => 'add', 'controller' => 'exercises'), array('class' => 'modal-link', 'id' => 'add-exercise-link'));
 
+    //echo $this->Html->link('Muokkaa harjoituksia', array($course_id,'?' => array('edit' => 'exercises')));
     echo '<br/>';
     echo '<br/>';
     echo '<h2>'.__('Assistentit').'</h2>';
@@ -156,8 +162,22 @@ echo $this->element('tab-menu', array('links' => $links));
                                 'hiddenField' => false
                             )
                         ) . '</td>';
-            echo '<td>'. $student['Student']['first_name'] .'</td>';
-            echo '<td>'. $student['Student']['last_name'] .'</td>';
+            echo '<td>'. $this->Html->link(__($student['Student']['first_name']),
+                array(
+                    'admin' => false,
+                    'controller' => 'course_memberships',
+                    'action' => 'view',
+                    $student['id'] // CourseMembership ID
+                )
+            ).'</td>';
+            echo '<td>'. $this->Html->link(__($student['Student']['last_name']),
+                array(
+                    'admin' => false,
+                    'controller' => 'course_memberships',
+                    'action' => 'view',
+                    $student['id'] // CourseMembership ID
+                )
+            ).'</td>';
             echo '<td>'. $student['Student']['student_number'] .'</td>';
             echo '<td>'. $student['Student']['email'] .'</td>';
             $assistant = isset($student['Student']['Group'][0]['user_id']) ? 

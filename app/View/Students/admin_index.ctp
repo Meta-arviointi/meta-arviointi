@@ -89,17 +89,19 @@ echo $this->element('tab-menu', array('links' => $links));
                 array(
                     'admin' => false,
                     'controller' => 'students',
-                    'action' => 'view',
+                    'action' => 'edit',
                     $student['Student']['id']
-                )
+                ),
+                array('class' => 'modal-link')
             ).'</td>';
             echo '<td>'. $this->Html->link(__($student['Student']['first_name']),
                 array(
                     'admin' => false,
                     'controller' => 'students',
-                    'action' => 'view',
+                    'action' => 'edit',
                     $student['Student']['id']
-                )
+                ),
+                array('class' => 'modal-link')
             ).'</td>';
             echo '<td>'. $student['Student']['student_number'].'</td>';
             echo '<td>'. $student['Student']['email'].'</td>';
