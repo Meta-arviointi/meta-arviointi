@@ -59,6 +59,7 @@ echo $this->element('tab-menu', array('links' => $links));
     echo $this->Form->create(false, array('id' => 'StudentIndexFilters', 'type' => 'get', 'data-target' => 'StudentsList'));
     echo $this->Form->label('group', 'Vastuuryhmä');
     echo $this->Form->select('group', $user_groups, array('div' => false, 'empty' => array('' => 'Kaikki'), 'default' => $this->Session->read('User.group_id')));
+    echo $this->Form->input('actions', array('label' => __('Toimenpiteitä'), 'type' => 'checkbox', 'hiddenField' => '', 'value' => 'true'));
     echo $this->Form->end();
 
     echo $this->Html->link(__('Lisää toimenpide valituille'),array(
@@ -97,7 +98,7 @@ echo $this->element('tab-menu', array('links' => $links));
                 foreach($memberships as $membership) {
                     $student_group_id = 0;
                     if(!empty($membership['Student']['Group'])) $student_group_id = $membership['Student']['Group'][0]['id'];
-                    echo '<tr class="table-content" data-group="'.$student_group_id.'">';
+                    echo '<tr class="table-content" data-group="'.$student_group_id.'" data-actions=' . ((count($membership['Action']) > 0) ? 'true' : 'false') . '>';
                     echo '<td>' . $this->Form->checkbox('CourseMembership.'.$membership['CourseMembership']['id'], array(
                                 'value' => $membership['CourseMembership']['id'],
                                 'hiddenField' => false

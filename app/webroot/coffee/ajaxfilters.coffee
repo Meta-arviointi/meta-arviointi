@@ -4,7 +4,7 @@
             callback:   null
 
         settings = $.extend {}, defaults, settings
-        $.param.fragment.noEscape("[],");
+        $.param.fragment.noEscape "[],"
 
         return this.each ->
             table = $(this)
@@ -17,8 +17,12 @@
             getInputParams = ->
                 params = {}
                 for i in inputs
-                    val = $(i).val()
-                    params[$(i).attr('name')] = val if val != ''
+                    $i = $(i)
+                    val = $i.val()
+                    if $i.attr('type') != 'checkbox' || $i.is(':checked')
+                        console.log i
+                        console.log val
+                        params[$i.attr('name')] = val if val != ''
                 return params
 
             pushParams = (mergeMode) ->
@@ -39,7 +43,7 @@
                 state = $.bbq.getState id
 
                 for key, val of state
-                    forms.find('*[name='+key+']').val val
+                    forms.find('select[name='+key+']').val val
 
                 tbody.children('tr').each ->
                     show = true
