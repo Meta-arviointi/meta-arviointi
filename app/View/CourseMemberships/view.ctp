@@ -48,13 +48,18 @@
 <?php 
 $links = array(
         array('text' => __('Opiskelijat'), 'url' => array('controller' => 'students')),
-        array('text' => __('Toimenpiteet'), 'url' => array('controller' => 'actions'))
+        array('text' => __('Toimenpiteet'), 'url' => array('controller' => 'actions')),
+        array('text' => __('Kurssi'), 'url' => array(
+                'controller' => 'courses',
+                'action' => 'view',
+                $this->Session->read('Course.course_id')
+            )
+        )
 );
 echo $this->element('tab-menu', array('links' => $links)); 
 ?>
     </div>
 </div>
-<hr class="row">
 <div class="row">
     <div class="sixcol">
         <?php
@@ -104,7 +109,7 @@ echo $this->element('tab-menu', array('links' => $links));
     </div>
     <div class="threecol last">
         <?php
-        echo $this->Html->link('Muokkaa', array('controller' => 'students', 'action' => 'edit', $course_membership['Student']['id']), array('class' => 'button float-right modal-link'));
+        /*echo $this->Html->link('Muokkaa', array('controller' => 'students', 'action' => 'edit', $course_membership['Student']['id']), array('class' => 'button float-right modal-link'));*/
         ?>
         <div class="quit-info">
             <?php
@@ -300,13 +305,14 @@ echo $this->element('tab-menu', array('links' => $links));
             echo '<a href="#" id="student-email-form-link">Lähetä uusi sähköpostiviesti</a>';
 
             // KORJAUSPYYNTÖ
-            echo $this->Form->create('Mail', array(
+            echo $this->Form->create('EmailMessage', array(
                 'class' => 'student-email-form', 
                 'id' => 'student-email-form', 
-                'url' => array('controller' => 'emails', 'action' => 'send'),
+                'url' => array('controller' => 'email_messages', 'action' => 'send'),
                 'inputDefaults' => array('label' => false) // ilman tätä tulostuu jostain "Redirect" labeliksi
             ));
-            echo $this->Form->input('title', array('label' => __('Otsikko')));
+            echo $this->Form->input('course_membership_id', array('type' => 'hidden', 'value' => $course_membership['CourseMembership']['id']));
+            echo $this->Form->input('subject', array('label' => __('Otsikko')));
             echo $this->Form->input('content', array('label' => __('Viesti'), 'rows' => 10));
             echo $this->Form->submit(__('Lähetä'), array('before' => '<a href="#" class="collapse-toggle cancel">' . __('Peruuta') . '</a>'));
             echo $this->Form->end();
@@ -317,10 +323,13 @@ echo $this->element('tab-menu', array('links' => $links));
                 foreach($course_membership['EmailMessage'] as $msg) {
                     echo '<div class="email-message';
                     if(empty($msg['read_time'])) echo ' not-read';
+                    if(empty($msg['sender'])) echo ' outbound';
                     echo '">';
 
-                    echo '<h3>'.$msg['subject'].'</h3>';
-                    echo '<p>'.$msg['content'].'</p>';
+                    echo '<h3>';
+                    if(empty($msg['sender'])) { echo '&rarr; '; } else { echo '&larr; '; }
+                    echo $msg['subject'].'</h3>';
+                    echo '<p>'.str_replace("\n", "<br>", $msg['content']).'</p>';
 
                     echo '<div class="meta">';
                     if(empty($msg['read_time'])) {

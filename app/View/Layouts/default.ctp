@@ -24,6 +24,7 @@
 		echo $this->Html->script('jquery-ui-timepicker-addon.js');
 		echo $this->Html->script('jquery.scrollTo.min');
 		echo $this->Html->script('jquery.ba-bbq.min');
+		echo $this->Html->script('jquery.tablesorter.min');
 		echo $this->Coffee->import('ajaxfilters');
 		echo $this->Coffee->import('application');
 	?>
@@ -60,14 +61,21 @@
 					<?php
 						if($this->Session->read('Auth.User')) {
 							echo '<div id="login-details">';
+							$profile_link_classes = 'header-button';
+							if(
+								$this->request->params['controller'] == 'users' &&
+								$this->request->params['action'] == 'view' &&
+								$this->request->params['pass'][0] == $this->Session->read('Auth.User.id')
+							) { $profile_link_classes .= ' selected'; }
 							echo $this->Html->link(
 								$this->Session->read('Auth.User.name'),
 								array(
+									'admin' => false,
 									'controller' => 'users',
 									'action' => 'view',
 									$this->Session->read('Auth.User.id')
 									),
-								array('id' => 'my-profile-link', 'class' => 'header-button')
+								array('id' => 'my-profile-link', 'class' => $profile_link_classes)
 							);
 							echo $this->Html->link(
 								__('Kirjaudu ulos'),
@@ -89,7 +97,19 @@
 								)
 							);
 							echo '</div>';
-
+							echo '<div id="courses-link">';
+							$courses_link_classes = 'header-button';
+							if(empty($this->request->params['admin'])) $courses_link_classes .= ' selected';
+							echo $this->Html->link(__('Kurssit'), array(
+									'admin' => false,
+									'controller' => 'students',
+									'action' => 'index'
+								), 
+								array(
+									'class' => $courses_link_classes
+								)
+							);
+							echo '</div>';
 							echo '<div id="mail-indicator">';
 							echo '<a href="#" class="header-button">';
 							echo count($email_notifications);

@@ -29,9 +29,16 @@ class Student extends AppModel {
             'message' => 'Sähköposti on puutteellinen'
         ),
         'student_number' => array(
-            'rule' => 'alphaNumeric',
-            'required' => true,
-            'message' => 'Opiskelijanumero on pakollinen'
+            'numeric' => array(
+                'rule' => 'numeric',
+                'required' => true,
+                'message' => 'Opiskelijanumero on pakollinen'
+            ),
+            'isUnique' => array(
+                'rule' => 'isUnique',
+                'required' => true,
+                'message' => 'Opiskelijanumero on jo käytössä'
+            )
         )
     );
 

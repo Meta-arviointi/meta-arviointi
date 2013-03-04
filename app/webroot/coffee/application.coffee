@@ -35,17 +35,34 @@ window.datepickerDefaults = {
 $(document).ready ->
     $.scrollTo 0
 
+    modal = $('.modal')
+    body = $('body')
+
+    showModal = ->
+        modal.fadeIn 100
+        body.addClass 'modal-visible'
+        return
+
+    hideModal = ->
+        modal.fadeOut 100
+        body.removeClass 'modal-visible'
+        return
+
     $('.modal').hide()
+
     $('.modal-close, .modal-overlay').click -> 
-        $(this).parents('.modal').fadeOut 100
+        hideModal()
         false
 
     $('.modal-link').each ->
         link = $(this)
         link.click ->
-            $('.modal').fadeIn 100
+            showModal()
             $('.modal-content').load link.attr('href')
             false
+
+    $(window).keyup (e) ->
+        hideModal() if e.keyCode == 27
 
     $('.collapsable').hide()
 
@@ -57,14 +74,13 @@ $(document).ready ->
         $(this).parents('.collapsable').slideUp(200).prev('.decollapse-toggle').slideDown 200
         false
 
-    ###
-    $('#StudentIndexFilters select').change ->
-        $(this).parents('form').submit()
-    ###
-    $('#StudentsList').ajaxfilters()
+
+    # Ajax filtering
+    $('#StudentsList, #ActionsList').ajaxfilters()
 
     $('#UserCourseSelection select').change ->
         $(this).parents('form').submit()
+
 
     # Action form functionality
     $('.student-action-form').hide()
@@ -97,7 +113,7 @@ $(document).ready ->
     #$('#InputFieldId').datepicker datepickerDefaults
 
     $('#mail-indicator > a').on 'click', ->
-        $('#mail-indicator').toggleClass 'open'
+        $('#mail-indicator').toggleClass('open') if $(this).text() != '0'
         false
 
     $('#TextFilterKeyword').keyup ->

@@ -51,6 +51,18 @@ class User extends AppModel {
                 'rule' => array('notEmpty'),
                 'message' => 'Sähköposti on pakollinen'
             )
+        ),
+        'first_name' => array(
+            'required' => array(
+                'rule' => 'notEmpty',
+                'message' => 'Etunimi on pakollinen'
+            )
+        ),
+        'last_name' => array(
+            'required' => array(
+                'rule' => 'notEmpty',
+                'message' => 'Sukunimi on pakollinen'
+            )
         )
     );
 

@@ -70,6 +70,12 @@ class UsersController extends AppController {
 
 
     public function admin_index() {
+        // Don't print course_selection drop-down to layout
+        $this->set('course_selection', false);
+
+        $admin = $this->Auth->user('is_admin');
+        $this->set('admin', $admin);
+        
         $this->User->recursive = 0;
         $this->set('users', $this->paginate());
 
@@ -95,6 +101,7 @@ class UsersController extends AppController {
 	    );
 	    $users = $this->User->find('all', $params);
 	    $this->set('users', $users);
+        $this->set('user_logins', $this->User->find('list', array('fields' => array('User.id', 'User.basic_user_account'))));
     }
 
 
@@ -114,39 +121,59 @@ class UsersController extends AppController {
             // jos on painettu linkkiä. 
             $this->redirect($this->referer());
         }
-        
     }
 
-    public function admin_add() {
+    public function edit($id = null) {
+        if ( $this->request->is('post') || $this->request->is('put') ) {
+            // Data from form, try to save
+            // Make sure that old password won't be overwritten
+            if ( empty($this->request->data['User']['password']) ) {
+                unset($this->request->data['User']['password']);
+            }
+            if ( $this->User->save($this->request->data) ) {
+                $this->Session->setFlash(__('Käyttäjän tiedot päivitetty'));
+                $this->redirect(array('action' => 'view', $this->User->id));
+            } else {
+                $this->Session->setFlash(__('Tietojen tallennus epäonnistui'));
+            }
 
+        } else {
+            if ( $id == $this->Auth->user('id') || $this->Auth->user('is_admin') ) {
+                $this->User->id = $id;
+                if ($this->User->exists()) {
+                    $user = $this->User->read(null, $id);
+                    // No default password
+                    unset($user['User']['password']);
+                    $this->set('user', $user);
+                    $this->data = $user;
+                    $this->set('referer', $this->referer());
+                } else {
+                    throw new NotFoundException(__('Invalid user'));
+                }
+            } else {
+                $this->Session->setFlash(__('Ei riittäviä oikeuksia'));
+                // HUOM. Jos kirjoittaa urlilla /users/view/x, ainakaan
+                // Firefox ei lähetä HTTP_REFERER kenttää headerissa.
+                // Silloin ao. redirect menee '/'. Referer toimii Firefoxissa
+                // jos on painettu linkkiä.
+                $this->redirect($this->referer());
+            }
+        }
+    }
+
+    public function add() {
         if ($this->request->is('post')) {
             $this->User->create();
             if ($this->User->save($this->request->data)) {
                 $this->Session->setFlash(__('Käyttäjä lisätty järjestelmään'));
-                $this->redirect(array('action' => 'index'));
+                $this->redirect($this->referer());
             } else {
                 $this->Session->setFlash(__('Käyttäjää ei voitu lisätä järjestelmään, tarkista tiedot.'));
             }
         }
     }
+
 /*
-    public function edit($id = null) {
-        $this->User->id = $id;
-        if (!$this->User->exists()) {
-            throw new NotFoundException(__('Invalid user'));
-        }
-        if ($this->request->is('post') || $this->request->is('put')) {
-            if ($this->User->save($this->request->data)) {
-                $this->Session->setFlash(__('The user has been saved'));
-                $this->redirect(array('action' => 'index'));
-            } else {
-                $this->Session->setFlash(__('The user could not be saved. Please, try again.'));
-            }
-        } else {
-            $this->request->data = $this->User->read(null, $id);
-            unset($this->request->data['User']['password']);
-        }
-    }
 
     public function delete($id = null) {
         if (!$this->request->is('post')) {
@@ -214,7 +241,7 @@ class UsersController extends AppController {
         }
     }
 
-    public function test($sid, $cid) {
+    public function test($uid) {
         //debug($this->User->get_last_course($course_id));
         //debug($this->User->Action->new_actions());
         //debug($this->User->Action->new_actions_count());
@@ -224,8 +251,8 @@ class UsersController extends AppController {
         // course_id as parameter
         //debug($this->User->Action->open_actions();
         // course_id from session, contain also Student
-        //debug($this->User->Action->open_actions(null, array('Student')));
-        debug($this->User->Group->Student->student_group($sid, $cid));
+        debug($this->User->user_group($uid, $this->Session->read('Course.course_id')));
+        
     }
 
     public function student_test($sid) {

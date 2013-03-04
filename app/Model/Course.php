@@ -35,6 +35,18 @@ class Course extends AppModel {
             )
         )
     );
+    public function beforeSave($options = array()) {
+        if ( !empty($this->data[$this->alias]['starttime']) && !empty($this->data[$this->alias]['endtime']) ) {
+            $this->data[$this->alias]['starttime'] = $this->format_date($this->data[$this->alias]['starttime']);
+            $this->data[$this->alias]['endtime'] = $this->format_date($this->data[$this->alias]['endtime']);
+        }
+        return true;
+    }
+
+    public function format_date($date) {
+        return date('Y-m-d H:i:sO', strtotime($date));
+
+    }
 
     public function get_courses($cid) {
         if ($cid <= 0) {
@@ -50,6 +62,44 @@ class Course extends AppModel {
             );
         }
         return $this->find('all', $params);
+    }
+
+    /**
+     * Return requested course. Possible to add contain parameters.
+     * @return Course, or false if $cid was omitted
+     */
+    public function get_course($cid = 0, $contain = array()) {
+        if ( $cid > 0 ) {
+            $options = array('conditions' => array('Course.id' => $cid));
+            if ( !empty($contain) ) {
+                $options['contain'] = $contain;
+            }
+            return $this->find('first', $options);
+        } else {
+            return false;
+        }
+    }
+
+    public function get_users($cid = 0, $contain = array()) {
+        if ( $cid > 0 ) {
+            $options = array(
+                'conditions' => array('Course.id' => $cid),
+                'contain' => array(
+                    'User' => array(
+                        'Group' => array(
+                            'conditions' => array('Group.course_id' => $cid)
+                        )
+                    )
+                )
+            );
+
+            if ( !empty($contain) ) {
+                $options['contain'] = $contain;
+            }
+            return $this->find('first', $options);
+        } else {
+            return false;
+        }
     }
 }
 ?>

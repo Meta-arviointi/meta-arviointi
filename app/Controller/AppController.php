@@ -35,7 +35,7 @@ class AppController extends Controller {
 
     public $helpers = array('Form', 'Html', 'Session', 'Less', 'Coffee', 'Paginator');
 
-    public $uses = array('Course');
+    public $uses = array('Course', 'User');
 
     private $_course;
 
@@ -43,7 +43,7 @@ class AppController extends Controller {
         'Session',
         'Auth' => array(
             'loginAction' => array('controller' => 'users', 'action' => 'login', 'course_id' => false, 'admin' => false),
-            'loginRedirect' => array('controller' => 'courses', 'action' => 'index'),
+            'loginRedirect' => array('controller' => 'students', 'action' => 'index'),
             'logoutRedirect' => array('controller' => 'users', 'action' => 'login', 'course_id' => false),
             'authError' => 'Ole hyvä ja kirjaudu sisään',
             'authenticate' => array(
@@ -71,16 +71,39 @@ class AppController extends Controller {
         // PRINT COURSE SELECTION DROPDOWN LIST TO HEADERBAR
         // Default is to print, override in controller to prevent print
         $this->set('course_selection', true);
+        
+        $uid = $this->Auth->user('id');
+        if ( !empty($uid) ) {
+
+            // Get all courses user has attended
+            $courses = $this->User->user_courses($uid);
+
+            $users_courses = array();
+            // Iterate over courses and populate array ready to be used in 
+            // selection list in courses/index/-view
+            // format is Course.id as key and Course.name as value (like find('list'))
+            foreach($courses as $course) {
+                $users_courses[$course['id']] = $course['name'];
+            }
+
+            // THIS DROP-DOWN IS PRINTED TO LAYOUT, UNLESS 'course_selection'
+            // IS SET TO false in Controller!!!
+
+            // Set array to be used in drop-down selection
+            $this->set('users_courses', $users_courses);    
+        }
+        
     }
 
     public function beforeRender() {
         // Get new email messages from IMAP and insert them to the database
         // FIXME when the imap-functions are available!
         if(function_exists('curl_init')) {
-            $json_url = 'http://kallunki.org/email_json.php';
+            $json_url = 'https://meta-arviointi.sis.uta.fi/email_json.php';
             $ch = curl_init($json_url);
             $options = array(
                 CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_SSL_VERIFYPEER => false,
                 //CURLOPT_HTTPHEADER => array('Content-type: application/json') ,
                 CURLOPT_POST => true,
                 CURLOPT_POSTFIELDS => array('secret_token' => 'm374arvioint1')
@@ -107,7 +130,12 @@ class AppController extends Controller {
 
                     $student = $this->EmailMessage->CourseMembership->Student->findByEmail(strtolower($r->from));
                     if(!empty($student['CourseMembership'])) {
-                        $this->EmailMessage->set('course_membership_id', $student['CourseMembership'][0]['id']);
+                        $membership = null;
+                        foreach($student['CourseMembership'] as $cm) {
+                            if($membership == null) $membership = $cm; //TODO better logic for matching emails to courses
+                        }
+                        $this->EmailMessage->set('course_membership_id', $membership['id']);
+
                     }
                     $this->EmailMessage->save();
                 }
@@ -138,17 +166,14 @@ class AppController extends Controller {
                     )
                 )
             ));
+            //print_r($user);
             $email_messages = array();
             if(!empty($user) && !empty($user['Group'])) {
                 foreach($user['Group'] as $group) {
                     foreach($group['Student'] as $student) {
-                        $membership = null;
                         foreach($student['CourseMembership'] as $cm) {
-                            if($membership == null || strtotime($cm['starttime']) > strtotime($membership['starttime'])) {
-                                $membership = $cm;
-                            }
+                            $email_messages = array_merge($email_messages, $cm['EmailMessage']);
                         }
-                        $email_messages = array_merge($email_messages, $membership['EmailMessage']);
                     }
                 }
             }

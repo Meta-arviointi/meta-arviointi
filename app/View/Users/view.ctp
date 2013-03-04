@@ -21,6 +21,13 @@
                     echo '</div>';
                 }
                 echo '</div>';
+                echo $this->Html->link(__('Muokkaa'), array(
+                        'admin' => false,
+                        'controller' => 'users',
+                        'action' => 'edit',
+                        $user['User']['id']
+                    )
+                );
             ?>
         </div>
     </div>

@@ -1,18 +1,28 @@
 <?php
 
 class Exercise extends AppModel {
-	public $name = 'Exercise';
-	
-	public $belongsTo = array('Course');
-	public $hasAndBelongsToMany = array('Action');
+    public $name = 'Exercise';
+    
+    public $belongsTo = array('Course');
+    public $hasAndBelongsToMany = array('Action');
 
     public $validate = array(
+        'exercise_number' => array(
+            'required' => array(
+                'rule' => 'notEmpty',
+                'message' => 'Harjoitusnumero vaaditaan'
+            ),
+            'number' => array(
+                'rule' => 'numeric',
+                'message' => 'Harjoitusnumeron täytyy olla numero'
+            )
+        ),
         'exercise_name' => array(
             'required' => array(
                 'rule' => array(
-                	'notEmpty'
+                    'notEmpty'
                 ), 
-                'message' => 'Exercise name is required'
+                'message' => 'Anna harjoituksen nimi'
             ),
             'dateformat' => array(
                 'rule' => array('datetime', 'dmy'),
@@ -22,9 +32,9 @@ class Exercise extends AppModel {
         'starttime' => array(
             'required' => array(
                 'rule' => array(
-                	'notEmpty'
+                    'notEmpty'
                 ), 
-                'message' => 'Exercise start time is required'
+                'message' => 'Anna harjoituksen alkuajankohta'
             ),
             'dateformat' => array(
                 'rule' => array('datetime', 'dmy'),
@@ -34,9 +44,9 @@ class Exercise extends AppModel {
         'endtime' => array(
             'required' => array(
                 'rule' => array(
-                	'notEmpty'
+                    'notEmpty'
                 ), 
-                'message' => 'Exercise end time is required'
+                'message' => 'Anna harjoituksen loppuajankohta'
             ),
             'dateformat' => array(
                 'rule' => array('datetime', 'dmy'),
@@ -46,9 +56,9 @@ class Exercise extends AppModel {
         'review_starttime' => array(
             'required' => array(
                 'rule' => array(
-                	'notEmpty'
+                    'notEmpty'
                 ), 
-                'message' => 'Review start time is required'
+                'message' => 'Harjoituksen arviointiaika vaaditaan'
             ),
             'dateformat' => array(
                 'rule' => array('datetime', 'dmy'),
@@ -58,9 +68,9 @@ class Exercise extends AppModel {
         'review_endtime' => array(
             'required' => array(
                 'rule' => array(
-                	'notEmpty'
+                    'notEmpty'
                 ), 
-                'message' => 'Review end time is required'
+                'message' => 'Harjoituksen arviointiaika vaaditaan'
             ),
             'dateformat' => array(
                 'rule' => array('datetime', 'dmy'),
@@ -70,13 +80,13 @@ class Exercise extends AppModel {
     );
 
     public function compareDate($start, $end) {
-    	return strtotime($start) < strtotime($end);
+        return strtotime($start) < strtotime($end);
     }
 
-	// Virtual field used in find('list') operations to
-	// get proper options for html form <select>-tag
-	public $virtualFields = array(
-		'exercise_string' => '\'H\' || Exercise.exercise_number || \': \'  || Exercise.exercise_name'
-	);
+    // Virtual field used in find('list') operations to
+    // get proper options for html form <select>-tag
+    public $virtualFields = array(
+        'exercise_string' => '\'H\' || Exercise.exercise_number || \': \'  || Exercise.exercise_name'
+    );
 }
 ?>
