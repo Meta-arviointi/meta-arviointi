@@ -261,6 +261,21 @@ echo $this->element('tab-menu', array('links' => $links));
                             ),
                             __('Haluatko varmasti poistaa opiskelijan kurssilta?')
                 ); '</td>';
+                echo '<td>'. $this->Html->link($this->Html->image('edit-action-icon.png',
+                            array('alt' => __('Muokkaa opiskelijaa'),
+                                'title' => __('Muokkaa opiskelijaa')
+                                )
+                            ),
+                            array(
+                                'controller' => 'students',
+                                'action' => 'edit',
+                                $student['Student']['id']
+                            ),
+                            array(
+                                'escape' => false,
+                                'class' => 'modal-link'
+                            )
+                ); '</td>';
             }
         }    
     } else {
