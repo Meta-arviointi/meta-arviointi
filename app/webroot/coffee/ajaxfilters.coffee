@@ -14,14 +14,26 @@
             forms = $('*[data-target="'+id+'"]')
             inputs = forms.find 'input, select'
 
-            inputs.change ->
+            getInputParams = ->
                 params = {}
-                state = {}
                 for i in inputs
                     val = $(i).val()
                     params[$(i).attr('name')] = val if val != ''
+                return params
+
+            pushParams = (mergeMode) ->
+                state = {}
+                params = getInputParams()
                 state[id] = params
-                $.bbq.pushState state
+                $.bbq.pushState state, mergeMode
+                return
+
+            inputs.change ->
+                # override url parameters with input values
+                pushParams 0
+
+            # get default parameters from inputs, but do not override url
+            pushParams 1
 
             updateTable = ->
                 state = $.bbq.getState id

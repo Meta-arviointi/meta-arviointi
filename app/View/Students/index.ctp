@@ -58,7 +58,7 @@ echo $this->element('tab-menu', array('links' => $links));
     // Selection for assistent groups
     echo $this->Form->create(false, array('id' => 'StudentIndexFilters', 'type' => 'get', 'data-target' => 'StudentsList'));
     echo $this->Form->label('group', 'Vastuuryhmä');
-    echo $this->Form->select('group', $user_groups, array('div' => false, 'empty' => array('' => 'Kaikki')));
+    echo $this->Form->select('group', $user_groups, array('div' => false, 'empty' => array('' => 'Kaikki'), 'default' => $this->Session->read('User.group_id')));
     echo $this->Form->end();
 
     echo $this->Html->link(__('Lisää toimenpide valituille'),array(
@@ -152,14 +152,3 @@ echo $this->element('tab-menu', array('links' => $links));
         $('#StudentsList tr.table-content:has(td:contains('+$(this).val()+'))').show();
     });
 </script>
-
-<?php
-    if($this->Session->read('User.group_id')) { ?>
-        <script>
-            if(window.location.hash == '') {
-                window.location.hash = 'StudentsList[group]='+<?php echo $this->Session->read('User.group_id'); ?>;
-            }
-        </script>
-    <?php }
-?>
-
