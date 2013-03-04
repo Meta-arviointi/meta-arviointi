@@ -81,17 +81,18 @@ class Exercise extends AppModel {
             $this->data[$this->alias]['endtime'] = $this->format_date($this->data[$this->alias]['endtime']);
         }
         if ( !empty($this->data[$this->alias]['review_starttime']) ) {
-            $this->data[$this->alias]['review_starttime'] = $this->format_date($this->data[$this->alias]['starttime']);
+            $this->data[$this->alias]['review_starttime'] = $this->format_date($this->data[$this->alias]['review_starttime']);
         }
         if ( !empty($this->data[$this->alias]['review_endtime']) ) {
             $this->data[$this->alias]['review_endtime'] = $this->format_date($this->data[$this->alias]['review_endtime']);
         }
-        //debug($this->data);
         return true;
     }
 
     public function format_date($date) {
-        return date('Y-m-d H:i:sO', strtotime($date));
+        $formatted_datetime = date_create_from_format('d.m.Y H:i', $date);
+        $datetime_dbstring = date_format($formatted_datetime, 'Y-m-d H:i:sO');
+        return $datetime_dbstring;
     }
 
     public function compareDate($start, $end) {
