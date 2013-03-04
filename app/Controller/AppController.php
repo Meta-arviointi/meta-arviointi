@@ -130,7 +130,12 @@ class AppController extends Controller {
 
                     $student = $this->EmailMessage->CourseMembership->Student->findByEmail(strtolower($r->from));
                     if(!empty($student['CourseMembership'])) {
-                        $this->EmailMessage->set('course_membership_id', $student['CourseMembership'][0]['id']);
+                        $membership = null;
+                        foreach($student['CourseMembership'] as $cm) {
+                            if($membership == null) $membership = $cm; //TODO better logic for matching emails to courses
+                        }
+                        $this->EmailMessage->set('course_membership_id', $membership['id']);
+
                     }
                     $this->EmailMessage->save();
                 }
