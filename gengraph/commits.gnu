@@ -10,7 +10,7 @@ set xdata time
 set timefmt "%Y-%m-%d"
 set format x "%Y-%m"
 set xlabel "Date"
-set xrange ["2012-09" : "2013-03"]
+set xrange ["2012-09" : "2013-04"]
 set xtics nomirror rotate by -90
 set yrange [0:]
 # Colours
