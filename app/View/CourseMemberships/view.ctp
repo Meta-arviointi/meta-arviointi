@@ -295,7 +295,7 @@ echo $this->element('tab-menu', array('links' => $links));
             echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
             echo $this->Form->input('comment', array('rows' => 2));
             echo $this->Form->error('comment');
-            echo $this->Form->submit(__('Lähetä kommentti'));
+            echo $this->Form->submit(__('Tallenna'));
             echo $this->Form->end();
 
             echo '</div>';

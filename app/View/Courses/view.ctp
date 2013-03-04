@@ -68,7 +68,66 @@ echo $this->element('tab-menu', array('links' => $links));
     echo '        <th>'. __('Palautus') .'</th>';
     echo '    </tr>';
     if ( $edit_exercises ) {
+        echo $this->Form->create('Exercise', array(
+                'url' => array(
+                    'controller' => 'exercises',
+                    'action' => 'edit_many'
+                ),
+                'inputDefaults' => array(
+                    'label' => false,
+                    'div' => false
+                )
+            )
+        );
+        $i = 0;
+        foreach($exercises as $exercise) {
 
+            $id = $exercise['id'];
+            $number = $exercise['exercise_number'];
+            $name = $exercise['exercise_name'];
+            $stime = date('d.m.Y H:i', strtotime($exercise['starttime']));
+            $etime = date('d.m.Y H:i', strtotime($exercise['endtime']));
+            $rstime = date('d.m.Y H:i', strtotime($exercise['review_starttime']));
+            $retime = date('d.m.Y H:i', strtotime($exercise['review_endtime']));
+            echo '<tr>';
+            echo $this->Form->input('Exercise.'.$i.'.id', array('type' => 'hidden', 'default' => $id));
+            echo $this->Form->input('Exercise.'.$i.'.course_id', array('type' => 'hidden', 'default' => $course_id));
+            echo '<td>'.$this->Form->input('Exercise.'.$i.'.exercise_number', array(
+                'default' => $number,
+                'size' => 2
+                )
+            );
+            echo $this->Form->input('Exercise.'.$i.'.exercise_name', array(
+                'default' => $name
+                )
+            ).'</td>';
+            echo '<td>'.$this->Form->input('Exercise.'.$i.'.starttime', array(
+                'default' => $stime,
+                'type' => 'text',
+                'class' => 'datetimepicker'
+                )
+            ).'</td>';
+            echo '<td>'.$this->Form->input('Exercise.'.$i.'.endtime', array(
+                'default' => $etime,
+                'type' => 'text',
+                'class' => 'datetimepicker'
+                )
+            ).'</td>';
+            echo '<td>'.$this->Form->input('Exercise.'.$i.'.review_starttime', array(
+                'default' => $rstime,
+                'type' => 'text',
+                'class' => 'datetimepicker'
+                )
+            ).'</td>';
+            echo '<td>'.$this->Form->input('Exercise.'.$i.'.review_endtime', array(
+                'default' => $retime,
+                'type' => 'text',
+                'class' => 'datetimepicker'
+                )
+            ).'</td>';
+            echo '</tr>';
+            $i++;
+        }
 
     } else {
         if ( !empty($exercises) ) {
@@ -89,8 +148,11 @@ echo $this->element('tab-menu', array('links' => $links));
 
     echo '</table>';
     echo $this->Html->link('Lisää harjoitus', array('action' => 'add', 'controller' => 'exercises'), array('class' => 'modal-link', 'id' => 'add-exercise-link'));
-
-    //echo $this->Html->link('Muokkaa harjoituksia', array($course_id,'?' => array('edit' => 'exercises')));
+    if ( $edit_exercises ) {
+        echo $this->Form->end(__('Tallenna harjoitukset'));
+    } else {
+        echo $this->Html->link(__('Muokkaa harjoituksia'), array($course_id,'?' => array('edit' => 'exercises')));    
+    }
     echo '<br/>';
     echo '<br/>';
     echo '<h2>'.__('Assistentit').'</h2>';

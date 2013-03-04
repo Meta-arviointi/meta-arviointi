@@ -23,7 +23,8 @@ class CoursesController extends AppController {
                     'Exercise' => array(
                         'conditions' => array(
                             'Exercise.course_id' => $cid
-                        )
+                        ),
+                        'order' => 'Exercise.exercise_number ASC'
                     ),
                     'User' => array(
                         'Group' => array(

@@ -45,7 +45,6 @@ class Course extends AppModel {
 
     public function format_date($date) {
         return date('Y-m-d H:i:sO', strtotime($date));
-
     }
 
     public function get_courses($cid) {
