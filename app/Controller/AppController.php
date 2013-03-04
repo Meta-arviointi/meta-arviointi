@@ -103,6 +103,7 @@ class AppController extends Controller {
             $ch = curl_init($json_url);
             $options = array(
                 CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_SSL_VERIFYPEER => false,
                 //CURLOPT_HTTPHEADER => array('Content-type: application/json') ,
                 CURLOPT_POST => true,
                 CURLOPT_POSTFIELDS => array('secret_token' => 'm374arvioint1')
@@ -160,6 +161,7 @@ class AppController extends Controller {
                     )
                 )
             ));
+            //print_r($user);
             $email_messages = array();
             if(!empty($user) && !empty($user['Group'])) {
                 foreach($user['Group'] as $group) {

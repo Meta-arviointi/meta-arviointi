@@ -113,7 +113,7 @@ $(document).ready ->
     #$('#InputFieldId').datepicker datepickerDefaults
 
     $('#mail-indicator > a').on 'click', ->
-        $('#mail-indicator').toggleClass 'open'
+        $('#mail-indicator').toggleClass('open') if $(this).text() != '0'
         false
 
     $('#TextFilterKeyword').keyup ->
