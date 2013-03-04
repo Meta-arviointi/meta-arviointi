@@ -76,7 +76,7 @@ $(document).ready ->
 
 
     # Ajax filtering
-    $('#StudentsList').ajaxfilters()
+    $('#StudentsList, #ActionsList').ajaxfilters()
 
     $('#UserCourseSelection select').change ->
         $(this).parents('form').submit()

@@ -25,22 +25,27 @@ echo $this->element('tab-menu', array('links' => $links));
     echo '</pre>';
 
     // Selection for assistant group
-    echo $this->Form->create(false, array('id' => 'StudentIndexFilters', 'type' => 'get'));
-    echo $this->Form->label('group', 'Vastuuryhmä');
-    echo $this->Form->select('group_id', $user_groups, array('div' => false, 'empty' => array(0 => 'Kaikki'), 'default' => $group_id));
-    echo $this->Form->input('filter', array('div' => false, 'label' => __('Suodata'), 'id' => 'TextFilterKeyword'));
+    echo $this->Form->create(false, array('id' => 'ActionIndexFilters', 'type' => 'get', 'data-target' => 'ActionsList'));
+    echo $this->Form->input('group', array('options' => $user_groups, 'label' => __('Vastuuryhmä'), 'div' => false, 'empty' => array('' => __('Kaikki')), 'default' => $this->Session->read('User.group_id')));
+   echo $this->Form->input('exercise', array('options' => $exercises, 'label' => __('Harjoitus'), 'div' => false, 'empty' => array('' => __('Kaikki')), 'default' => ''));
+
+    echo $this->Form->input('resolved', array('options' => array('' => __('Kaikki'), 'true' => __('Kyllä'), 'false' => __('Ei')), 'label' => __('Käsitelty'), 'div' => false, 'empty' => array('' => __('Kaikki')), 'default' => ''));
+
     echo $this->Form->end();
     
     ?>
 
     <table class="data-table" id="ActionsList">
-        <tr class="table-header">
-            <th><?php echo __('Tyyppi'); ?></th>
-            <th><?php echo __('Harjoitus'); ?></th>
-            <th><?php echo __('Opiskelija'); ?></th>
-            <th><?php echo __('Lisännyt'); ?></th>
-            <th><?php echo __('Käsitelty'); ?></th>
-        </tr>
+        <thead>
+            <tr class="table-header">
+                <th><?php echo __('Tyyppi'); ?></th>
+                <th><?php echo __('Harjoitus'); ?></th>
+                <th><?php echo __('Opiskelija'); ?></th>
+                <th><?php echo __('Lisännyt'); ?></th>
+                <th><?php echo __('Käsitelty'); ?></th>
+            </tr>
+        </thead>
+        <tbody>
         <?php /* <tr> paginaatio poistettu käytöstä (toistaiseksi)
             <th><?php echo $this->Paginator->sort('last_name', 'Sukunimi'); ?></th>
             <th><?php echo $this->Paginator->sort('first_name', 'Etunimi'); ?></th>
@@ -64,7 +69,19 @@ echo $this->element('tab-menu', array('links' => $links));
                 } else { // only one exercise
                         $action_title = 'H' . $action['Exercise'][0]['exercise_number'];
                 }
-                echo '<tr class="table-content">';
+                $student_group_id = '';
+                if(!empty($action['CourseMembership']['Student']['Group'])) {
+                    $student_group_id = $action['CourseMembership']['Student']['Group'][0]['id'];
+                }
+                $ex_ids = array();
+                foreach($action['Exercise'] as $ex) {
+                    $ex_ids[] = $ex['id'];
+                }
+                echo '<tr class="table-content"
+                    data-group="'.$student_group_id.'"
+                    data-exercise="'.implode(',', $ex_ids).'"
+                    data-resolved="'. ((!empty($action['Action']['handled_id'])) ? 'true' : 'false') .'"
+                    >';
                 echo '<td>' . $this->Html->link($action['ActionType']['name'], 
                     array(
                         'controller' => 'course_memberships',
@@ -91,6 +108,7 @@ echo $this->element('tab-menu', array('links' => $links));
         }
 
         ?>
+        </tbody>
     </table>
     </div>
 </div>

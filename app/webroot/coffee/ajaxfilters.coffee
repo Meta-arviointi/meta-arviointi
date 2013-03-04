@@ -48,7 +48,17 @@
                 tbody.children('tr').each ->
                     show = true
                     for key, val of state
-                        show = false if val != '' && $(this).attr('data-' + key) != val
+                        dataAttr = $(this).attr('data-' + key)
+                        #single value
+                        if dataAttr.indexOf(',') == -1
+                            show = false if val != '' && dataAttr != val
+                        #multiple values
+                        else
+                            match = false
+                            for da in dataAttr.split(',')
+                                match = true if da == val
+                            show = match
+
                     $(this).toggle show
 
             $(window).bind 'hashchange', (e) ->

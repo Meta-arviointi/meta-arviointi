@@ -28,26 +28,6 @@ class ActionsController extends AppController {
         if ( $course_changed ) {
             $this->Action->User->set_new_group($this->Auth->user('id'), $course_id);
         }
-
-        $group_id = null;
-        // Check if get-request has 'group_id'.
-        // If so, set it to session 'User.group_id'
-        if (isset($this->request->query['group_id'])) {
-            $group_id = $this->request->query['group_id'];
-            $this->Session->write('User.group_id', $group_id);
-        } else { // No variable in get-request, take group_id from session
-            // Read group_id from session, if 'null' group_id = 0.
-            $group_id = $this->Session->read('User.group_id') == null ? 0 : $this->Session->read('User.group_id');
-        }
-        
-        $student_group_filter = null;
-        if ( $group_id ) {
-            $student_group_filter = array('Group' => 
-                array('conditions' =>
-                     array('Group.id' => $group_id)
-                )
-            );
-        }
         
         $actions = $this->Action->find('all', array(
                 'contain' => array(
@@ -55,7 +35,13 @@ class ActionsController extends AppController {
                         'conditions' => array(
                             'CourseMembership.course_id' => $course_id
                         ),
-                        'Student' => $student_group_filter
+                        'Student' => array(
+                            'Group' => array(
+                                'conditions' => array(
+                                    'Group.course_id' => $course_id
+                                )
+                            )
+                        )
                     ),
                     'User',
                     'ActionType',
@@ -77,14 +63,9 @@ class ActionsController extends AppController {
         foreach ($actions as $index => $action) {
             if ( empty($action['Exercise']) || empty($action['CourseMembership']) ) {
                 unset($actions[$index]);
-            } else {
-                if ( $group_id > 0 &&  empty($action['CourseMembership']['Student']['Group']) ) {
-                    unset($actions[$index]);
-                }
             }
-            
         }
-
+        //print_r($actions);
         $this->set('actions', $actions);
         //debug($actions);
 
@@ -101,6 +82,14 @@ class ActionsController extends AppController {
         }
 
         $this->set('user_groups', $user_groups);
+
+        $this->set('exercises', $this->Course->Exercise->find('list', array(
+            'conditions' => array(
+                'course_id' => $course_id
+            ),
+            'fields' => array('id', 'exercise_name'),
+            'order' => 'Exercise.exercise_number'
+        )));
 
 
         // Get all courses user has attended
@@ -120,8 +109,6 @@ class ActionsController extends AppController {
         );
 
         $this->set('users_courses', $users_courses);
-
-        $this->set('group_id', $group_id);
     }
 
     /**
