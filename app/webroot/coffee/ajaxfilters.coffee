@@ -66,4 +66,6 @@
 
             #initial filtering on page load
             updateTable()
+
+            table.tablesorter()
 )(jQuery)

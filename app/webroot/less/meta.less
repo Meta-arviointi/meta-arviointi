@@ -245,9 +245,25 @@ hr.row {
 		text-align: left;
 		padding: 5px 10px 10px 10px;
 		color: #75949f;
+        &.header {
+            -webkit-transition: color 200ms ease-in-out;
+            -moz-transition: color 200ms ease-in-out;
+            -ms-transition: color 200ms ease-in-out;
+            -o-transition: color 200ms ease-in-out;
+            transition: color 200ms ease-in-out;
+            cursor: pointer;
+        }
+        &.header:hover {
+            color: #000;
+        }
+        &.headerSortUp,
+        &.headerSortDown {
+            color: #000;
+        }
 	}
 	td {
         padding: 5px 10px;
+        border-top: 1px solid #f7f8f8;
         &.empty {
             text-align: center;
             font-size: 1.2em;
@@ -257,11 +273,15 @@ hr.row {
         &.empty-cell {
             font-style: italic;
         }
-	}
-	tr:nth-child(even) {
-		td {
-			background: #f7f8f8;
-		}
+        .quick-action {
+            opacity: 0.15;
+            -webkit-transition: opacity 200ms ease-in-out;
+            -moz-transition: opacity 200ms ease-in-out;
+            transition: opacity 200ms ease-in-out;
+            &:hover {
+                opacity: 0.5;
+            }
+        }
 	}
 }
 

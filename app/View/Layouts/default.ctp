@@ -24,6 +24,7 @@
 		echo $this->Html->script('jquery-ui-timepicker-addon.js');
 		echo $this->Html->script('jquery.scrollTo.min');
 		echo $this->Html->script('jquery.ba-bbq.min');
+		echo $this->Html->script('jquery.tablesorter.min');
 		echo $this->Coffee->import('ajaxfilters');
 		echo $this->Coffee->import('application');
 	?>

@@ -136,8 +136,7 @@ echo $this->element('tab-menu', array('links' => $links));
                                 $membership['CourseMembership']['id']
                             ),
                             array(
-                                'id' => 'quick-action',
-                                'class' => 'modal-link',
+                                'class' => 'modal-link quick-action',
                                 'escape' => false
                             )
                     ); '</td>';
