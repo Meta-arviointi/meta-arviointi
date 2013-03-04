@@ -92,5 +92,18 @@ class Group extends AppModel {
 			return false;
 		}
 	}
+
+	/**
+	 * Checks group for students count.
+	 * If count is 0, then deletes group.
+	 */
+	public function update_status($gid) {
+		if ( $this->exists($gid) ) {
+			$count = $this->students_count($gid);
+			if ( $count <= 0 ) {
+				$this->delete($gid, false);
+			}
+		}
+	}
 }
 ?>

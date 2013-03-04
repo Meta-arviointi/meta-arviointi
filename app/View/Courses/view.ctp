@@ -176,7 +176,8 @@ echo $this->element('tab-menu', array('links' => $links));
                             ),
                             array(
                                 'escape' => false
-                            )
+                            ),
+                            __('Haluatko varmasti poistaa opiskelijan kurssilta?')
                 ); '</td>';
             }
         }    

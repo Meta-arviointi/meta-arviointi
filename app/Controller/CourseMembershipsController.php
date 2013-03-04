@@ -308,6 +308,8 @@ class CourseMembershipsController extends AppController {
             $gid = $group[0]['id'];
 
             $this->CourseMembership->Student->Group->unlink_student($gid,$student_id);
+            // Call status check. Group is deleted if student_count = 0.
+            $this->CourseMembership->Student->Group->update_status($gid);
             $this->redirect($this->referer());
         }
 
