@@ -171,13 +171,9 @@ class AppController extends Controller {
             if(!empty($user) && !empty($user['Group'])) {
                 foreach($user['Group'] as $group) {
                     foreach($group['Student'] as $student) {
-                        $membership = null;
                         foreach($student['CourseMembership'] as $cm) {
-                            if($membership == null || strtotime($cm['starttime']) > strtotime($membership['starttime'])) {
-                                $membership = $cm;
-                            }
+                            $email_messages = array_merge($email_messages, $cm['EmailMessage']);
                         }
-                        $email_messages = array_merge($email_messages, $membership['EmailMessage']);
                     }
                 }
             }
