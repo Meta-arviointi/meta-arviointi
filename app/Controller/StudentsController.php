@@ -136,16 +136,19 @@ class StudentsController extends AppController {
         }
     }
 
-    public function admin_edit($id) {
-        if($this->request->is('put')) {
-            if($this->Student->save($this->request->data)) {
+    public function edit($id) {
+        if ( $this->request->is('put') || $this->request->is('post') ) {
+            if ( $this->Student->save($this->request->data) ) {
                 $this->Session->setFlash('Tallennettu!');
-                $this->redirect(array('action' => 'view', $this->Student->id));
+                $this->redirect($this->referer());
             }
             else $this->Session->setFlash('Ei onnistu!');
         }
         else {
             $this->data = $this->Student->findById($id);
+            if( !$this->RequestHandler->isAjax() ) {
+                $this->set('referer', $this->referer());
+            }
         }
     }
 
