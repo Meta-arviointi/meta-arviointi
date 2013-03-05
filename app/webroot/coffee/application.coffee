@@ -32,6 +32,17 @@ window.datepickerDefaults = {
     dateFormat: 'dd.mm.yy'
 }
 
+$.fn.setCursorPosition = (pos) ->
+    if $(this).get(0).setSelectionRange
+        $(this).get(0).setSelectionRange pos, pos 
+    else if $(this).get(0).createTextRange
+        range = $(this).get(0).createTextRange()
+        range.collapse true
+        range.moveEnd 'character', pos
+        range.moveStart 'character', pos
+        range.select()
+    return $(this)
+
 $(document).ready ->
     $.scrollTo 0
 
@@ -222,4 +233,14 @@ $(document).ready ->
         return 0  unless results
         results[1] or 0
 
+    $('.reply-to-email').click ->
+        $('#EmailMessageSubject').val 'Re: ' + $(this).parents('.email-message').find('.email-subject').text()
+        mailContent = $(this).parents('.email-message').find('.email-content').text()
+        newContent = "\n\n"
+        for line in mailContent.split("\n")
+            newContent += ">" + line + "\n"
+        $('#EmailMessageContent').val(newContent).setCursorPosition 0
+
+        $.scrollTo studentEmailFormContainer, 500, {offset: {top: -120}}
+        $('#student-email-form').slideDown 500
 

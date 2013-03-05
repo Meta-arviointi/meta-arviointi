@@ -336,8 +336,8 @@ echo $this->element('tab-menu', array('links' => $links));
 
                     echo '<h3>';
                     if(empty($msg['sender'])) { echo '&rarr; '; } else { echo '&larr; '; }
-                    echo $msg['subject'].'</h3>';
-                    echo '<p>'.str_replace("\n", "<br>", $msg['content']).'</p>';
+                    echo '<span class="email-subject">' . $msg['subject'].'</span></h3>';
+                    echo '<p class="email-content">'.str_replace("\n", "<br>", $msg['content']).'</p>';
 
                     echo '<div class="meta">';
                     if(empty($msg['read_time'])) {
@@ -352,6 +352,9 @@ echo $this->element('tab-menu', array('links' => $links));
                                 'class' => 'button mark-as-read'
                             )
                         );
+                    }
+                    else if(!empty($msg['sender'])) {
+                        echo $this->Html->link(__('Vastaa tähän viestiin'), '#', array('class' => 'reply-to-email'));
                     }
                     echo '<span class="timestamp">'.date('d.m.Y H:i:s', strtotime($msg['sent_time'])).'</span>';
                     echo '</div></div>';
