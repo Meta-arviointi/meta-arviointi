@@ -260,8 +260,8 @@ echo $this->element('tab-menu', array('links' => $links));
                                 'escape' => false
                             ),
                             __('Haluatko varmasti poistaa opiskelijan kurssilta?')
-                ); '</td>';
-                echo '<td>'. $this->Html->link($this->Html->image('edit-action-icon.png',
+                );
+                echo $this->Html->link($this->Html->image('edit-action-icon.png',
                             array('alt' => __('Muokkaa opiskelijaa'),
                                 'title' => __('Muokkaa opiskelijaa')
                                 )
@@ -275,7 +275,7 @@ echo $this->element('tab-menu', array('links' => $links));
                                 'escape' => false,
                                 'class' => 'modal-link'
                             )
-                ); '</td>';
+                ). '</td>';
             }
         }    
     } else {

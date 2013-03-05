@@ -37,6 +37,20 @@ class Action extends AppModel {
         )
     );
 
+
+    // Convert date and time from Datetimepicker to match database timestamp format
+    // ie. '06.02.2013 00:15' converts to '2013-02-06 00:15:00+0200'
+    public function beforeSave($options = array()) {
+        if ( !empty($this->data[$this->alias]['deadline']) ) {
+            $this->data[$this->alias]['deadline'] = $this->format_date($this->data[$this->alias]['deadline']);
+        }
+    }
+    public function format_date($date) {
+        $formatted_datetime = date_create_from_format('d.m.Y H:i', $date);
+        $datetime_dbstring = date_format($formatted_datetime, 'Y-m-d H:i:sO');
+        return $datetime_dbstring;
+    }
+
     /*
      * Return all actions created after last login.
      * Optional parameter last_login. If not set take

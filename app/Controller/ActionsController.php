@@ -149,16 +149,9 @@ class ActionsController extends AppController {
      */
     public function save() {
         if ( $this->request->is('post') || $this->request->is('put') ) {
-            //debug($this->request->data);
 
-            // Convert date and time from Datetimepicker to match database timestamp format
-            // ie. '06.02.2013 00:15' converts to '2013-02-06 00:15:00+0200'
-            if ( isset($this->request->data['Action']['deadline']) ) {
-                $deadline = $this->request->data['Action']['deadline'];
-                $deadline_format = date_create_from_format('d.m.Y H:i', $deadline);
-                $deadline_dbstring = date_format($deadline_format, 'Y-m-d H:i:sO');
-                $this->request->data['Action']['deadline'] = $deadline_dbstring;
-            } else { // no deadline, make sure it's null when saving to DB
+            if ( !isset($this->request->data['Action']['deadline']) ) {
+                // Empty deadline
                 $this->request->data['Action']['deadline'] = null;
             }
 
@@ -170,7 +163,7 @@ class ActionsController extends AppController {
                 $this->request->data['Action']['handled_time'] = null;
             }
 
-            if($this->Action->save($this->request->data)) {
+            if ( $this->Action->save($this->request->data) ) {
                 // Set ID of new saved Action or edited Action
                 empty($this->request->data['Action']['id'])
                     ? $id = $this->Action->id : $id = $this->request->data['Action']['id'];
@@ -288,7 +281,8 @@ class ActionsController extends AppController {
                     'conditions' => array(
                         'Exercise.course_id' => $action_data['Exercise'][0]['course_id']
                     ),
-                    'fields' => array('Exercise.id', 'Exercise.exercise_string')
+                    'fields' => array('Exercise.id', 'Exercise.exercise_string'),
+                    'order' => 'Exercise.exercise_name ASC'
                 )
             )
         );
