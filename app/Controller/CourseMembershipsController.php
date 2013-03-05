@@ -268,7 +268,8 @@ class CourseMembershipsController extends AppController {
                 'conditions' => array(
                     'Exercise.course_id' => $course_membership['Course']['id']
                 ),
-                'fields' => array('Exercise.id', 'Exercise.exercise_string')    
+                'fields' => array('Exercise.id', 'Exercise.exercise_string'),
+                'order' => 'Exercise.exercise_number ASC'
             )
         );
 

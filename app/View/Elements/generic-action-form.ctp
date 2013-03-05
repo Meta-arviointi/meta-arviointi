@@ -1,6 +1,5 @@
 <script type="text/javascript">
-    $(document).ready(function() {
-        /*
+        
         $('.generic-action-form').submit(function() {
             var n = $(this).find('input[type="checkbox"]:checked').length;
             if ( n == 0 ) {
@@ -10,7 +9,6 @@
                 return true;
             }
         });
-*/
         $('.generic-action-form').find('.checkbox').each(function() {
             var thisDiv = this;
             var url = <?php echo '\'' .  $this->Html->url(array(
@@ -26,15 +24,12 @@
             });
         });
 
-
-    });
 </script>
 <?php
 $action = !empty($action_data['Action']) ? $action_data['Action'] : null;
 
 echo $this->Form->create('Action', array(
-    'class' => 'generic-action-form', 
-    'id' => 'generic-action-form', 
+    'class' => 'generic-action-form',
     'url' => array('controller' => 'actions', 'action' => 'save')
 ));
 

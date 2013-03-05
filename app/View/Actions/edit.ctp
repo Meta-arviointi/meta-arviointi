@@ -1,14 +1,4 @@
 <script type="text/javascript">
-    $(document).ready(function() {
-        $('.generic-action-form').submit(function() {
-            var n = $(this).find('input[type="checkbox"]:checked').length;
-            if ( n == 0 ) {
-                alert('<?php echo __("Valitse ainakin yksi harjoitus")?>');
-                return false;
-            } else {
-                return true;
-            }
-        });
 
         $('select#action-type-switcher').change(function() {
             var url = <?php echo '\''. $this->Html->url(
@@ -17,32 +7,15 @@
                         'action' => 'edit',
                         $action_data['Action']['id']
                     )
-                ) . '\';' ?>
+                ) . '\';'."\n" ?>
             url = url + "/" + $(this).val();
             $.ajax({
                 url: url
             }).done(function(data) {
-                $('#generic-action-form').html(data);
-            })
-        });
-
-        $('.generic-action-form').find('.checkbox').each(function() {
-            var thisDiv = this;
-            var url = <?php echo '\'' .  $this->Html->url(array(
-                    'controller' => 'course_memberships',
-                    'action' => 'review_end'
-                )
-            ) . '\';' . "\n" ?>
-            var inputVal = $(thisDiv).find('input[type="checkbox"]').val();
-            $.ajax({
-                url: url + "/" + inputVal
-            }).done(function(data){
-                $(thisDiv).append('<span class="timestamp"><?php echo __('Viim. arviointipäivä') . ': \''?> + data + '</span>');
+                $('#generic-action-form-container').html(data);
             });
         });
 
-
-    });
 </script>
 
 
@@ -55,7 +28,7 @@ echo '<h3>' . $action_data['CourseMembership']['Student']['last_name'] . ' '
 //debug($exercises);
 
 // Create dropdown-list to change action type
-echo $this->Form->create();
+echo $this->Form->create('Switcher');
 echo $this->Form->input('id', array(
         'id' => 'action-type-switcher',
         'options' => $action_types,
@@ -65,7 +38,7 @@ echo $this->Form->input('id', array(
 );
 echo $this->Form->end();
 
-echo '<div id="generic-action-form">';
+echo '<div id="generic-action-form-container">';
 echo $this->element('generic-action-form', array(
         'action_data' => $action_data,
         'list_action_exercises' => $list_action_exercises,
