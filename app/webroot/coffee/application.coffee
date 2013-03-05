@@ -243,4 +243,6 @@ $(document).ready ->
 
         $.scrollTo studentEmailFormContainer, 500, {offset: {top: -120}}
         $('#student-email-form').slideDown 500
+        
+    return
 

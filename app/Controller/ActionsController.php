@@ -261,6 +261,22 @@ class ActionsController extends AppController {
         $this->set('action', $action);
     }
 
+    public function send_action_emails() {
+        if(!empty($this->request->query['actions'])) {
+            $this->Action->recursive = 2;
+            $actions = $this->Action->find('all', array(
+                'conditions' => array(
+                    'Action.id' => $this->request->query['actions']
+                )
+            ));
+            $this->set('actions', $actions);
+        }
+        else {
+            echo __('Toimenpiteitä ei ole valittuna.');
+            die();
+        }
+    }
+
     public function edit($id, $action_type_id = 0) {
         $this->Action->contain(array(
                 'Exercise',

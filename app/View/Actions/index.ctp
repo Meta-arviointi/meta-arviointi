@@ -1,7 +1,15 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $('#ActionsList input[type="checkbox"]').change(function() {
-            $('#SendActionEmailsLink').toggleClass('disabled', $('#ActionsList input[type="checkbox"]:checked').length < 1)
+            var checkedInputs = $('#ActionsList input[type="checkbox"]:checked')
+            $('#SendActionEmailsLink').toggleClass('disabled', checkedInputs.length < 1)
+            var params = {
+                actions: []
+            }
+            checkedInputs.each(function() {
+                params.actions.push($(this).val());
+            });
+            $('#SendActionEmailsLink').querystring(params);
         });
 
         $('#SendActionEmailsLink').click(function() {
@@ -57,7 +65,7 @@ echo $this->element('tab-menu', array('links' => $links));
     <hr class="row">
 
     <?php
-        echo $this->Html->link(__('Lähetä sähköposti valituille'), '#', array('id' => 'SendActionEmailsLink', 'class' => 'button disabled'));
+        echo $this->Html->link(__('Lähetä sähköposti valituille'), array('action' => 'send_action_emails'), array('id' => 'SendActionEmailsLink', 'class' => 'modal-link button disabled'));
     ?>
 
     <table class="data-table" id="ActionsList">
