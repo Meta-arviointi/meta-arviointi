@@ -321,6 +321,7 @@ echo $this->element('tab-menu', array('links' => $links));
             echo $this->Form->input('course_membership_id', array('type' => 'hidden', 'value' => $course_membership['CourseMembership']['id']));
             echo $this->Form->input('subject', array('label' => __('Otsikko')));
             echo $this->Form->input('content', array('label' => __('Viesti'), 'rows' => 10));
+            echo __('Ystävällisin terveisin') . ',<br>' . $this->Session->read('Auth.User.name');
             echo $this->Form->submit(__('Lähetä'), array('before' => '<a href="#" class="collapse-toggle cancel">' . __('Peruuta') . '</a>'));
             echo $this->Form->end();
         echo '</div>';

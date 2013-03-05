@@ -8,11 +8,7 @@
 
         $('#CreateManyLink').click(function(event) {
             event.preventDefault();
-            if ( $(this).hasClass('disabled')) {
-                return false
-            } else {
-                return true;
-            }
+            return !$(this).hasClass('disabled');
         });
 
         $('#CreateManyActions').find('input[type="checkbox"]').each(function() {
@@ -51,9 +47,9 @@ echo $this->element('tab-menu', array('links' => $links));
 	<div class="twelvecol last">
     <?php 
      /* DEBUG */
-    echo '<pre>';
+    //echo '<pre>';
     //debug($students);
-    echo '</pre>';
+    //echo '</pre>';
 
     // Selection for assistent groups
     echo $this->Form->create(false, array('id' => 'StudentIndexFilters', 'type' => 'get', 'data-target' => 'StudentsList'));
@@ -63,11 +59,12 @@ echo $this->element('tab-menu', array('links' => $links));
     echo $this->Form->input('messages', array('label' => __('Sähköpostiviestejä'), 'type' => 'checkbox', 'hiddenField' => '', 'value' => 'true', 'div' => false));
     echo $this->Form->end();
 
+    echo '<hr class="row">';
     echo $this->Html->link(__('Lisää toimenpide valituille'),array(
             'controller' => 'actions',
             'action' => 'create_many'
             ),
-            array('class' => 'modal-link',
+            array('class' => 'modal-link button',
                 'id' => 'CreateManyLink'
             )
     );

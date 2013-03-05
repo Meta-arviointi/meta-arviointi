@@ -263,6 +263,7 @@ class ActionsController extends AppController {
     }
 
     public function get_email_template($id) {
+        $this->Action->recursive = 2;
         $action = $this->Action->findById($id);
         $this->set('action', $action);
     }

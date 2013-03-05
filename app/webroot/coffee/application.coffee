@@ -203,14 +203,14 @@ $(document).ready ->
 
     studentEmailFormContainer = $('#student-email-form-container')
     window.emailAction = (actionID) ->
-        $('#student-email-form').show()
+        $('#student-email-form').slideDown 500
         $.scrollTo studentEmailFormContainer, 500, {offset: {top: -120}}
         $.ajax
             dataType: "json"
             url: window.baseUrl + 'actions/get_email_template/' + actionID + '.json'
             success: (data) ->
-                $('#MailTitle').val data.title
-                $('#MailContent').val data.content
+                $('#EmailMessageSubject').val data.subject
+                $('#EmailMessageContent').val unescape(data.content)
                 return
             error: (qXHR, textStatus, errorThrown) ->
                 alert errorThrown
