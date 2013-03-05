@@ -1,3 +1,15 @@
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#ActionsList input[type="checkbox"]').change(function() {
+            $('#SendActionEmailsLink').toggleClass('disabled', $('#ActionsList input[type="checkbox"]:checked').length < 1)
+        });
+
+        $('#SendActionEmailsLink').click(function() {
+            if($(this).hasClass('disabled')) { return false; }
+        });
+    });
+</script>
+
 <div class="row">
     <div class="twelveol">
 <?php 
@@ -19,14 +31,13 @@ echo $this->element('tab-menu', array('links' => $links));
     <div class="twelvecol last">
     <?php 
      /* DEBUG */
-    echo '<pre>';
+//    echo '<pre>';
 //  debug($actions);
 //  debug($course_memberships);
-    echo '</pre>';
+//    echo '</pre>';
 
     // Selection for assistant group
     echo $this->Form->create(false, array('id' => 'ActionIndexFilters', 'type' => 'get', 'data-target' => 'ActionsList'));
-
     echo $this->Form->input('group', array('options' => $user_groups, 'label' => __('Vastuuryhmä'), 'div' => false, 'empty' => array('' => __('Kaikki')), 'default' => $this->Session->read('User.group_id')));
 
     echo $this->Form->input('user', array('options' => $users, 'label' => __('Lisännyt'), 'div' => false, 'empty' => array('' => __('Kaikki')), 'default' => ''));
@@ -41,6 +52,12 @@ echo $this->element('tab-menu', array('links' => $links));
     
 
     echo $this->Form->create(false, array('id' => 'SelectActions'));
+    ?>
+
+    <hr class="row">
+
+    <?php
+        echo $this->Html->link(__('Lähetä sähköposti valituille'), '#', array('id' => 'SendActionEmailsLink', 'class' => 'button disabled'));
     ?>
 
     <table class="data-table" id="ActionsList">

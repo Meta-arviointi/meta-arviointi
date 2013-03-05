@@ -15,11 +15,14 @@
 				$membership = $this->EmailMessage->CourseMembership->findById($cm_id);
 				$this->request->data['EmailMessage']['receiver'] = $membership['Student']['email'];
 
+				// Append user name to the message
+				$this->request->data["EmailMessage"]["content"] .= "\n\n" . __("Ystävällisin terveisin") . ",\n" . $this->Session->read('Auth.User.name');
+
 				if($this->EmailMessage->save($this->request->data)) {
 					$message = array(
-						'to' => $this->request->data['EmailMessage']['receiver'],
-						'subject' => $this->request->data['EmailMessage']['subject'],
-						'body' => $this->request->data['EmailMessage']['content']
+						"to" => $this->request->data["EmailMessage"]["receiver"],
+						"subject" => $this->request->data["EmailMessage"]["subject"],
+						"body" => $this->request->data["EmailMessage"]["content"]
 					);
 					$http_status = null;
 					if(function_exists('curl_init')) {
@@ -31,7 +34,7 @@
 							CURLOPT_HTTPHEADER => array("Content-type: multipart/form-data"),
 							//CURLOPT_HTTPHEADER => array('Content-type: application/json') ,
 							CURLOPT_POST => true,
-							CURLOPT_POSTFIELDS => $this->_flatten_GP_array(array('secret_token' => 'm374arvioint1', 'message' => $message))
+							CURLOPT_POSTFIELDS => $this->_flatten_GP_array(array("secret_token" => "m374arvioint1", "message" => $message))
 						);
 						curl_setopt_array($ch, $options);
 						$results = curl_exec($ch);
@@ -60,12 +63,12 @@
 			foreach($var as $idx => $value){
 				if(is_scalar($value)){
 					if($prefix){
-						$return[$prefix.'['.$idx.']'] = $value;
+						$return[$prefix."[".$idx."]"] = $value;
 					} else {
 						$return[$idx] = $value;
 					}
 				} else {
-					$return = array_merge($return,$this->_flatten_GP_array($value,$prefix ? $prefix.'['.$idx.']' : $idx));
+					$return = array_merge($return,$this->_flatten_GP_array($value,$prefix ? $prefix."[".$idx."]" : $idx));
 				}
 			}
 			return $return;

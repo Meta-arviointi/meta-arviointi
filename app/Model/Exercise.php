@@ -73,7 +73,7 @@ class Exercise extends AppModel {
         )
     );
 
-    public function beforeSave() {
+    public function beforeSave($options = array()) {
         if ( !empty($this->data[$this->alias]['starttime']) ) {
             $this->data[$this->alias]['starttime'] = $this->format_date($this->data[$this->alias]['starttime']);
         }
