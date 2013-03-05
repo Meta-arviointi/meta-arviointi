@@ -56,6 +56,7 @@ echo $this->element('tab-menu', array('links' => $links));
     echo $this->Form->label('group', 'Vastuuryhmä');
     echo $this->Form->select('group', $user_groups, array('div' => false, 'empty' => array('' => 'Kaikki'), 'default' => $this->Session->read('User.group_id')));
     echo $this->Form->input('actions', array('label' => __('Käsittelemättömiä toimenpiteitä'), 'type' => 'checkbox', 'hiddenField' => '', 'value' => 'true', 'div' => false));
+    echo $this->Form->input('deadline', array('label' => __('Aikaraja umpeutunut'), 'type' => 'checkbox', 'hiddenField' => '', 'value' => 'true', 'div' => false));
     echo $this->Form->input('messages', array('label' => __('Sähköpostiviestejä'), 'type' => 'checkbox', 'hiddenField' => '', 'value' => 'true', 'div' => false));
     echo $this->Form->end();
 
@@ -97,7 +98,16 @@ echo $this->element('tab-menu', array('links' => $links));
                     $student_group_id = 0;
                     if(!empty($membership['Student']['Group'])) $student_group_id = $membership['Student']['Group'][0]['id'];
 
-                    $notice_actions = 'false';
+                    $unhandled = 'false';
+                    foreach($membership['Action'] as $ac) {
+                        if(
+                            empty($ac['handled_id'])                    //Not handled
+                        ) {
+                            $unhandled = 'true';
+                        }
+                    }
+
+                    $deadline = 'false';
                     foreach($membership['Action'] as $ac) {
                         if(
                             isset($ac['deadline']) &&                   //Deadline is set
@@ -105,13 +115,14 @@ echo $this->element('tab-menu', array('links' => $links));
                             strtotime($ac['deadline']) < time() &&      //Deadline has gone
                             empty($ac['handled_id'])                    //Not handled
                         ) {
-                            $notice_actions = 'true';
+                            $deadline = 'true';
                         }
                     }
 
                     echo '<tr class="table-content" 
                         data-group="'.$student_group_id.'" 
-                        data-actions=' . $notice_actions . '
+                        data-actions="' . $unhandled . '"
+                        data-deadline="' . $deadline . '"
                         data-messages=' . ((count($membership['EmailMessage']) > 0) ? 'true' : 'false') . '
                         >';
 
