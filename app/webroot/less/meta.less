@@ -878,3 +878,59 @@ a.disabled {
         padding-left: 1em;
     }
 }
+
+#SendActionEmailsForm {
+    overflow: hidden;
+    width: 100%;
+    .message-form {
+        visibility: hidden;
+        position: absolute;
+        bottom: 100%;
+        label {
+            display: block;
+        }
+        &.current {
+            visibility: visible;
+            position: static;
+            bottom: auto;
+            .input {
+                input[type="text"], textarea {
+                    width: 98%;
+                }
+            }
+        }
+        .form-navi {
+            padding: 3px;
+            background: #f0f0f0;
+            border-radius: 6px;
+            overflow: hidden;
+            line-height: 1.6em;
+
+            margin-bottom: 1em;
+            text-align: center;
+            font-family: OpenSansBold;
+            font-size: 1.2em;
+            a {
+                font-family: OpenSansBold;
+            }
+            a.prev {
+                float: left;
+            }
+            a.next {
+                float: right;
+            }
+        }
+        .submit {
+            padding-top: 1em;
+            overflow: hidden;
+            .send-all {
+                float: right;
+                margin: 0;
+                margin-right: 10px;
+            }
+            .button {
+                float: right;
+            }
+        }
+    }
+}
