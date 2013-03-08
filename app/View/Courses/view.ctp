@@ -52,6 +52,14 @@ echo $this->element('tab-menu', array('links' => $links));
     echo '<h1>'.$course['name'].'</h1>';
     echo '<p class="course-dates">' .__('Kurssi alkaa').': '. $this->Time->Format('j.n.Y', $course['starttime']) . '</p>';
     echo '<p class="course-dates">' .__('Kurssi päättyy').': '. $this->Time->Format('j.n.Y', $course['endtime']) . '</p>';
+    echo $this->Html->link(__('Muokkaa'), array(
+            'action' => 'edit',
+            $course['id']
+        ),
+        array(
+            'class' => 'modal-link'
+        )
+    );
 
     echo '<h2>Harjoitukset</h2>';
     echo '<table class="data-table">';

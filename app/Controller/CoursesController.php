@@ -141,6 +141,30 @@ class CoursesController extends AppController {
         }
     }
 
+    public function edit($cid) {
+        if ( $this->request->is('post') || $this->request->is('put') ) {
+            if ( $this->Course->save($this->request->data) ) {
+                $this->Session->setFlash(__('Kurssin tiedot päivitetty'));
+                $this->redirect(array('action' => 'view', $this->Course->id));
+            } else {
+                $this->Session->setFlash(__('Tietojen tallennus epäonnistui'));
+            }
+
+        } else {
+            $this->Course->id = $cid;
+            if ($this->Course->exists()) {
+                $this->Course->contain();
+                $course = $this->Course->read(null, $cid);
+                // For View, format date to datetimepicker format
+                $course['Course']['starttime'] = date('d.m.Y H:i', strtotime($course['Course']['starttime']));
+                $course['Course']['endtime'] = date('d.m.Y H:i', strtotime($course['Course']['endtime']));
+                $this->data = $course;
+            } else {
+                $this->Session->setFlash(__('Tuntematon kurssi'));
+                $this->redirect($this->referer());
+            }
+        }
+    }
 
     public function add_users() {
         if ( $this->request->is('post') || $this->request->is('put') ) {
