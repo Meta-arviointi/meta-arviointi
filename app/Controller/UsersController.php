@@ -125,11 +125,7 @@ class UsersController extends AppController {
 
     public function edit($id = null) {
         if ( $this->request->is('post') || $this->request->is('put') ) {
-            // Data from form, try to save
-            // Make sure that old password won't be overwritten
-            if ( empty($this->request->data['User']['password']) ) {
-                unset($this->request->data['User']['password']);
-            }
+            $this->set('user', $this->User->findById($id));
             if ( $this->User->save($this->request->data) ) {
                 $this->Session->setFlash(__('Käyttäjän tiedot päivitetty'));
                 $this->redirect(array('action' => 'view', $this->User->id));
