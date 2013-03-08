@@ -159,7 +159,7 @@ echo $this->element('tab-menu', array('links' => $links));
     echo '<table class="data-table">';
     echo '    <tr>';
     echo '        <th>'. __('Nimi') .'</th>';
-    echo '        <th>'. __('Peruspalvelutunnus') .'</th>';
+    echo '        <th>'. __('Tunnus') .'</th>';
     echo '        <th>'. __('Sähköposti') .'</th>';
     echo '        <th>'. __('Ryhmän koko') .'</th>';
     echo '    </tr>';
@@ -295,7 +295,7 @@ echo $this->element('tab-menu', array('links' => $links));
     );
     echo '<div id="csv-upload">';
     echo $this->Form->label(__('Lisää opiskelijat CSV-tiedostosta'));
-    echo '<div>Rivit muodossa: sukunimi;etunimi;opnumero;email;assari_ppt</div>';
+    echo '<div>Rivit muodossa: sukunimi;etunimi;opnumero;email;assari_tunnus</div>';
     echo $this->Form->create('Student', array(
             'type' => 'file',
             'url' => array(

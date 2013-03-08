@@ -13,7 +13,7 @@
     
     echo '<h2>Kurssille lisätyt assistentit ('.count($added_users).' kpl)</h2>';
     echo '<table class="data-table">';
-    echo '<tr class="table-header"><th>Etunimi</th><th>Sukunimi</th><th>PPT</th></tr>';
+    echo '<tr class="table-header"><th>Etunimi</th><th>Sukunimi</th><th>Tunnus</th></tr>';
         if ( !empty($added_users) ) {
             foreach($added_users as $user ) {
                 echo '<tr class="table-content">';
@@ -30,7 +30,7 @@
 
     echo '<h2>Tiedoston tuntemattomat assistentit ('.count($unknown_users).' kpl)</h2>';
     echo '<table class="data-table">';
-    echo '<tr class="table-header"><th>'.__('Peruspalvelutunnus').'</th></tr>';
+    echo '<tr class="table-header"><th>'.__('Tunnus').'</th></tr>';
         if ( !empty($unknown_users) ) {
             foreach($unknown_users as $user_bua ) {
                 echo '<tr class="table-content">';

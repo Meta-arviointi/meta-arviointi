@@ -26,7 +26,7 @@ class User extends AppModel {
             'notEmpty' => array(
                 'rule' => 'notEmpty',
                 'required' => true,
-                'message' => 'Peruspalvelutunnus vaaditaan'
+                'message' => 'Tunnus vaaditaan'
             ),
             'maxLength' => array(
                 'rule' => array('maxLength', 30),

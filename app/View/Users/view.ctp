@@ -9,7 +9,7 @@
                 // Define fields to be displayed.
                 // Notice: key must be key in $user['User]-array
                 $fields = array('first_name' => __('Etunimi'), 'last_name' => __('Sukunimi'), 
-                    'basic_user_account' => __('Käyttäjätunnus (ppt)'), 
+                    'basic_user_account' => __('Tunnus'), 
                     'email' => __('Sähköposti'), 'last_login' => __('Viimeksi kirjautunut')
                 );
                 // Print fields
