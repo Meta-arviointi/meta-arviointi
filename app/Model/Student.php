@@ -14,23 +14,23 @@ class Student extends AppModel {
 
     public $validate = array(
         'first_name' => array(
-            'rule' => 'alphaNumeric',
+            'rule' => '/^[a-zA-ZÄäÖöÅå0-9_\-]+$/i',
             'required' => true,
-            'message' => 'Etunimi on pakollinen (vain numeroita tai kirjaimia)'
+            'message' => 'Etunimi on pakollinen'
         ),
         'last_name' => array(
-            'rule' => 'alphaNumeric',
+            'rule' => '/^[a-zA-ZÄäÖöÅå0-9_\-]+$/i',
             'required' => true,
-            'message' => 'Sukunimi on pakollinen (vain numeroita tai kirjaimia)'
+            'message' => 'Sukunimi on pakollinen'
         ),
         'email' => array(
-            'rule' => 'email',
+            'rule' => '/^.+@.+$/i',
             'required' => true,
             'message' => 'Sähköposti on puutteellinen'
         ),
         'student_number' => array(
-            'numeric' => array(
-                'rule' => 'numeric',
+            'alphaNumeric' => array(
+                'rule' => 'alphaNumeric',
                 'required' => true,
                 'message' => 'Opiskelijanumero on pakollinen'
             ),

@@ -62,11 +62,16 @@
 						if($this->Session->read('Auth.User')) {
 							echo '<div id="login-details">';
 							$profile_link_classes = 'header-button';
+							$viewing_profile = false;
 							if(
 								$this->request->params['controller'] == 'users' &&
 								$this->request->params['action'] == 'view' &&
 								$this->request->params['pass'][0] == $this->Session->read('Auth.User.id')
-							) { $profile_link_classes .= ' selected'; }
+							) {
+								$viewing_profile = true;
+							}
+
+							if($viewing_profile) { $profile_link_classes .= ' selected'; }
 							echo $this->Html->link(
 								$this->Session->read('Auth.User.name'),
 								array(
@@ -99,8 +104,8 @@
 							echo '</div>';
 							echo '<div id="courses-link">';
 							$courses_link_classes = 'header-button';
-							if(empty($this->request->params['admin'])) $courses_link_classes .= ' selected';
-							echo $this->Html->link(__('Kurssit'), array(
+							if(empty($this->request->params['admin']) && !$viewing_profile) $courses_link_classes .= ' selected';
+							echo $this->Html->link(__('Kurssi'), array(
 									'admin' => false,
 									'controller' => 'students',
 									'action' => 'index'

@@ -628,7 +628,7 @@ SELECT pg_catalog.setval('groups_students_id_seq', 5, true);
 
 CREATE TABLE students (
     id integer NOT NULL,
-    student_number integer NOT NULL,
+    student_number character varying(30) NOT NULL,
     last_name character varying(255) NOT NULL,
     first_name character varying(255) NOT NULL,
     email character varying(255) NOT NULL
@@ -996,11 +996,11 @@ INSERT INTO groups_students VALUES (5, 2, 5);
 -- Data for Name: students; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO students VALUES (1, 34243, 'Testaaja', 'Testi', 'testi.testaaja@uta.fi');
-INSERT INTO students VALUES (2, 12345, 'Opiskelija', 'Ossi', 'ossi.opiskelija@uta.fi');
-INSERT INTO students VALUES (3, 98765, 'Mänty', 'Jarmo', 'jarmo.manty@uta.fi');
-INSERT INTO students VALUES (4, 43214, 'Luttinen', 'Usko', 'usko.luttinen@uta.fi');
-INSERT INTO students VALUES (5, 26371, 'Sorsa', 'Pulla', 'pulla.sorsa@uta.fi');
+INSERT INTO students VALUES (1, '34243', 'Testaaja', 'Testi', 'testi.testaaja@uta.fi');
+INSERT INTO students VALUES (2, '12345', 'Opiskelija', 'Ossi', 'ossi.opiskelija@uta.fi');
+INSERT INTO students VALUES (3, '98765', 'Mänty', 'Jarmo', 'jarmo.manty@uta.fi');
+INSERT INTO students VALUES (4, '43214', 'Luttinen', 'Usko', 'usko.luttinen@uta.fi');
+INSERT INTO students VALUES (5, '26371', 'Sorsa', 'Pulla', 'pulla.sorsa@uta.fi');
 
 
 --

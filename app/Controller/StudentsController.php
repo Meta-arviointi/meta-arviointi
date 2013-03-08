@@ -357,10 +357,10 @@ class StudentsController extends AppController {
                         $line = explode(';',$row[0]);
                         // Check if we have all needed information
                         // and validate                                                 
-                        if ( count($line) >= 4 && Validation::alphaNumeric($line[0]) &&
-                            Validation::alphaNumeric($line[1]) &&
-                            Validation::numeric($line[2]) &&
-                            Validation::email($line[3]) ) {
+                        if ( count($line) >= 4 && Validation::custom($line[0], '/^[a-zA-ZÄäÖöÅå0-9_\-]+$/i') &&
+                            Validation::custom($line[1], '/^[a-zA-ZÄäÖöÅå0-9_\-]+$/i') &&
+                            Validation::alphaNumeric($line[2]) &&
+                            Validation::custom($line[3], '/^.+@.+$/i') ) {
                             // Set information
                             $student_lname = $line[0];
                             $student_fname = $line[1];
