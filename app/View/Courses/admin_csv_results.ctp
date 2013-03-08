@@ -116,7 +116,7 @@
 
     echo '<h2>'.__('Tuontiloki').'</h2>';
     echo '<div>';
-    echo '<textarea rows="'.($log_row_count + 2) .'" cols="100" readonly="readonly">';
+    echo '<textarea rows="'.($log_row_count + 5) .'" cols="100" readonly="readonly">';
     echo $errors_log;
     echo '</textarea>';
     echo '</div>';
