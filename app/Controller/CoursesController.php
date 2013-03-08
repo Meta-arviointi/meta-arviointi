@@ -130,8 +130,24 @@ class CoursesController extends AppController {
 
     public function admin_add() {
         if ($this->request->is('post')) {
+            $admins = $this->Course->User->find('list', array(
+                    'fields' => array('User.id', 'User.name'),
+                    'conditions' => array(
+                        'User.id !=' => $this->Session->read('Auth.User.id'),
+                        'User.is_admin' => true
+                    )
+                )
+            );
+            if ( !empty($admins) ) {
+                $uid = $this->request->data['User']['id'];
+                unset($this->request->data['User']['id']);
+                $this->request->data['User']['User'][] = intval($uid);
+                foreach( $admins as $id => $name ) {
+                    $this->request->data['User']['User'][] = $id;
+                }    
+            }
             $this->Course->create();
-            if ($this->Course->save($this->request->data)) {
+            if ($this->Course->saveAll($this->request->data)) {
                 $name = $this->Course->field('name');
                 $this->Session->setFlash(__("Kurssi '$name' lisätty"));
                 $this->redirect(array('admin' => false, 'action' => 'view', $this->Course->id));
