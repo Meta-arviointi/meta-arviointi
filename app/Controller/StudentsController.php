@@ -327,8 +327,6 @@ class StudentsController extends AppController {
                         )
                     );
 
-                    $users_csv = array();
-                    $users_gid = array();
                     $users = 0;
                     $new_students_count = 0;
                     $new_groups = 0;
@@ -336,7 +334,6 @@ class StudentsController extends AppController {
                     $has_group = false; // if student gets linked to group
                     $log_row_count = 0; // rows in log
 
-                    $new_students = array(); // new students created
                     $old_students = array(); // old students already in system
                     $students_course = array(); // students added to course
                     // New students with group
@@ -561,14 +558,15 @@ class StudentsController extends AppController {
                                     // add student to array of added students
                                     $this->Student->contain();
                                     $student = $this->Student->findById($sid);
-                                    $students_course[] = $student;
                                     if ( $has_group ) {
+                                        $student['Group'] = $user_bua;
                                         $students_with_group[] = $student;
 
                                     } else {
                                         $row_errors[] = "Opiskelija ($student_number) lisätty kurssille ilman vastuuryhmää.";
                                         $students_wo_group[] = $student;
                                     }
+                                    $students_course[] = $student;
                                 } else {
                                     $row_errors[] = "Opiskelija ($student_number) oli jo kurssilla.";
                                 }
