@@ -74,7 +74,7 @@ echo $this->element('tab-menu', array('links' => $links));
 
         <p>Kommentti: <?php echo empty($course_membership['CourseMembership']['comment']) ? '-' : $course_membership['CourseMembership']['comment'] ?>
             <?php
-                echo $this->Html->link('('.__('Muokkaa').')',
+                echo $this->Html->link('('.__('Muokkaa kommenttia').')',
                     array(
                         'action' => 'edit_comment', 
                         $course_membership['CourseMembership']['id']
