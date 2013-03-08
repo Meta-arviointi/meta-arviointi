@@ -21,8 +21,8 @@
         });
 
         $('#many-course_memberships-form').submit(function() {
-            // #CreateManyCourseMemberships is in /students/admin_index !
-            $(this).append(($('#CreateManyCourseMemberships').find('input[type="checkbox"]:checked')).attr('type','hidden'));
+            // #SelectManyCourseMemberships is in /students/admin_index !
+            $(this).append(($('#SelectManyCourseMemberships').find('input[type="checkbox"]:checked')).attr('type','hidden'));
             return true;
         });
 

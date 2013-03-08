@@ -227,5 +227,62 @@ class CoursesController extends AppController {
         }
     }
 
+    /**
+     * Function is called from admin/users/index, when multiple
+     * users are selected and added to group.
+     * Function first fetches current users in course,
+     * and appends new users from selection.
+     * Then saveAll is performed and all related users are saved to course
+     * (old and new).
+     */
+    public function add_many_users() {
+        if ( $this->request->is('post') || $this->request->is('put') ) {
+            $users = $this->request->data['User'];
+            $course_id = $this->request->data['Course']['id'];
+            $course = $this->Course->get_users($course_id);
+
+            $savedata = array();
+            // Loop through current users in course and add for saving
+            foreach( $course['User'] as $user ) {
+                $savedata['User'][] = $user['id'];
+            }
+            // Flip so we have User.id as key
+            $flipped = array_flip($savedata['User']);
+            foreach($users as $uid => $id) {
+                if ( !isset($flipped[$uid]) ) {
+                    // user not in course, add new user
+                    // to list for saving
+                    $savedata['User'][] = $uid;
+                }
+            }
+            // unset old, and set new data for save
+            unset($this->request->data['User']);
+            $this->request->data['User'] = $savedata;
+            // Save
+            $this->Course->create();
+            if ( $this->Course->saveAll($this->request->data) ) {
+                $this->Session->setFlash(__('Assistentit tallennettu kurssille'));
+                $this->redirect(array(
+                        'admin' => true,
+                        'controller' => 'users',
+                        'action' => 'index'
+                    )
+                );
+            } else {
+                $this->Session->setFlash(__('Assistenttien tallennus epäonnistui'));
+                $this->redirect(array(
+                        'admin' => true,
+                        'controller' => 'users',
+                        'action' => 'index'
+                    )
+                );
+            }
+
+        } else {
+            // Courses for selection list
+            $this->set('courses', $this->Course->find('list'));
+        }
+    }
+
 }
 

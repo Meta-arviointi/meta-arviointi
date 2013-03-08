@@ -1,6 +1,6 @@
 <script type="text/javascript">
     $(document).ready(function() {
-    	// Inlcude Student-checkboxes in form before submit
+        // Inlcude Student-checkboxes in form before submit
         $('#UserSetGroupsForm').submit(function() {
             // #EditStudentGroups is in /courses/view !
             $(this).append(($('#EditStudentGroups').find('input[type="checkbox"]:checked')).attr('type','hidden'));
@@ -14,10 +14,10 @@
 <?php
 echo $this->Form->create('User');
 echo $this->Form->input('id', array(
-		'label' => __('Assistentti'),
-		'empty' => __('Valitse vastuuryhmä'),
-		'options' => $users
-	)
+        'label' => __('Assistentti'),
+        'empty' => __('Valitse vastuuryhmä'),
+        'options' => $users
+    )
 );
 echo $this->Form->end('Tallenna');
 
