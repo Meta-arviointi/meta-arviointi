@@ -226,7 +226,7 @@ class CourseMembershipsController extends AppController {
     public function view($id) {
         //debug($this->request);
         // Don't print course_selection drop-down to layout
-        $this->set('course_selection', false);
+        //$this->set('course_selection', false);
 
         /* Load ActionType-model to get action types for selection list */
         $this->loadModel('ActionType');
@@ -282,6 +282,46 @@ class CourseMembershipsController extends AppController {
         $this->set('users', $users);
         $this->set('student_courses', $student_courses);
 
+    }
+
+    public function view_rdr() {
+        // Init. variable to make sure it's not null at the end
+        $course_id = $this->Session->read('Course.course_id');
+        // get referring CourseMembership.id
+        $url = explode('/', $this->referer(null,true));
+        $cmid = $url[3];
+        // Check if request is post
+        if ( $this->request->is('post') ) {
+            $course_id = $this->request->data['course_id'];
+        } else if ( $this->request->is('get') ) { // .. or get
+            $course_id = $this->request->query['course_id'];
+        }
+        $this->CourseMembership->id = $cmid;
+        $sid = $this->CourseMembership->field('student_id');
+        $new_cm = $this->CourseMembership->find('first', array(
+                'conditions' => array(
+                    'course_id' => $course_id,
+                    'student_id' => $sid
+                )    
+            )
+        );
+        $this->Session->write('Course.course_id', $course_id);
+        if ( !empty($new_cm) ) {
+            $this->redirect(array(
+                  'action' => 'view',
+                  $new_cm['CourseMembership']['id']
+                )
+            );
+        } else {
+            // Student is not in selected course, rdr to students/index
+            $this->Session->setFlash(__('Opiskelija ei ole valitulla kurssilla'));
+            $this->redirect(array(
+                    'controller' => 'students',
+                    'action' => 'index',
+                    $course_id
+                )
+            );
+        }
     }
 
     public function delete($cm_id) {
