@@ -1,10 +1,3 @@
-<?php 
-     /* DEBUG */
-    echo '<pre>';
-    //debug($course_membership);
-      // debug($this->request);
-    echo '</pre>';
-?>
 <script type="text/javascript">
     $(document).ready(function() {
         $('.student-action-form').each(function() {
@@ -83,6 +76,20 @@ echo $this->element('tab-menu', array('links' => $links));
                 )
             ?>
         </p>
+        <p>
+        <?php
+            echo __('Vastuuassistentti').': <strong>'.
+                $users[$course_membership['Student']['Group'][0]['user_id']]
+                .'</strong>';
+            echo '</p>';
+            echo $this->Html->link(__('Muuta vastuuryhmää'), array(
+                    'controller' => 'students',
+                    'action' => 'set_group',
+                    $course_membership['Student']['id']
+                ),
+                array('class' => 'modal-link')
+            );
+        ?>
 
     </div>
     <div class="threecol">
@@ -215,7 +222,7 @@ echo $this->element('tab-menu', array('links' => $links));
 
         echo '</div>';
 
-        foreach($student_actions as $action) {
+        foreach($course_membership['Action'] as $action) {
 
             $action_title = null;
 
@@ -232,20 +239,20 @@ echo $this->element('tab-menu', array('links' => $links));
             }
             $action_title = $action_title .  ': ' . $action['ActionType']['name'];
 
-            echo '<div class="action" id="action'.$action['Action']['id'].'">';
+            echo '<div class="action" id="action'.$action['id'].'">';
             echo '<div class="toolbar">';
             echo $this->Html->link(__('Lähetä sähköposti'),
                 '#', 
                 array(
                     'class' => 'email-action',
-                    'onClick' => 'javascript: window.emailAction('.$action['Action']['id'].'); return false;'
+                    'onClick' => 'javascript: window.emailAction('.$action['id'].'); return false;'
                 )
             );
             echo $this->Html->link(__('Muokkaa'),
                 array(
                     'controller' => 'actions',
                     'action' => 'edit', 
-                    $action['Action']['id']
+                    $action['id']
                 ), 
                 array(
                     'class' => 'modal-link edit-action',
@@ -253,21 +260,21 @@ echo $this->element('tab-menu', array('links' => $links));
             );
             echo $this->Html->link(
                 'Poista',
-                array('controller' => 'actions', 'action' => 'delete', $action['Action']['id']),
+                array('controller' => 'actions', 'action' => 'delete', $action['id']),
                 array('class' => 'delete-action'),
                 __('Haluatko varmasti poistaa toimenpiteen?')
             );
             echo '</div>';
             echo '<h3>' . $action_title . '</h3>';
-            if ( !empty($action['Action']['handled_id']) ) {
+            if ( !empty($action['handled_id']) ) {
                 echo '<div class="meta"><span>(' . __('Käsitellyt') . ': ' . 
-                    $users[$action['Action']['handled_id']] . ' - ' .
-                    date('j.n.Y G:i', strtotime($action['Action']['handled_time'])) . ')</span></div>';
+                    $users[$action['handled_id']] . ' - ' .
+                    date('j.n.Y G:i', strtotime($action['handled_time'])) . ')</span></div>';
             }
-            if(!empty($action['Action']['deadline'])) echo '<p class="deadline">Aikaraja: '.date('d.m.Y H:i', strtotime($action['Action']['deadline'])).'</p>';
-            if(!empty($action['Action']['description'])) echo '<p class="comment">'.$action['Action']['description'].'</p>';
+            if(!empty($action['deadline'])) echo '<p class="deadline">Aikaraja: '.date('d.m.Y H:i', strtotime($action['deadline'])).'</p>';
+            if(!empty($action['description'])) echo '<p class="comment">'.$action['description'].'</p>';
             echo '<div class="meta">';
-            echo '<span class="timestamp">'.date('d.m.Y H:i', strtotime($action['Action']['created'])).'</span> - ';
+            echo '<span class="timestamp">'.date('d.m.Y H:i', strtotime($action['created'])).'</span> - ';
             echo '<span class="by">' . $action['User']['name'] . '</span>';
             echo '</div>';
 
@@ -291,7 +298,7 @@ echo $this->element('tab-menu', array('links' => $links));
                     'label' => false
                 )
             ));
-            echo $this->Form->input('action_id', array('type' => 'hidden', 'default' => $action['Action']['id']));
+            echo $this->Form->input('action_id', array('type' => 'hidden', 'default' => $action['id']));
             echo $this->Form->input('user_id', array('type' => 'hidden', 'default' => $this->Session->read('Auth.User.id')));
             echo $this->Form->input('comment', array('rows' => 2));
             echo $this->Form->error('comment');

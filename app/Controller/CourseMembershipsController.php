@@ -234,35 +234,24 @@ class CourseMembershipsController extends AppController {
         $this->set('action_types', $this->ActionType->types());
 
         // Find selected CourseMembership data
-        $course_membership = $this->CourseMembership->findById($id);
-
-        // get student's actions in selected course enrolment
-        $student_actions = $this->CourseMembership->Action->find('all', array(
-                'contain' => array(
-                    'User',
-                    'ActionType',
+        $options = array(
+            'conditions' => array(
+                'CourseMembership.id' => $id
+            ),
+            'contain' => array(
+                'Action' => array(
+                    'order' => 'Action.created DESC',
                     'ActionComment' => array('User'),
-                    'Exercise' => array(
-                        'conditions' => array(
-                            'Exercise.course_id' => $course_membership['Course']['id']
-                        )
-                    )
+                    'ActionType',
+                    'Exercise',
+                    'User'
                 ),
-                'conditions' => array(
-                    'Action.course_membership_id' => $id
-                ),
-                'order' => array('Action.created DESC')
+                'Course',
+                'EmailMessage',
+                'Student' => array('Group')
             )
         );
-
-        /*
-         * Delete actions that don't belong to current course.
-         */
-        foreach ($student_actions as $index => $action) {
-            if ( empty($action['Exercise']) ) {
-                unset($student_actions[$index]);
-            } 
-        }
+        $course_membership = $this->CourseMembership->find('first', $options);
 
         $exercises = $this->CourseMembership->Course->Exercise->find('list', array(
                 'conditions' => array(
@@ -289,7 +278,6 @@ class CourseMembershipsController extends AppController {
         //debug($student_actions);
         //debug($exercises);
         $this->set('course_membership', $course_membership);
-        $this->set('student_actions', $student_actions);
         $this->set('exercises', $exercises);
         $this->set('users', $users);
         $this->set('student_courses', $student_courses);

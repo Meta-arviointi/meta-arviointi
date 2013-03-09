@@ -228,6 +228,65 @@ class StudentsController extends AppController {
 		$this->set('students', $students);
 	}
 
+    public function set_group($sid = 0) {
+        $cid = $this->Session->read('Course.course_id');
+        if ( $this->request->is('post') ) {
+            $uid = $this->request->data['User']['id'];
+            $sid = $this->request->data['Student']['id'];
+            $group = $this->Student->Group->User->user_group($uid, $cid);
+            $gid = null;
+            if ( !empty($group) ) {
+                $gid = $group['Group']['id'];
+            } else { // user has no group
+                // Create new group for user $uid
+                $this->Student->Group->create();
+                $this->Student->Group->save(array(
+                    'course_id' => $cid, 
+                    'user_id' => $uid
+                    )
+                );
+                // set $gid
+                $gid = $this->Student->Group->id;
+            }
+            $sgroup = $this->Student->student_group($sid, $cid);
+            if ( !empty($sgroup) ) {
+                // remove old group 
+                $sgid = $sgroup[0]['id'];
+                if ( $sgid != $gid ) {
+                    $this->Student->Group->unlink_student($sgid, $sid);
+                } else {
+                    // this user is already linked to this group
+                    $duplicate = true;
+                }
+            }
+            if ( !$duplicate ) {
+                // link student to selected group (different from current)
+                $return = $this->Student->Group->link_student($gid, $sid);
+                if ( $return ) {
+                    $this->Session->setFlash(__('Vastuuryhmä vaihdettu'));
+                    $this->redirect($this->referer());
+                } else {
+                    $this->Session->setFlash(__('Vastuuryhmän tallennuksessa tapahtui virhe'));
+                    $this->redirect($this->referer());
+                }
+            }
+
+
+        } else {
+            // get users in course
+            $users = $this->Student->CourseMembership->Course->get_users($cid);
+            $users_list = array();
+            // make drop-down
+            foreach( $users['User'] as $user ) {
+                $users_list[$user['id']] = $user['name'];
+            }
+
+            $this->set('users', $users_list);
+            $this->set('student_id', $sid);
+        }
+
+    }
+
     public function set_groups($cid = 0) {
         if ( $cid <= 0 ) {
             $cid = $this->Session->read('Course.course_id');
