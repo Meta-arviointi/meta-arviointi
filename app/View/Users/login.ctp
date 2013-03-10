@@ -5,7 +5,7 @@
         <fieldset>
             <legend><?php echo __('Meta-arviointityökalu'); ?></legend>
         <?php
-            echo $this->Form->input('basic_user_account', array('label' => 'Peruspalvelutunnus:'));
+            echo $this->Form->input('basic_user_account', array('label' => 'Tunnus:'));
             echo $this->Form->input('password', array('label' => 'Salasana:'));
         ?>
         </fieldset>

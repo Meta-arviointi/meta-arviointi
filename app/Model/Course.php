@@ -44,7 +44,9 @@ class Course extends AppModel {
     }
 
     public function format_date($date) {
-        return date('Y-m-d H:i:sO', strtotime($date));
+        $formatted_datetime = date_create_from_format('d.m.Y H:i', $date);
+        $datetime_dbstring = date_format($formatted_datetime, 'Y-m-d H:i:sO');
+        return $datetime_dbstring;
     }
 
     public function get_courses($cid) {

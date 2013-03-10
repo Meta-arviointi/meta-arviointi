@@ -6,9 +6,11 @@
             'id' => 'UserCourseSelection'
         )
     );
+    $course_id = $this->Session->read('Course.course_id');
     echo $this->Form->input('course_id', array(
             'options' => $users_courses,
-            'default' => $this->Session->read('Course.course_id'),
+            'default' => isset($users_courses[$course_id]) ? $course_id : "",
+            'empty' => 'Valitse kurssi',
             'label' => __('Kurssi'),
         )
     );

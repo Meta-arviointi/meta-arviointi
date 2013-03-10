@@ -118,20 +118,41 @@ class CoursesController extends AppController {
             $course_id = $this->request->query['course_id'];
         }
 
-        // Redirect to index() with $course_id
-        $this->redirect(array(
-                'admin' => false,
-                'controller' => 'courses',
-                'action' => 'view',
-                $course_id
-            )
-        );
+        if ( $this->Course->exists($course_id) ) {
+            // Redirect to index() with $course_id
+            $this->redirect(array(
+                    'admin' => false,
+                    'controller' => 'courses',
+                    'action' => 'view',
+                    $course_id
+                )
+            );
+        } else { // unknown course_id
+            $this->Session->setFlash(__('Tuntematon kurssi'));
+            $this->redirect($this->referer());
+        }
     }
 
     public function admin_add() {
         if ($this->request->is('post')) {
+            $admins = $this->Course->User->find('list', array(
+                    'fields' => array('User.id', 'User.name'),
+                    'conditions' => array(
+                        'User.id !=' => $this->Session->read('Auth.User.id'),
+                        'User.is_admin' => true
+                    )
+                )
+            );
+            if ( !empty($admins) ) {
+                $uid = $this->request->data['User']['id'];
+                unset($this->request->data['User']['id']);
+                $this->request->data['User']['User'][] = intval($uid);
+                foreach( $admins as $id => $name ) {
+                    $this->request->data['User']['User'][] = $id;
+                }    
+            }
             $this->Course->create();
-            if ($this->Course->save($this->request->data)) {
+            if ($this->Course->saveAll($this->request->data)) {
                 $name = $this->Course->field('name');
                 $this->Session->setFlash(__("Kurssi '$name' lisätty"));
                 $this->redirect(array('admin' => false, 'action' => 'view', $this->Course->id));
@@ -141,6 +162,30 @@ class CoursesController extends AppController {
         }
     }
 
+    public function edit($cid) {
+        if ( $this->request->is('post') || $this->request->is('put') ) {
+            if ( $this->Course->save($this->request->data) ) {
+                $this->Session->setFlash(__('Kurssin tiedot päivitetty'));
+                $this->redirect(array('action' => 'view', $this->Course->id));
+            } else {
+                $this->Session->setFlash(__('Tietojen tallennus epäonnistui'));
+            }
+
+        } else {
+            $this->Course->id = $cid;
+            if ($this->Course->exists()) {
+                $this->Course->contain();
+                $course = $this->Course->read(null, $cid);
+                // For View, format date to datetimepicker format
+                $course['Course']['starttime'] = date('d.m.Y H:i', strtotime($course['Course']['starttime']));
+                $course['Course']['endtime'] = date('d.m.Y H:i', strtotime($course['Course']['endtime']));
+                $this->data = $course;
+            } else {
+                $this->Session->setFlash(__('Tuntematon kurssi'));
+                $this->redirect($this->referer());
+            }
+        }
+    }
 
     public function add_users() {
         if ( $this->request->is('post') || $this->request->is('put') ) {
@@ -184,6 +229,63 @@ class CoursesController extends AppController {
             }
             $this->set('users', $users);
             $this->set('user_groups', $user_groups);
+        }
+    }
+
+    /**
+     * Function is called from admin/users/index, when multiple
+     * users are selected and added to group.
+     * Function first fetches current users in course,
+     * and appends new users from selection.
+     * Then saveAll is performed and all related users are saved to course
+     * (old and new).
+     */
+    public function add_many_users() {
+        if ( $this->request->is('post') || $this->request->is('put') ) {
+            $users = $this->request->data['User'];
+            $course_id = $this->request->data['Course']['id'];
+            $course = $this->Course->get_users($course_id);
+
+            $savedata = array();
+            // Loop through current users in course and add for saving
+            foreach( $course['User'] as $user ) {
+                $savedata['User'][] = $user['id'];
+            }
+            // Flip so we have User.id as key
+            $flipped = array_flip($savedata['User']);
+            foreach($users as $uid => $id) {
+                if ( !isset($flipped[$uid]) ) {
+                    // user not in course, add new user
+                    // to list for saving
+                    $savedata['User'][] = $uid;
+                }
+            }
+            // unset old, and set new data for save
+            unset($this->request->data['User']);
+            $this->request->data['User'] = $savedata;
+            // Save
+            $this->Course->create();
+            if ( $this->Course->saveAll($this->request->data) ) {
+                $this->Session->setFlash(__('Assistentit tallennettu kurssille'));
+                $this->redirect(array(
+                        'admin' => true,
+                        'controller' => 'users',
+                        'action' => 'index'
+                    )
+                );
+            } else {
+                $this->Session->setFlash(__('Assistenttien tallennus epäonnistui'));
+                $this->redirect(array(
+                        'admin' => true,
+                        'controller' => 'users',
+                        'action' => 'index'
+                    )
+                );
+            }
+
+        } else {
+            // Courses for selection list
+            $this->set('courses', $this->Course->find('list'));
         }
     }
 

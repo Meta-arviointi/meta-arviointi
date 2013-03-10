@@ -25,19 +25,19 @@ echo $this->element('tab-menu', array('links' => $links));
         echo '        <table class="data-table">';
         echo '        <tr>';
         echo '            <th>'. __('Kurssi') .'</th>';
-        echo '            <th>'. __('Alku pvm').'</th>';
-        echo '            <th>'. __('Loppu pvm').'</th>';
-        echo '            <th>'. __('tila').'</th>';
+        echo '            <th>'. __('Alkaa').'</th>';
+        echo '            <th>'. __('Päättyy').'</th>';
+        echo '            <th>'. __('Tila').'</th>';
         echo '        </tr>';
 
     foreach($courses as $course) {
         echo '<tr>';
         echo '<td>'.$this->Html->link($course['Course']['name'], 
             array('admin' => false, 'controller' => 'courses', 'action' => 'view', $course['Course']['id'])).'</td>';
-        $this->Time->Format('d-m-Y');
-        echo '<td>'.$this->Html->link($this->Time->Format('d-m-Y', $course['Course']['starttime']), 
+        $this->Time->Format('j.n.Y');
+        echo '<td>'.$this->Html->link($this->Time->Format('j.n.Y', $course['Course']['starttime']), 
             array('admin' => false, 'controller' => 'courses', 'action' => 'view', $course['Course']['id'])).'</td>';
-        echo '<td>'.$this->Html->link($this->Time->Format('d-m-Y', $course['Course']['endtime']), 
+        echo '<td>'.$this->Html->link($this->Time->Format('j.n.Y', $course['Course']['endtime']), 
             array('admin' => false, 'controller' => 'courses', 'action' => 'view', $course['Course']['id'])).'</td>';
         if (strtotime($course['Course']['starttime']) > time()) {
             echo '<td>Tulossa</td>';
@@ -50,7 +50,7 @@ echo $this->element('tab-menu', array('links' => $links));
         }
     }
     echo '    </table>';
-    echo $this->Html->link('Lisää uusi kurssi', array('action' => 'admin_add', 'controller' => 'courses'), array('class' => 'modal-link', 'id' => 'add-course-link'));
+    echo $this->Html->link('Lisää uusi kurssi', array('action' => 'admin_add', 'controller' => 'courses'), array('class' => 'button modal-link', 'id' => 'add-course-link'));
 
     ?>
     </div>

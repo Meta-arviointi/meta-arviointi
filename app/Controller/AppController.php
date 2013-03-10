@@ -68,6 +68,11 @@ class AppController extends Controller {
                 $this->Session->write('Course.course_id', $this->_course['Course']['id']);
                 //$this->redirect(array('course_id' => $this->_course['Course']['id']));
         }
+
+        $this->set('all_courses', 
+            $this->Course->find('list', array('fields' => 'Course.name'))
+        );
+
         // PRINT COURSE SELECTION DROPDOWN LIST TO HEADERBAR
         // Default is to print, override in controller to prevent print
         $this->set('course_selection', true);

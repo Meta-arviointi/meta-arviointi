@@ -52,6 +52,14 @@ echo $this->element('tab-menu', array('links' => $links));
     echo '<h1>'.$course['name'].'</h1>';
     echo '<p class="course-dates">' .__('Kurssi alkaa').': '. $this->Time->Format('j.n.Y', $course['starttime']) . '</p>';
     echo '<p class="course-dates">' .__('Kurssi päättyy').': '. $this->Time->Format('j.n.Y', $course['endtime']) . '</p>';
+    echo $this->Html->link(__('Muokkaa'), array(
+            'action' => 'edit',
+            $course['id']
+        ),
+        array(
+            'class' => 'button modal-link'
+        )
+    );
 
     echo '<h2>Harjoitukset</h2>';
     echo '<table class="data-table">';
@@ -147,11 +155,16 @@ echo $this->element('tab-menu', array('links' => $links));
     
 
     echo '</table>';
-    echo $this->Html->link('Lisää harjoitus', array('action' => 'add', 'controller' => 'exercises'), array('class' => 'modal-link', 'id' => 'add-exercise-link'));
+    echo $this->Html->link('Lisää harjoitus', array('action' => 'add', 'controller' => 'exercises'), array('class' => 'button modal-link', 'id' => 'add-exercise-link'));
     if ( $edit_exercises ) {
         echo $this->Form->end(__('Tallenna harjoitukset'));
     } else {
-        echo $this->Html->link(__('Muokkaa harjoituksia'), array($course_id,'?' => array('edit' => 'exercises')));    
+        echo $this->Html->link(__('Muokkaa harjoituksia'), array(
+                $course_id,
+                '?' => array('edit' => 'exercises')
+            ),
+            array('class' => 'button')
+        );    
     }
     echo '<br/>';
     echo '<br/>';
@@ -159,7 +172,7 @@ echo $this->element('tab-menu', array('links' => $links));
     echo '<table class="data-table">';
     echo '    <tr>';
     echo '        <th>'. __('Nimi') .'</th>';
-    echo '        <th>'. __('Peruspalvelutunnus') .'</th>';
+    echo '        <th>'. __('Tunnus') .'</th>';
     echo '        <th>'. __('Sähköposti') .'</th>';
     echo '        <th>'. __('Ryhmän koko') .'</th>';
     echo '    </tr>';
@@ -180,7 +193,7 @@ echo $this->element('tab-menu', array('links' => $links));
     
     echo '</table>';
 
-    echo $this->Html->link('Lisää/poista kurssin assistentteja', array('action' => 'add_users', 'controller' => 'courses'), array('class' => 'modal-link', 'id' => 'add-user-link'));
+    echo $this->Html->link('Lisää/poista kurssin assistentteja', array('action' => 'add_users', 'controller' => 'courses'), array('class' => 'button modal-link', 'id' => 'add-user-link'));
 
     echo '<br/>';
     echo '<br/>';
@@ -201,7 +214,7 @@ echo $this->element('tab-menu', array('links' => $links));
             'controller' => 'students',
             'action' => 'set_groups'
             ),
-            array('class' => 'modal-link',
+            array('class' => 'button modal-link',
                 'id' => 'CreateManyLink'
             )
     );
@@ -288,14 +301,14 @@ echo $this->element('tab-menu', array('links' => $links));
                 'controller' => 'course_memberships'
             ),
             array(
-                'class' => 'modal-link',
+                'class' => 'button modal-link',
                 'id' => 'add-students-link',
                 'div'
             )
     );
     echo '<div id="csv-upload">';
-    echo $this->Form->label(__('Lisää opiskelijat CSV-tiedostosta'));
-    echo '<div>Rivit muodossa: sukunimi;etunimi;opnumero;email;assari_ppt</div>';
+    echo '<h2>' . __('Lisää opiskelijat CSV-tiedostosta') . '</h2>';
+    echo '<div>Rivit muodossa: sukunimi;etunimi;opnumero;email;assari_tunnus</div>';
     echo $this->Form->create('Student', array(
             'type' => 'file',
             'url' => array(

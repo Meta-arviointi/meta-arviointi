@@ -1,7 +1,7 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $('#CreateManyLink').addClass('disabled');
-        var n = $('#CreateManyCourseMemberships').find('input[type="checkbox"]:checked').length;
+        var n = $('#SelectManyCourseMemberships').find('input[type="checkbox"]:checked').length;
         if ( n > 0 ) {
             $('#CreateManyLink').removeClass('disabled');
         }
@@ -15,10 +15,10 @@
             }
         });
 
-        $('#CreateManyCourseMemberships').find('input[type="checkbox"]').each(function() {
+        $('#SelectManyCourseMemberships').find('input[type="checkbox"]').each(function() {
             var chkbox = this;
             $(chkbox).click(function() {
-                var n = $('#CreateManyCourseMemberships').find('input[type="checkbox"]:checked').length;
+                var n = $('#SelectManyCourseMemberships').find('input[type="checkbox"]:checked').length;
                 if ( n == 0 ) {
                     $('#CreateManyLink').addClass('disabled');
                 } else {
@@ -50,7 +50,7 @@ echo $this->element('tab-menu', array('links' => $links));
     echo '<pre>';
     //debug($students[1]);
     echo '</pre>';
-    echo $this->Form->create(false, array('id' => 'CreateManyCourseMemberships',
+    echo $this->Form->create(false, array('id' => 'SelectManyCourseMemberships',
             'url' => array('controller' => 'actions', 'action' => 'add'),
             'inputDefaults' => array(
                 'label' => false,
@@ -62,7 +62,7 @@ echo $this->element('tab-menu', array('links' => $links));
             'controller' => 'course_memberships',
             'action' => 'create_many'
             ),
-            array('class' => 'modal-link',
+            array('class' => 'button modal-link',
                 'id' => 'CreateManyLink'
             )
     );
@@ -143,7 +143,9 @@ echo $this->element('tab-menu', array('links' => $links));
         ?>
     </table>
     <?php echo $this->Html->link(__('Lisää uusi opiskelija'), 
-        array('admin' => false, 'action' => 'add', 'controller' => 'students'), array('class' => 'modal-link')); ?>
+        array('admin' => false, 'action' => 'add', 'controller' => 'students'), 
+            array('class' => ' button modal-link')
+        ); ?>
     </div>
 </div>
 <script>

@@ -52,8 +52,17 @@
 						) ?>
 					</h1>
 					<?php 
+					echo '<div id="static-course"><span id="course-name">'.
+							$all_courses[$this->Session->read('Course.course_id')].
+						'</span></div>';
 						if ( $course_selection && isset($users_courses)) {
+							echo '<div id="course-selection-toggle">';
+							echo '<a class="header-button" href="#">Omat kurssit</a>';
+							echo '<div id="course-selection-box">';
+
 							echo $this->element('course-selection', array('users_courses', $users_courses));
+							echo '</div>';
+							echo '</div>';
 						}
 					?>
 				</div>
@@ -92,7 +101,7 @@
 							echo '<div id="admin-link">';
 							$admin_link_classes = 'header-button';
 							if(!empty($this->request->params['admin'])) $admin_link_classes .= ' selected';
-							echo $this->Html->link(__('Hallinnointi'), array(
+							echo $this->Html->link(__('Järjestelmä'), array(
 									'admin' => true,
 									'controller' => 'courses',
 									'action' => 'index'

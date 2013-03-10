@@ -88,7 +88,7 @@ class ActionsController extends AppController {
                 'course_id' => $course_id
             ),
             'fields' => array('id', 'exercise_name'),
-            'order' => 'Exercise.exercise_number'
+            'order' => 'Exercise.exercise_number ASC'
         )));
 
         $this->set('action_types', $this->Action->ActionType->find('list', array(
@@ -134,13 +134,18 @@ class ActionsController extends AppController {
             $course_id = $this->request->query['course_id'];
         }
 
-        // Redirect to index() with $course_id
-        $this->redirect(array(
-                'controller' => 'actions',
-                'action' => 'index',
-                $course_id
-            )
-        );
+        if ( $this->Action->CourseMembership->Course->exists($course_id) ) {
+            // Redirect to index() with $course_id
+            $this->redirect(array(
+                    'controller' => 'actions',
+                    'action' => 'index',
+                    $course_id
+                )
+            );
+        } else { // unknown course_id
+            $this->Session->setFlash(__('Tuntematon kurssi'));
+            $this->redirect($this->referer());
+        }
     }
 
     /*
@@ -279,7 +284,8 @@ class ActionsController extends AppController {
 
     public function edit($id, $action_type_id = 0) {
         $this->Action->contain(array(
-                'Exercise',
+                'Exercise' => 
+                    array('order' => 'Exercise.exercise_number ASC'),
                 'CourseMembership' => array(
                     'Student'
                 )
@@ -298,7 +304,7 @@ class ActionsController extends AppController {
                         'Exercise.course_id' => $action_data['Exercise'][0]['course_id']
                     ),
                     'fields' => array('Exercise.id', 'Exercise.exercise_string'),
-                    'order' => 'Exercise.exercise_name ASC'
+                    'order' => 'Exercise.exercise_number ASC'
                 )
             )
         );
@@ -339,7 +345,8 @@ class ActionsController extends AppController {
                         'conditions' => array(
                             'Exercise.course_id' => $cm['CourseMembership']['course_id']
                         ),
-                        'fields' => array('Exercise.id', 'Exercise.exercise_string')
+                        'fields' => array('Exercise.id', 'Exercise.exercise_string'),
+                        'order' => 'Exercise.exercise_number ASC'
                     )
                 )
             );
@@ -402,7 +409,8 @@ class ActionsController extends AppController {
                         'conditions' => array(
                             'Exercise.course_id' => $this->Session->read('Course.course_id')
                         ),
-                        'fields' => array('Exercise.id', 'Exercise.exercise_string')
+                        'fields' => array('Exercise.id', 'Exercise.exercise_string'),
+                        'order' => 'Exercise.exercise_number ASC'
                     )
                 )
             );

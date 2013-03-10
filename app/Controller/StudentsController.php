@@ -72,14 +72,18 @@ class StudentsController extends AppController {
         } else if ( $this->request->is('get') ) { // .. or get
             $course_id = $this->request->query['course_id'];
         }
-
-        // Redirect to index() with $course_id
-        $this->redirect(array(
-                'controller' => 'students',
-                'action' => 'index',
-                $course_id
-            )
-        );
+        if ( $this->Student->CourseMembership->Course->exists($course_id) ) {
+            // Redirect to index() with $course_id
+            $this->redirect(array(
+                    'controller' => 'students',
+                    'action' => 'index',
+                    $course_id
+                )
+            );    
+        } else {
+            $this->Session->setFlash(__('Tuntematon kurssi'));
+            $this->redirect($this->referer());
+        }
     }
 
     public function view($id = null) {
@@ -228,6 +232,65 @@ class StudentsController extends AppController {
 		$this->set('students', $students);
 	}
 
+    public function set_group($sid = 0) {
+        $cid = $this->Session->read('Course.course_id');
+        if ( $this->request->is('post') ) {
+            $uid = $this->request->data['User']['id'];
+            $sid = $this->request->data['Student']['id'];
+            $group = $this->Student->Group->User->user_group($uid, $cid);
+            $gid = null;
+            if ( !empty($group) ) {
+                $gid = $group['Group']['id'];
+            } else { // user has no group
+                // Create new group for user $uid
+                $this->Student->Group->create();
+                $this->Student->Group->save(array(
+                    'course_id' => $cid, 
+                    'user_id' => $uid
+                    )
+                );
+                // set $gid
+                $gid = $this->Student->Group->id;
+            }
+            $sgroup = $this->Student->student_group($sid, $cid);
+            if ( !empty($sgroup) ) {
+                // remove old group 
+                $sgid = $sgroup[0]['id'];
+                if ( $sgid != $gid ) {
+                    $this->Student->Group->unlink_student($sgid, $sid);
+                } else {
+                    // this user is already linked to this group
+                    $duplicate = true;
+                }
+            }
+            if ( !$duplicate ) {
+                // link student to selected group (different from current)
+                $return = $this->Student->Group->link_student($gid, $sid);
+                if ( $return ) {
+                    $this->Session->setFlash(__('Vastuuryhmä vaihdettu'));
+                    $this->redirect($this->referer());
+                } else {
+                    $this->Session->setFlash(__('Vastuuryhmän tallennuksessa tapahtui virhe'));
+                    $this->redirect($this->referer());
+                }
+            }
+
+
+        } else {
+            // get users in course
+            $users = $this->Student->CourseMembership->Course->get_users($cid);
+            $users_list = array();
+            // make drop-down
+            foreach( $users['User'] as $user ) {
+                $users_list[$user['id']] = $user['name'];
+            }
+
+            $this->set('users', $users_list);
+            $this->set('student_id', $sid);
+        }
+
+    }
+
     public function set_groups($cid = 0) {
         if ( $cid <= 0 ) {
             $cid = $this->Session->read('Course.course_id');
@@ -327,8 +390,6 @@ class StudentsController extends AppController {
                         )
                     );
 
-                    $users_csv = array();
-                    $users_gid = array();
                     $users = 0;
                     $new_students_count = 0;
                     $new_groups = 0;
@@ -336,7 +397,6 @@ class StudentsController extends AppController {
                     $has_group = false; // if student gets linked to group
                     $log_row_count = 0; // rows in log
 
-                    $new_students = array(); // new students created
                     $old_students = array(); // old students already in system
                     $students_course = array(); // students added to course
                     // New students with group
@@ -561,14 +621,15 @@ class StudentsController extends AppController {
                                     // add student to array of added students
                                     $this->Student->contain();
                                     $student = $this->Student->findById($sid);
-                                    $students_course[] = $student;
                                     if ( $has_group ) {
+                                        $student['Group'] = $user_bua;
                                         $students_with_group[] = $student;
 
                                     } else {
                                         $row_errors[] = "Opiskelija ($student_number) lisätty kurssille ilman vastuuryhmää.";
                                         $students_wo_group[] = $student;
                                     }
+                                    $students_course[] = $student;
                                 } else {
                                     $row_errors[] = "Opiskelija ($student_number) oli jo kurssilla.";
                                 }

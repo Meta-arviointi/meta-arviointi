@@ -4,12 +4,6 @@ App::uses('AuthComponent', 'Controller/Component');
 
 class User extends AppModel {
 
-    public function beforeSave($options = array()) {
-        if (isset($this->data[$this->alias]['password'])) {
-            $this->data[$this->alias]['password'] = AuthComponent::password($this->data[$this->alias]['password']);
-        }
-        return true;
-    }
 
     public $name = 'User';
 
@@ -26,7 +20,7 @@ class User extends AppModel {
             'notEmpty' => array(
                 'rule' => 'notEmpty',
                 'required' => true,
-                'message' => 'Peruspalvelutunnus vaaditaan'
+                'message' => 'Tunnus vaaditaan'
             ),
             'maxLength' => array(
                 'rule' => array('maxLength', 30),
@@ -46,7 +40,11 @@ class User extends AppModel {
             )
         ),
         'email' => array(
-            'email',
+            'email' => array(
+                'rule' => '/^.+@.+$/i',
+                'required' => true,
+                'message' => 'Sähköposti on puutteellinen'
+            ),
             'required' => array(
                 'rule' => array('notEmpty'),
                 'message' => 'Sähköposti on pakollinen'
@@ -66,6 +64,34 @@ class User extends AppModel {
         )
     );
 
+    public function beforeSave($options = array()) {
+        if (isset($this->data[$this->alias]['password'])) {
+            $this->data[$this->alias]['password'] = AuthComponent::password($this->data[$this->alias]['password']);
+        }
+        return true;
+    }
+
+    public function beforeValidate($options = array()) {
+        if ( empty($this->data['User']['password']) ) {
+            // If no password is set
+            // Make sure that old password won't be overwritten
+            unset($this->data['User']['password']);
+        } else if ( !empty($this->data['User']['password']) && 
+            !empty($this->data['User']['password2']) ) {
+            // Both passwords fields are filled, compare
+            if ( strcmp($this->data['User']['password'], 
+                $this->data['User']['password2']) ) {
+                // passwords didn't match
+                $this->invalidate('password', __('Salasanat eivät täsmää'));
+                return false;
+            } // else: passwords did match, save is OK
+        } else {
+            // Only one password field was filled
+            $this->invalidate('password', __('Anna uusi salasana kahdesti'));
+            return false;
+        }
+        return true;
+    }
     public function get_last_course($user_id) {
         // User_id must be passed
         if ( !empty($user_id) ) {

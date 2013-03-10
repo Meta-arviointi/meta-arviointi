@@ -13,6 +13,11 @@
                 echo $this->Form->input('first_name', array('label' => __('Etunimi')));
                 echo $this->Form->input('last_name', array('label' => __('Sukunimi')));
                 echo $this->Form->input('password', array('label' => __('Uusi salasana')));
+                echo $this->Form->input('password2', array(
+                        'label' => __('Uusi salasana uudelleen'),
+                        'type' => 'password'
+                    )
+                );
                 echo $this->Form->end(__('Tallenna'));
                 if ( !empty($referer) ) {
                     echo $this->Html->link(__('Takaisin'), $referer);
