@@ -40,7 +40,11 @@ class User extends AppModel {
             )
         ),
         'email' => array(
-            'email',
+            'email' => array(
+                'rule' => '/^.+@.+$/i',
+                'required' => true,
+                'message' => 'Sähköposti on puutteellinen'
+            ),
             'required' => array(
                 'rule' => array('notEmpty'),
                 'message' => 'Sähköposti on pakollinen'

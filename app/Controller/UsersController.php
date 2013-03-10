@@ -162,7 +162,18 @@ class UsersController extends AppController {
             $this->User->create();
             if ($this->User->save($this->request->data)) {
                 $this->Session->setFlash(__('Käyttäjä lisätty järjestelmään'));
-                $this->redirect($this->referer());
+                if ( !strcmp($this->referer(), Router::url(null, true)) ) {
+                    // don't redirect to users/add-view
+                    // redirect to users/index instead
+                    $this->redirect(array(
+                            'admin' => true,
+                            'controller' => 'users',
+                            'action' => 'index'
+                        )
+                    );
+                } else {
+                    $this->redirect($this->referer());
+                }
             } else {
                 $this->Session->setFlash(__('Käyttäjää ei voitu lisätä järjestelmään, tarkista tiedot.'));
             }

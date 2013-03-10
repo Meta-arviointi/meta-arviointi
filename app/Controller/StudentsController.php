@@ -72,14 +72,18 @@ class StudentsController extends AppController {
         } else if ( $this->request->is('get') ) { // .. or get
             $course_id = $this->request->query['course_id'];
         }
-
-        // Redirect to index() with $course_id
-        $this->redirect(array(
-                'controller' => 'students',
-                'action' => 'index',
-                $course_id
-            )
-        );
+        if ( $this->Student->CourseMembership->Course->exists($course_id) ) {
+            // Redirect to index() with $course_id
+            $this->redirect(array(
+                    'controller' => 'students',
+                    'action' => 'index',
+                    $course_id
+                )
+            );    
+        } else {
+            $this->Session->setFlash(__('Tuntematon kurssi'));
+            $this->redirect($this->referer());
+        }
     }
 
     public function view($id = null) {

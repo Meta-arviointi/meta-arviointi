@@ -118,14 +118,19 @@ class CoursesController extends AppController {
             $course_id = $this->request->query['course_id'];
         }
 
-        // Redirect to index() with $course_id
-        $this->redirect(array(
-                'admin' => false,
-                'controller' => 'courses',
-                'action' => 'view',
-                $course_id
-            )
-        );
+        if ( $this->Course->exists($course_id) ) {
+            // Redirect to index() with $course_id
+            $this->redirect(array(
+                    'admin' => false,
+                    'controller' => 'courses',
+                    'action' => 'view',
+                    $course_id
+                )
+            );
+        } else { // unknown course_id
+            $this->Session->setFlash(__('Tuntematon kurssi'));
+            $this->redirect($this->referer());
+        }
     }
 
     public function admin_add() {

@@ -92,6 +92,8 @@ $(document).ready ->
     $('#UserCourseSelection select').change ->
         $(this).parents('form').submit()
 
+    $('#UserCourseSelection select').on 'click', (e) ->
+        e.stopPropagation()
 
     # Action form functionality
     $('.student-action-form').hide()
@@ -125,6 +127,10 @@ $(document).ready ->
 
     $('#mail-indicator > a').on 'click', ->
         $('#mail-indicator').toggleClass('open') if $(this).text() != '0'
+        false
+
+    $('#course-selection-toggle > a').on 'click', ->
+        $('#course-selection-toggle').toggleClass('open') if $(this).text() != '0'
         false
 
     $('#TextFilterKeyword').keyup ->
@@ -211,6 +217,7 @@ $(document).ready ->
 
     $(window).on 'click', ->
         $('#mail-indicator').removeClass 'open'
+        $('#course-selection-toggle').removeClass 'open'
 
     studentEmailFormContainer = $('#student-email-form-container')
     window.emailAction = (actionID) ->
