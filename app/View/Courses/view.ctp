@@ -264,7 +264,7 @@ echo $this->element('tab-menu', array('links' => $links));
                 $users_list[$student['Student']['Group'][0]['user_id']] : '';
             echo '<td>'. $assistant .'</td>';
             if ( !empty($is_admin) ) {
-                echo '<td>'. $this->Html->link($this->Html->image('edit-action-icon.png',
+                echo '<td class="row-tools">'. $this->Html->link($this->Html->image('edit-action-icon.png',
                             array('alt' => __('Muokkaa opiskelijaa'),
                                 'title' => __('Muokkaa opiskelijaa')
                                 )
