@@ -61,6 +61,8 @@ echo $this->element('tab-menu', array('links' => $links));
         )
     );
 
+    echo '<hr class="row">';
+
     echo '<h2>Harjoitukset</h2>';
     echo '<table class="data-table">';
     echo '    <tr>';
@@ -155,9 +157,13 @@ echo $this->element('tab-menu', array('links' => $links));
     
 
     echo '</table>';
-    echo $this->Html->link('Lisää harjoitus', array('action' => 'add', 'controller' => 'exercises'), array('class' => 'button modal-link', 'id' => 'add-exercise-link'));
     if ( $edit_exercises ) {
         echo $this->Form->end(__('Tallenna harjoitukset'));
+        echo $this->Html->link(__('Peruuta'), array(
+                $course_id,
+            ),
+            array('class' => 'button')
+        );    
     } else {
         echo $this->Html->link(__('Muokkaa harjoituksia'), array(
                 $course_id,
@@ -166,8 +172,9 @@ echo $this->element('tab-menu', array('links' => $links));
             array('class' => 'button')
         );    
     }
-    echo '<br/>';
-    echo '<br/>';
+    echo $this->Html->link('Lisää harjoitus', array('action' => 'add', 'controller' => 'exercises'), array('class' => 'button modal-link', 'id' => 'add-exercise-link'));
+
+    echo '<hr class="row">';
     echo '<h2>'.__('Assistentit').'</h2>';
     echo '<table class="data-table">';
     echo '    <tr>';
@@ -194,22 +201,12 @@ echo $this->element('tab-menu', array('links' => $links));
     echo '</table>';
 
     echo $this->Html->link('Lisää/poista kurssin assistentteja', array('action' => 'add_users', 'controller' => 'courses'), array('class' => 'button modal-link', 'id' => 'add-user-link'));
+   
 
-    echo '<br/>';
-    echo '<br/>';
-
-    
-        
+    echo '<hr class="row">';    
     echo '<h2>'.__('Opiskelijat').'</h2>';
 
-    echo $this->Form->create(false, array('id' => 'EditStudentGroups',
-            'url' => array('controller' => 'actions', 'action' => 'add'),
-            'inputDefaults' => array(
-                'label' => false,
-                'div' => false
-            )
-        )
-    );
+
     echo $this->Html->link(__('Liitä valitut opiskelijat vastuuryhmään'),array(
             'controller' => 'students',
             'action' => 'set_groups'
@@ -217,6 +214,14 @@ echo $this->element('tab-menu', array('links' => $links));
             array('class' => 'button modal-link',
                 'id' => 'CreateManyLink'
             )
+    );
+    echo $this->Form->create(false, array('id' => 'EditStudentGroups',
+            'url' => array('controller' => 'actions', 'action' => 'add'),
+            'inputDefaults' => array(
+                'label' => false,
+                'div' => false
+            )
+        )
     );
     echo '<table class="data-table">';
     echo '    <tr>';
@@ -259,22 +264,7 @@ echo $this->element('tab-menu', array('links' => $links));
                 $users_list[$student['Student']['Group'][0]['user_id']] : '';
             echo '<td>'. $assistant .'</td>';
             if ( !empty($is_admin) ) {
-                echo '<td>'. $this->Html->link($this->Html->image('delete-action-icon.png',
-                            array('alt' => __('Poista opiskelija kurssilta'),
-                                'title' => __('Poista opiskelija kurssilta')
-                                )
-                            ),
-                            array(
-                                'controller' => 'course_memberships',
-                                'action' => 'delete',
-                                $student['id']
-                            ),
-                            array(
-                                'escape' => false
-                            ),
-                            __('Haluatko varmasti poistaa opiskelijan kurssilta?')
-                );
-                echo $this->Html->link($this->Html->image('edit-action-icon.png',
+                echo '<td>'. $this->Html->link($this->Html->image('edit-action-icon.png',
                             array('alt' => __('Muokkaa opiskelijaa'),
                                 'title' => __('Muokkaa opiskelijaa')
                                 )
@@ -288,6 +278,21 @@ echo $this->element('tab-menu', array('links' => $links));
                                 'escape' => false,
                                 'class' => 'modal-link'
                             )
+                );
+                echo $this->Html->link($this->Html->image('delete-action-icon.png',
+                            array('alt' => __('Poista opiskelija kurssilta'),
+                                'title' => __('Poista opiskelija kurssilta')
+                                )
+                            ),
+                            array(
+                                'controller' => 'course_memberships',
+                                'action' => 'delete',
+                                $student['id']
+                            ),
+                            array(
+                                'escape' => false
+                            ),
+                            __('Haluatko varmasti poistaa opiskelijan kurssilta?')
                 ). '</td>';
             }
         }    
