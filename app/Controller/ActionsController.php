@@ -233,6 +233,42 @@ class ActionsController extends AppController {
         }
     }
 
+    /**
+     * Set actions handled.
+     * AJAX-function!
+     */
+    public function handle() {
+        if ( $this->request->is('post') || $this->request->is('put') ) {
+            $this->autoRender = false;
+            if ( $this->Action->exists($this->request->data['Action']['id']) ) {
+                if ( !empty($this->request->data['Action']['handled_id']) ) {
+                    $this->request->data['Action']['handled_time'] = date('Y-m-d H:i:sO');
+                } else {
+                    $this->request->data['Action']['handled_id'] = null;
+                    $this->request->data['Action']['handled_time'] = null;
+                }
+                if ( $this->Action->save($this->request->data) ) {
+                    if ( !empty($this->request->data['Action']['handled_id']) ) {
+                        $users = $this->Action->User->find('list', array(
+                                'fields' => array('User.id', 'User.name')
+                            )
+                        );
+                        echo '<span>(' . __('Käsitellyt') . ': ' . 
+                            $users[$this->request->data['Action']['handled_id']] . ' - ' .
+                            date('j.n.Y G:i', strtotime($this->request->data['Action']['handled_time'])) .
+                            ')</span>';
+                    } else {
+                        echo '';
+                    }
+                } else {
+                    echo __('Toimenpiteen tallennus ei onnistunut');
+                }
+            } else {
+                echo __('Tuntematon toimenpide');
+            }
+        }
+    }
+
     public function add_action_comment() {
         if($this->request->is('post')) {
             if($this->Action->ActionComment->save($this->request->data)) {

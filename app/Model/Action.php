@@ -14,16 +14,19 @@ class Action extends AppModel {
         'user_id' => array(
             'rule' => 'notEmpty',
             'required' => true,
+            'on' => 'create',
             'message' => 'Käyttäjää ei voitu tallentaa'
         ),
         'course_membership_id' => array(
             'rule' => 'notEmpty',
             'required' => true,
+            'on' => 'create',
             'message' => 'Opiskelijaa ei voitu kohdetaa'
         ),
         'action_type_id' => array(
             'rule' => 'notEmpty',
             'required' => true,
+            'on' => 'create',
             'message' => 'Valitse toimenpidetyyppi'
         ),
         'deadline' => array(
