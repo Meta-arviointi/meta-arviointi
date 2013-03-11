@@ -68,8 +68,10 @@ $(document).ready ->
     $('.modal-link').each ->
         link = $(this)
         link.click ->
-            showModal()
-            $('.modal-content').load link.attr('href')
+            if(!$(this).hasClass('is-disabled'))
+                $('.modal-content').empty()
+                showModal()
+                $('.modal-content').load link.attr('href')
             false
 
     $(window).keyup (e) ->
@@ -250,6 +252,9 @@ $(document).ready ->
 
         $.scrollTo studentEmailFormContainer, 500, {offset: {top: -120}}
         $('#student-email-form').slideDown 500
-        
+
+    $(document).tooltip()
+
     return
+
 

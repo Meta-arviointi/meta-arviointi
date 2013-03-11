@@ -317,6 +317,19 @@ hr.row {
                 opacity: 0.5;
             }
         }
+        &.row-tools {
+            a {
+                margin: 0em 0.2em;
+
+                opacity: 0.25;
+                -webkit-transition: opacity 200ms ease-in-out;
+                -moz-transition: opacity 200ms ease-in-out;
+                transition: opacity 200ms ease-in-out;
+                &:hover {
+                    opacity: 0.6;
+                }
+            }
+        }
 	}
 }
 
@@ -344,7 +357,7 @@ hr.row {
         margin-left: 5px;
         margin-right: 0px;
     }
-    &.disabled {
+    &.disabled, &.is-disabled {
         color: #e0e0e0;
         background: #c0c0c0;
         box-shadow: inset 0px -1px 3px #b8b8b8;
@@ -566,6 +579,9 @@ textarea {
             &:hover {
                 opacity: 0.5;
             }
+        }
+        form {
+            float: left;
         }
     }
 }

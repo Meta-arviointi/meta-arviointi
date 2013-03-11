@@ -19,10 +19,12 @@
                     )
                 );
                 echo $this->Form->end(__('Tallenna'));
-                if ( !empty($referer) ) {
-                    echo $this->Html->link(__('Takaisin'), $referer);
-                } else {
-                    echo $this->Html->link(__('Takaisin'), array('action' => 'view', $user['User']['id']));
+                if ( $print_back ) {
+                    if ( !empty($referer) ) {
+                        echo $this->Html->link(__('Takaisin'), $referer);
+                    } else {
+                        echo $this->Html->link(__('Takaisin'), array('action' => 'view', $user['User']['id']));
+                    }    
                 }
 
             ?>

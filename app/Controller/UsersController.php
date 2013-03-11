@@ -109,9 +109,11 @@ class UsersController extends AppController {
         if ( $id == $this->Auth->user('id') || $this->Auth->user('is_admin') ) {
             $this->User->id = $id;
             if ($this->User->exists()) {
+                $this->set('referer', $this->referer());
                 $this->set('user', $this->User->read(null, $id));    
             } else {
-                throw new NotFoundException(__('Invalid user'));
+                $this->Session->setFlash(__('Tuntematon käyttäjä'));
+                $this->redirect($this->referer());
             }
         } else {
             $this->Session->setFlash(__('Ei riittäviä oikeuksia'));
@@ -143,8 +145,14 @@ class UsersController extends AppController {
                     $this->set('user', $user);
                     $this->data = $user;
                     $this->set('referer', $this->referer());
+                    if ( $this->RequestHandler->isAjax() ) {
+                        $this->set('print_back', false);
+                    } else {
+                        $this->set('print_back', true);
+                    }
                 } else {
-                    throw new NotFoundException(__('Invalid user'));
+                    $this->Session->setFlash(__('Tuntematon käyttäjä'));
+                    $this->redirect($this->referer());
                 }
             } else {
                 $this->Session->setFlash(__('Ei riittäviä oikeuksia'));

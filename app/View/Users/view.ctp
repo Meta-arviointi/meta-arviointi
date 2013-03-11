@@ -26,8 +26,11 @@
                         'controller' => 'users',
                         'action' => 'edit',
                         $user['User']['id']
+                    ), array(
+                        'class' => 'button modal-link'
                     )
                 );
+                echo $this->Html->link(__('Takaisin'), $referer);
             ?>
         </div>
     </div>
