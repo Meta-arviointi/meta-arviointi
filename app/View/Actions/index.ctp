@@ -2,7 +2,7 @@
     $(document).ready(function() {
         $('#ActionsList input[type="checkbox"]').change(function() {
             var checkedInputs = $('#ActionsList input[type="checkbox"]:checked')
-            $('#SendActionEmailsLink').toggleClass('disabled', checkedInputs.length < 1)
+            $('#SendActionEmailsLink').toggleClass('is-disabled', checkedInputs.length < 1)
             var params = {
                 actions: []
             }
@@ -13,7 +13,7 @@
         });
 
         $('#SendActionEmailsLink').click(function() {
-            if($(this).hasClass('disabled')) { return false; }
+            if($(this).hasClass('is-disabled')) { return false; }
         });
     });
 </script>
@@ -65,7 +65,7 @@ echo $this->element('tab-menu', array('links' => $links));
     <hr class="row">
 
     <?php
-        echo $this->Html->link(__('Lähetä sähköposti valituille'), array('action' => 'send_action_emails'), array('id' => 'SendActionEmailsLink', 'class' => 'modal-link button disabled'));
+        echo $this->Html->link(__('Lähetä sähköposti valituille'), array('action' => 'send_action_emails'), array('id' => 'SendActionEmailsLink', 'class' => 'modal-link button is-disabled', 'title' => __('Valitse ensin opiskelijat, joille sähköposti lähetetään.')));
     ?>
 
     <table class="data-table" id="ActionsList">
@@ -133,12 +133,12 @@ echo $this->element('tab-menu', array('links' => $links));
                         'action' => 'view',
                         $action['CourseMembership']['id'],
                         '?' => array('scroll_to' => 'action'.$action['Action']['id'])
-                        )
+                        ), array('title' => __('Opiskelijan oma sivu'))
                     ) . '</td>';
 
                 echo '<td>' . $action_title . '</td>';
                 echo '<td>' . $this->Html->link($student['last_name'] . ', ' . $student['first_name'], 
-                    array('controller' => 'course_memberships', 'action' => 'view', $action['CourseMembership']['id'])) . '</td>';
+                    array('controller' => 'course_memberships', 'action' => 'view', $action['CourseMembership']['id']), array('title' => __('Opiskelijan oma sivu'))) . '</td>';
                 echo '<td>' . $action['User']['name'] . '</td>';
                 $handler = isset($users[$action['Action']['handled_id']]) ? $users[$action['Action']['handled_id']] : null;
                 if ( !empty($handler) ) {

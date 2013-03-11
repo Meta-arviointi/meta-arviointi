@@ -135,7 +135,7 @@ echo $this->element('tab-menu', array('links' => $links));
                 'action' => 'edit',
                 $course_membership['Student']['id']
             ),
-            array('class' => 'button float-right modal-link')
+            array('class' => 'button float-right modal-link', 'title' => __('Muokkaa opiskelijan tietoja'))
         );
         ?>
         <div class="quit-info">
@@ -274,7 +274,8 @@ echo $this->element('tab-menu', array('links' => $links));
                 '#', 
                 array(
                     'class' => 'email-action',
-                    'onClick' => 'javascript: window.emailAction('.$action['id'].'); return false;'
+                    'onClick' => 'javascript: window.emailAction('.$action['id'].'); return false;',
+                    'title' => __('Lähetä sähköposti')
                 )
             );
             echo $this->Html->link(__('Muokkaa'),
@@ -285,12 +286,13 @@ echo $this->element('tab-menu', array('links' => $links));
                 ), 
                 array(
                     'class' => 'modal-link edit-action',
+                    'title' => 'Muokkaa'
                 )
             );
             echo $this->Html->link(
                 'Poista',
                 array('controller' => 'actions', 'action' => 'delete', $action['id']),
-                array('class' => 'delete-action'),
+                array('class' => 'delete-action', 'title' => 'Poista'),
                 __('Haluatko varmasti poistaa toimenpiteen?')
             );
             echo '</div>';

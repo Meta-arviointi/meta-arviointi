@@ -1,14 +1,14 @@
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#CreateManyLink').addClass('disabled');
+        $('#CreateManyLink').addClass('is-disabled');
         var n = $('#CreateManyActions').find('input[type="checkbox"]:checked').length;
         if ( n > 0 ) {
-            $('#CreateManyLink').removeClass('disabled');
+            $('#CreateManyLink').removeClass('is-disabled');
         }
 
         $('#CreateManyLink').click(function(event) {
             event.preventDefault();
-            return !$(this).hasClass('disabled');
+            return !$(this).hasClass('is-disabled');
         });
 
         $('#CreateManyActions').find('input[type="checkbox"]').each(function() {
@@ -16,9 +16,9 @@
             $(chkbox).click(function() {
                 var n = $('#CreateManyActions').find('input[type="checkbox"]:checked').length;
                 if ( n == 0 ) {
-                    $('#CreateManyLink').addClass('disabled');
+                    $('#CreateManyLink').addClass('is-disabled');
                 } else {
-                    $('#CreateManyLink').removeClass('disabled');
+                    $('#CreateManyLink').removeClass('is-disabled');
                 }
             })
         });
@@ -66,7 +66,8 @@ echo $this->element('tab-menu', array('links' => $links));
             'action' => 'create_many'
             ),
             array('class' => 'modal-link button',
-                'id' => 'CreateManyLink'
+                'id' => 'CreateManyLink',
+                'title' => 'Valitse ensin opiskelijat, joille toimenpide lisätään.'
             )
     );
 
@@ -133,10 +134,10 @@ echo $this->element('tab-menu', array('links' => $links));
                         ) . '</td>';
                     
                     echo '<td>'.$this->Html->link($membership['Student']['last_name'],
-                        array('controller' => 'course_memberships', 'action' => 'view', $membership['CourseMembership']['id'])).'</td>';
+                        array('controller' => 'course_memberships', 'action' => 'view', $membership['CourseMembership']['id']), array('title' => __('Opiskelijan oma sivu'))).'</td>';
 
                     echo '<td>'.$this->Html->link($membership['Student']['first_name'],
-                        array('controller' => 'course_memberships', 'action' => 'view', $membership['CourseMembership']['id'])).'</td>';
+                        array('controller' => 'course_memberships', 'action' => 'view', $membership['CourseMembership']['id']), array('title' => __('Opiskelijan oma sivu'))).'</td>';
                     echo '<td>'.$membership['Student']['student_number'].'</td>';
 
                     // If student belongs to a group, print assistant name
