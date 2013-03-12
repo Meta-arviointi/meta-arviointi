@@ -95,7 +95,7 @@ class AppController extends Controller {
             // IS SET TO false in Controller!!!
 
             // Set array to be used in drop-down selection
-            $this->set('users_courses', $users_courses);    
+            $this->set('users_courses', $users_courses);
         }
         
     }

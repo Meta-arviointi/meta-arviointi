@@ -317,7 +317,7 @@ echo $this->element('tab-menu', array('links' => $links));
             foreach($action['ActionComment'] as $comment) {
                 echo '<div class="comment">';
                 echo '<p>';
-                echo '<strong>' . $comment['User']['name'] . ':</strong> ';
+                echo '<strong>' . $users[$comment['user_id']] . ':</strong> ';
                 echo $comment['comment'];
                 echo '</p>';
                 echo '<span class="timestamp">'.date('d.m.Y H:i', strtotime($comment['created'])).'</span>';

@@ -241,14 +241,19 @@ class CourseMembershipsController extends AppController {
             'contain' => array(
                 'Action' => array(
                     'order' => 'Action.created DESC',
-                    'ActionComment' => array('User'),
+                    'ActionComment',
                     'ActionType',
                     'Exercise',
                     'User'
                 ),
                 'Course',
                 'EmailMessage',
-                'Student' => array('Group')
+                'Student' => array('Group' => array(
+                        'conditions' => array(
+                            'Group.course_id' => $this->Session->read('Course.course_id')
+                        )
+                    )
+                )
             )
         );
         $course_membership = $this->CourseMembership->find('first', $options);
@@ -270,6 +275,7 @@ class CourseMembershipsController extends AppController {
         // Fetch all other CourseMemberships of student $sid.
         // In view.ctp: Display links to student's other 
         // courses attended.
+        $this->CourseMembership->contain('Course');
         $sid = $course_membership['Student']['id'];
         $student_courses = $this->CourseMembership->findAllByStudentId($sid);
         

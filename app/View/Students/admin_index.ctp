@@ -108,7 +108,7 @@ echo $this->element('tab-menu', array('links' => $links));
             echo '<td>';
             if ( count($student['CourseMembership']) > 1 ) {
                 foreach( $student['CourseMembership'] as $cm ) {
-                    $course_name = $cm['Course']['name'];
+                    $course_name = $all_courses[$cm['course_id']];
                     echo $this->Html->link($course_name, array(
                             'admin' => false,
                             'controller' => 'course_memberships',
@@ -121,7 +121,7 @@ echo $this->element('tab-menu', array('links' => $links));
             } else { // only one OR zero CourseMembership
                 if ( !empty($student['CourseMembership']) ) {
                     $cm = $student['CourseMembership'][0];
-                    $course_name = $cm['Course']['name'];
+                    $course_name = $all_courses[$cm['course_id']];
                     echo $this->Html->link($course_name, array(
                             'admin' => false,
                             'controller' => 'course_memberships',

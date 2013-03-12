@@ -32,6 +32,7 @@ class StudentsController extends AppController {
             'contain' => array(
                 'Student' => array(
                     'Group' => array(
+                        'conditions' => array('Group.course_id' => $course_id),
                         'User'
                     )
                 ),
@@ -109,14 +110,9 @@ class StudentsController extends AppController {
         $admin = $this->Auth->user('is_admin');
         $this->set('admin', $admin);
 
-        $contain = array(
-            'CourseMembership' => array(
-                'Course'
-            )
-        );
         $options = array(
             'order' => 'last_name ASC',
-            'contain' => $contain
+            'contain' => 'CourseMembership'
         );
         $students = $this->Student->find('all', $options);
         $this->set('students', $students);
