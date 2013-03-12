@@ -52,10 +52,10 @@
 						) ?>
 					</h1>
 					<?php 
-					echo '<div id="static-course"><span id="course-name">'.
-							$all_courses[$this->Session->read('Course.course_id')].
-						'</span></div>';
 						if ( $course_selection && isset($users_courses)) {
+							echo '<div id="static-course"><span id="course-name">'.
+									$all_courses[$this->Session->read('Course.course_id')].
+								'</span></div>';
 							echo '<div id="course-selection-toggle">';
 							echo '<a class="header-button" href="#">Omat kurssit</a>';
 							echo '<div id="course-selection-box">';
