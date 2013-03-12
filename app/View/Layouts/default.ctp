@@ -132,6 +132,7 @@
 							if(!empty($email_notifications)) {
 								foreach($email_notifications as $msg) {
 									$href = $this->Html->url(array(
+										'admin' 		=> false,
 										'controller' 	=> 'CourseMemberships',
 										'action' 		=> 'view',
 										$msg['course_membership_id']
