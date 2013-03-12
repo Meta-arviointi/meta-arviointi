@@ -256,7 +256,7 @@ class UsersController extends AppController {
         }
     }
 
-    public function test($uid) {
+    public function test($cmid) {
         //debug($this->User->get_last_course($course_id));
         //debug($this->User->Action->new_actions());
         //debug($this->User->Action->new_actions_count());
@@ -266,7 +266,7 @@ class UsersController extends AppController {
         // course_id as parameter
         //debug($this->User->Action->open_actions();
         // course_id from session, contain also Student
-        debug($this->User->user_group($uid, $this->Session->read('Course.course_id')));
+        debug($this->User->Action->actions_count($cmid));
         
     }
 

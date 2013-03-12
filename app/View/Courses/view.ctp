@@ -1,12 +1,12 @@
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#CreateManyLink').addClass('disabled');
+        $('.SelectManyLink').addClass('disabled');
         var n = $('#EditStudentGroups').find('input[type="checkbox"]:checked').length;
         if ( n > 0 ) {
-            $('#CreateManyLink').removeClass('disabled');
+            $('.SelectManyLink').removeClass('disabled');
         }
 
-        $('#CreateManyLink').click(function(event) {
+        $('.SelectManyLink').click(function(event) {
             event.preventDefault();
             if ( $(this).hasClass('disabled')) {
                 return false
@@ -20,11 +20,17 @@
             $(chkbox).click(function() {
                 var n = $('#EditStudentGroups').find('input[type="checkbox"]:checked').length;
                 if ( n == 0 ) {
-                    $('#CreateManyLink').addClass('disabled');
+                    $('.SelectManyLink').addClass('disabled');
                 } else {
-                    $('#CreateManyLink').removeClass('disabled');
+                    $('.SelectManyLink').removeClass('disabled');
                 }
             })
+        });
+
+        $('#DeleteManyCourseMemberships').click(function(e) {
+            e.preventDefault;
+            $('#DeleteManyCourseMembershipsForm').find("form").append(($('#EditStudentGroups').find('input[type="checkbox"]:checked')).attr('type','hidden'));
+            $('#DeleteManyCourseMembershipsForm').find("form").submit();            
         });
 
     });
@@ -206,15 +212,24 @@ echo $this->element('tab-menu', array('links' => $links));
     echo '<hr class="row">';    
     echo '<h2>'.__('Opiskelijat').'</h2>';
 
-
     echo $this->Html->link(__('Liitä valitut opiskelijat vastuuryhmään'),array(
             'controller' => 'students',
             'action' => 'set_groups'
             ),
-            array('class' => 'button modal-link',
-                'id' => 'CreateManyLink'
+            array('class' => 'SelectManyLink button modal-link')
+    );
+    echo '<div id="DeleteManyCourseMembershipsForm">';
+    echo $this->Form->postButton(__('Poista opiskelijat kurssilta'),
+            array(
+                'controller' => 'course_memberships',
+                'action' => 'delete_many'
+            ),
+            array(
+                'class' => 'SelectManyLink button',
+                'id' => 'DeleteManyCourseMemberships'
             )
     );
+    echo '</div>';
     echo $this->Form->create(false, array('id' => 'EditStudentGroups',
             'url' => array('controller' => 'actions', 'action' => 'add'),
             'inputDefaults' => array(
@@ -223,6 +238,7 @@ echo $this->element('tab-menu', array('links' => $links));
             )
         )
     );
+    
     echo '<table class="data-table">';
     echo '    <tr>';
     echo '        <th></th>';
@@ -237,7 +253,8 @@ echo $this->element('tab-menu', array('links' => $links));
     if ( !empty($course_memberships) ) {
         foreach($course_memberships as $student) {
             echo '<tr>';
-            echo '<td>' . $this->Form->checkbox('Student.'.$student['Student']['id'], array(
+            // NOTE in below checkbox $student['id'] is CourseMembership.ID, not Student.ID!!!
+            echo '<td>' . $this->Form->checkbox('Student.'.$student['id'], array(
                                 'value' => $student['Student']['id'],
                                 'hiddenField' => false
                             )
@@ -297,7 +314,7 @@ echo $this->element('tab-menu', array('links' => $links));
             }
         }    
     } else {
-        echo '<tr><td class="empty" colspan="5">' . __('Ei opiskelijoita') . '</td><tr>';
+        echo '<tr><td class="empty" colspan="6">' . __('Ei opiskelijoita') . '</td><tr>';
     }
     echo '</table>';
     echo $this->Form->end();

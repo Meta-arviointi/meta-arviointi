@@ -334,21 +334,61 @@ class CourseMembershipsController extends AppController {
     public function delete($cm_id) {
         $this->CourseMembership->id = $cm_id;
         if ( $this->CourseMembership->exists() ) {
-            $student_id = $this->CourseMembership->field('student_id');
-            $cid = $this->CourseMembership->field('course_id');
-            $this->CourseMembership->delete($cm_id, false);
-            $this->Session->setFlash(__('Opiskelija poistettu kurssilta'));
+            // Check if Student has actions
+            if ( !$this->CourseMembership->Action->actions_count($cm_id) ) {
+                $student_id = $this->CourseMembership->field('student_id');
+                $cid = $this->CourseMembership->field('course_id');
+                $this->CourseMembership->delete($cm_id, false);
+                $this->Session->setFlash(__('Opiskelija poistettu kurssilta'));
 
-            // Delete Student -> Group association
-            $group = $this->CourseMembership->Student->student_group($student_id, $cid);
-            $gid = $group[0]['id'];
+                // Delete Student -> Group association
+                $group = $this->CourseMembership->Student->student_group($student_id, $cid);
+                $gid = $group[0]['id'];
 
-            $this->CourseMembership->Student->Group->unlink_student($gid,$student_id);
-            // Call status check. Group is deleted if student_count = 0.
-            $this->CourseMembership->Student->Group->update_status($gid);
+                $this->CourseMembership->Student->Group->unlink_student($gid,$student_id);
+                // Call status check. Group is deleted if student_count = 0.
+                $this->CourseMembership->Student->Group->update_status($gid);
+                $this->redirect($this->referer());
+            } else {
+                $this->Session->setFlash(__('Opiskelijalle on annettu toimenpiteitä, ei voida poistaa'));
+                $this->redirect($this->referer());
+            }
+        }
+    }
+
+    public function delete_many() {
+        if ( $this->request->is('post') ) {
+            $cid = $this->Session->read('Course.course_id');
+            $action_students = array();
+            $succ = 0;
+            $err = 0;
+            foreach($this->request->data['Student'] as $cmid => $sid) {
+                if ( $this->CourseMembership->exists($cmid) ) {
+                    // Check if Student has actions
+                    if ( !$this->CourseMembership->Action->actions_count($cmid) ) {
+                        $result = $this->CourseMembership->delete($cmid, false);
+                        if ( $result ) {
+                            $succ++;
+                            // Delete Student -> Group association
+                            $group = $this->CourseMembership->Student->student_group($sid, $cid);
+                            $gid = $group[0]['id'];
+
+                            $this->CourseMembership->Student->Group->unlink_student($gid,$sid);
+                            // Call status check. Group is deleted if student_count = 0.
+                            $this->CourseMembership->Student->Group->update_status($gid);    
+                        } else {
+                            $err++;
+                        }
+                    } else {
+                        $action_students[$sid] = $cmid;
+                        $err++;
+                    }
+                }
+            }
+            $ascount = count($action_students);
+            $this->Session->setFlash(__("$succ opiskelijaa poistettu kurssilta ($err epäonnistui, $ascount:llä opiskelijalla on toimenpiteitä)"));
             $this->redirect($this->referer());
         }
-
     }
 
     public function set_quit($id) {
