@@ -212,6 +212,19 @@ echo $this->element('tab-menu', array('links' => $links));
     echo '<hr class="row">';    
     echo '<h2>'.__('Opiskelijat').'</h2>';
 
+
+    // Selection for assistent groups
+    echo $this->Form->create(false, array('id' => 'StudentIndexFilters', 'class' => 'filter-form', 'type' => 'get', 'data-target' => 'StudentsList'));
+    echo $this->Form->input('group', array('label' => __('Vastuuryhmä'), 'options' => $user_groups, 'empty' => array('' => 'Kaikki'), 'default' => $this->Session->read('User.group_id')));
+    //echo $this->Form->input('actions', array('label' => __('Käsittelemättömiä toimenpiteitä'), 'type' => 'checkbox', 'hiddenField' => '', 'value' => 'true', 'div' => false));
+    echo $this->Form->input('quit', array('options' => array('' => __('Kaikki'), 'true' => __('Kyllä'), 'false' => __('Ei')), 'label' => __('Keskeyttänyt'), 'empty' => array('' => __('Kaikki')), 'default' => ''));
+    echo $this->Form->input('actions', array('options' => array('' => __('Kaikki'), 'true' => __('Kyllä'), 'false' => __('Ei')), 'label' => __('Toimenpiteitä'), 'empty' => array('' => __('Kaikki')), 'default' => ''));
+    echo $this->Form->input('deadline', array('label' => __('Aikaraja umpeutunut'), 'type' => 'checkbox', 'hiddenField' => '', 'value' => 'true'));
+    echo $this->Form->input('messages', array('label' => __('Lukemattomia viestejä'), 'type' => 'checkbox', 'hiddenField' => '', 'value' => 'true'));
+    echo $this->Form->end();
+
+    echo '<hr class="row">';
+
     echo $this->Html->link(__('Liitä valitut opiskelijat vastuuryhmään'),array(
             'controller' => 'students',
             'action' => 'set_groups'
@@ -230,6 +243,7 @@ echo $this->element('tab-menu', array('links' => $links));
             )
     );
     echo '</div>';
+
     echo $this->Form->create(false, array('id' => 'EditStudentGroups',
             'url' => array('controller' => 'actions', 'action' => 'add'),
             'inputDefaults' => array(
@@ -239,7 +253,7 @@ echo $this->element('tab-menu', array('links' => $links));
         )
     );
     
-    echo '<table class="data-table">';
+    echo '<table class="data-table" id="StudentsList">';
     echo '    <tr>';
     echo '        <th></th>';
     echo '        <th>'. __('Etunimi') .'</th>';
@@ -252,7 +266,42 @@ echo $this->element('tab-menu', array('links' => $links));
 
     if ( !empty($course_memberships) ) {
         foreach($course_memberships as $student) {
-            echo '<tr>';
+            
+            $student_group_id = 0;
+            if(!empty($student['Student']['Group'])) $student_group_id = $student['Student']['Group'][0]['id'];
+
+            $has_actions = 'false';
+            if(count($student['Action']) > 0) {
+                $has_actions = 'true';
+            }
+
+            $deadline = 'false';
+            foreach($student['Action'] as $ac) {
+                if(
+                    isset($ac['deadline']) &&                   //Deadline is set
+                    !empty($ac['deadline']) &&                  //Deadline is not empty
+                    strtotime($ac['deadline']) < time() &&      //Deadline has gone
+                    empty($ac['handled_id'])                    //Not handled
+                ) {
+                    $deadline = 'true';
+                }
+            }
+
+            $has_unread_messages = 'false';
+            foreach($student['EmailMessage'] as $em) {
+                if(empty($em['read_time'])) {
+                    $has_unread_messages = 'true';
+                }
+            }
+
+            $has_quit = (empty($student['quit_time'])) ? 'false' : 'true';
+
+            echo '<tr class="table-content" 
+                data-group="'.$student_group_id.'" 
+                data-actions="' . $has_actions . '"
+                data-deadline="' . $deadline . '"
+                data-messages="' . $has_unread_messages . '"
+                data-quit="' . $has_quit . '">';
             // NOTE in below checkbox $student['id'] is CourseMembership.ID, not Student.ID!!!
             echo '<td>' . $this->Form->checkbox('Student.'.$student['id'], array(
                                 'value' => $student['Student']['id'],
