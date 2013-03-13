@@ -91,8 +91,14 @@ echo $this->element('tab-menu', array('links' => $links));
         </p>
         <p>
         <?php
+            $user_id = null;
+            foreach($course_membership['Student']['Group'] as $g) {
+                if($g['course_id'] == $course_membership['CourseMembership']['course_id']) {
+                    $user_id = $g['user_id'];
+                }
+            }
             echo __('Vastuuassistentti').': <strong>'.
-                $users[$course_membership['Student']['Group'][0]['user_id']]
+                ((empty($user_id)) ? 'Ei määritelty' : $users[$user_id])
                 .'</strong>';
             echo '</p>';
             echo $this->Html->link(__('Muuta vastuuryhmää'), array(
@@ -317,7 +323,7 @@ echo $this->element('tab-menu', array('links' => $links));
             foreach($action['ActionComment'] as $comment) {
                 echo '<div class="comment">';
                 echo '<p>';
-                echo '<strong>' . $comment['User']['name'] . ':</strong> ';
+                echo '<strong>' . $users[$comment['user_id']] . ':</strong> ';
                 echo $comment['comment'];
                 echo '</p>';
                 echo '<span class="timestamp">'.date('d.m.Y H:i', strtotime($comment['created'])).'</span>';

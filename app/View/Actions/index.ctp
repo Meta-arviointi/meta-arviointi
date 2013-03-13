@@ -45,16 +45,16 @@ echo $this->element('tab-menu', array('links' => $links));
 //    echo '</pre>';
 
     // Selection for assistant group
-    echo $this->Form->create(false, array('id' => 'ActionIndexFilters', 'type' => 'get', 'data-target' => 'ActionsList'));
-    echo $this->Form->input('group', array('options' => $user_groups, 'label' => __('Vastuuryhmä'), 'div' => false, 'empty' => array('' => __('Kaikki')), 'default' => $this->Session->read('User.group_id')));
+    echo $this->Form->create(false, array('id' => 'ActionIndexFilters', 'class' => 'filter-form', 'type' => 'get', 'data-target' => 'ActionsList'));
+    echo $this->Form->input('group', array('options' => $user_groups, 'label' => __('Vastuuryhmä'), 'empty' => array('' => __('Kaikki')), 'default' => $this->Session->read('User.group_id')));
 
-    echo $this->Form->input('user', array('options' => $users, 'label' => __('Lisännyt'), 'div' => false, 'empty' => array('' => __('Kaikki')), 'default' => ''));
+    echo $this->Form->input('user', array('options' => $users, 'label' => __('Lisännyt'), 'empty' => array('' => __('Kaikki')), 'default' => ''));
 
-   echo $this->Form->input('type', array('options' => $action_types, 'label' => __('Tyyppi'), 'div' => false, 'empty' => array('' => __('Kaikki')), 'default' => ''));
+   echo $this->Form->input('type', array('options' => $action_types, 'label' => __('Tyyppi'), 'empty' => array('' => __('Kaikki')), 'default' => ''));
 
-   echo $this->Form->input('exercise', array('options' => $exercises, 'label' => __('Harjoitus'), 'div' => false, 'empty' => array('' => __('Kaikki')), 'default' => ''));
+   echo $this->Form->input('exercise', array('options' => $exercises, 'label' => __('Harjoitus'), 'empty' => array('' => __('Kaikki')), 'default' => ''));
 
-    echo $this->Form->input('resolved', array('options' => array('' => __('Kaikki'), 'true' => __('Kyllä'), 'false' => __('Ei')), 'label' => __('Käsitelty'), 'div' => false, 'empty' => array('' => __('Kaikki')), 'default' => ''));
+    echo $this->Form->input('resolved', array('options' => array('' => __('Kaikki'), 'true' => __('Kyllä'), 'false' => __('Ei')), 'label' => __('Käsitelty'), 'empty' => array('' => __('Kaikki')), 'default' => ''));
 
     echo $this->Form->end();
     

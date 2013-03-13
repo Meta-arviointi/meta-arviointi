@@ -102,6 +102,7 @@ class UsersController extends AppController {
 	    $users = $this->User->find('all', $params);
 	    $this->set('users', $users);
         $this->set('user_logins', $this->User->find('list', array('fields' => array('User.id', 'User.basic_user_account'))));
+        $this->set('courses', $this->User->Course->find('list', array('fields' => array('id', 'name'))));
     }
 
 
@@ -240,23 +241,8 @@ class UsersController extends AppController {
         return !empty($user_course['Course']);
     }
 
-    /*
-     * After course_id is changed between requests,
-     * update user's new group_id (related to new course) to Session.
-     */
-    public function set_new_group($user_id, $course_id) {
-        $user = $this->Course->User->user_group($user_id, $course_id);
-        // If present, set group_id to session
-        if ( !empty($user['Group']) ) {
-            $this->Session->write('User.group_id', $user['Group']['id']);
-        } else {
-            // No Group assigned to user in current course.
-            // Delete group_id from session, so no old values remain.
-            $this->Session->delete('User.group_id');
-        }
-    }
 
-    public function test($uid) {
+    public function test($cmid) {
         //debug($this->User->get_last_course($course_id));
         //debug($this->User->Action->new_actions());
         //debug($this->User->Action->new_actions_count());
@@ -266,7 +252,7 @@ class UsersController extends AppController {
         // course_id as parameter
         //debug($this->User->Action->open_actions();
         // course_id from session, contain also Student
-        debug($this->User->user_group($uid, $this->Session->read('Course.course_id')));
+        debug($this->User->Action->actions_count($cmid));
         
     }
 

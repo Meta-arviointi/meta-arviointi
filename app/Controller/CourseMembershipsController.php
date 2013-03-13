@@ -241,14 +241,19 @@ class CourseMembershipsController extends AppController {
             'contain' => array(
                 'Action' => array(
                     'order' => 'Action.created DESC',
-                    'ActionComment' => array('User'),
+                    'ActionComment',
                     'ActionType',
                     'Exercise',
                     'User'
                 ),
                 'Course',
                 'EmailMessage',
-                'Student' => array('Group')
+                'Student' => array('Group' => array(
+                        'conditions' => array(
+                            'Group.course_id' => $this->Session->read('Course.course_id')
+                        )
+                    )
+                )
             )
         );
         $course_membership = $this->CourseMembership->find('first', $options);
@@ -270,6 +275,7 @@ class CourseMembershipsController extends AppController {
         // Fetch all other CourseMemberships of student $sid.
         // In view.ctp: Display links to student's other 
         // courses attended.
+        $this->CourseMembership->contain('Course');
         $sid = $course_membership['Student']['id'];
         $student_courses = $this->CourseMembership->findAllByStudentId($sid);
         
@@ -288,14 +294,18 @@ class CourseMembershipsController extends AppController {
         // Init. variable to make sure it's not null at the end
         $course_id = $this->Session->read('Course.course_id');
         // get referring CourseMembership.id
-        $url = explode('/', $this->referer(null,true));
-        $cmid = $url[3];
+        $url = parse_url($this->referer(null,true));
+        $path = explode('/', $url['path']);
+        $cmid = $path[3];
         // Check if request is post
         if ( $this->request->is('post') ) {
             $course_id = $this->request->data['course_id'];
         } else if ( $this->request->is('get') ) { // .. or get
             $course_id = $this->request->query['course_id'];
         }
+        // update user's Group ID to Session
+        $this->CourseMembership->Course->User->set_new_group($this->Auth->user('id'), $course_id);
+
         $this->CourseMembership->Course->id = $course_id;
         if ( $this->CourseMembership->Course->exists() ) {
 
@@ -334,21 +344,61 @@ class CourseMembershipsController extends AppController {
     public function delete($cm_id) {
         $this->CourseMembership->id = $cm_id;
         if ( $this->CourseMembership->exists() ) {
-            $student_id = $this->CourseMembership->field('student_id');
-            $cid = $this->CourseMembership->field('course_id');
-            $this->CourseMembership->delete($cm_id, false);
-            $this->Session->setFlash(__('Opiskelija poistettu kurssilta'));
+            // Check if Student has actions
+            if ( !$this->CourseMembership->Action->actions_count($cm_id) ) {
+                $student_id = $this->CourseMembership->field('student_id');
+                $cid = $this->CourseMembership->field('course_id');
+                $this->CourseMembership->delete($cm_id, false);
+                $this->Session->setFlash(__('Opiskelija poistettu kurssilta'));
 
-            // Delete Student -> Group association
-            $group = $this->CourseMembership->Student->student_group($student_id, $cid);
-            $gid = $group[0]['id'];
+                // Delete Student -> Group association
+                $group = $this->CourseMembership->Student->student_group($student_id, $cid);
+                $gid = $group[0]['id'];
 
-            $this->CourseMembership->Student->Group->unlink_student($gid,$student_id);
-            // Call status check. Group is deleted if student_count = 0.
-            $this->CourseMembership->Student->Group->update_status($gid);
+                $this->CourseMembership->Student->Group->unlink_student($gid,$student_id);
+                // Call status check. Group is deleted if student_count = 0.
+                $this->CourseMembership->Student->Group->update_status($gid);
+                $this->redirect($this->referer());
+            } else {
+                $this->Session->setFlash(__('Opiskelijalle on annettu toimenpiteitä, ei voida poistaa'));
+                $this->redirect($this->referer());
+            }
+        }
+    }
+
+    public function delete_many() {
+        if ( $this->request->is('post') ) {
+            $cid = $this->Session->read('Course.course_id');
+            $action_students = array();
+            $succ = 0;
+            $err = 0;
+            foreach($this->request->data['Student'] as $cmid => $sid) {
+                if ( $this->CourseMembership->exists($cmid) ) {
+                    // Check if Student has actions
+                    if ( !$this->CourseMembership->Action->actions_count($cmid) ) {
+                        $result = $this->CourseMembership->delete($cmid, false);
+                        if ( $result ) {
+                            $succ++;
+                            // Delete Student -> Group association
+                            $group = $this->CourseMembership->Student->student_group($sid, $cid);
+                            $gid = $group[0]['id'];
+
+                            $this->CourseMembership->Student->Group->unlink_student($gid,$sid);
+                            // Call status check. Group is deleted if student_count = 0.
+                            $this->CourseMembership->Student->Group->update_status($gid);    
+                        } else {
+                            $err++;
+                        }
+                    } else {
+                        $action_students[$sid] = $cmid;
+                        $err++;
+                    }
+                }
+            }
+            $ascount = count($action_students);
+            $this->Session->setFlash(__("$succ opiskelijaa poistettu kurssilta ($err epäonnistui, $ascount:llä opiskelijalla on toimenpiteitä)"));
             $this->redirect($this->referer());
         }
-
     }
 
     public function set_quit($id) {

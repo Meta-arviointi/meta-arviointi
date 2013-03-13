@@ -62,6 +62,7 @@ class Course extends AppModel {
                 'conditions' => array('Course.id' => $cid),
             );
         }
+        $this->contain();
         return $this->find('all', $params);
     }
 

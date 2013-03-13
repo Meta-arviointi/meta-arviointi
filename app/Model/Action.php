@@ -159,5 +159,18 @@ class Action extends AppModel {
         return $actions;
     }
 
+    public function actions_count($course_membership_id) {
+        if ( !empty($course_membership_id) ) {
+            return $this->find('count', array(
+                    'conditions' => array(
+                        'course_membership_id' => $course_membership_id
+                    )
+                )
+            );
+        } else {
+            return false;
+        }
+    }
+
 }
 ?>

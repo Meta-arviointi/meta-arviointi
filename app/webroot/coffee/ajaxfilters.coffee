@@ -20,8 +20,6 @@
                     $i = $(i)
                     val = $i.val()
                     if $i.attr('type') != 'checkbox' || $i.is(':checked')
-                        console.log i
-                        console.log val
                         params[$i.attr('name')] = val if val != ''
                 return params
 
@@ -49,15 +47,18 @@
                     show = true
                     for key, val of state
                         dataAttr = $(this).attr('data-' + key)
-                        #single value
-                        if dataAttr.indexOf(',') == -1
-                            show = false if val != '' && dataAttr != val
-                        #multiple values
+                        if dataAttr?
+                            #single value
+                            if dataAttr.indexOf(',') == -1
+                                show = false if val != '' && dataAttr != val
+                            #multiple values
+                            else
+                                match = false
+                                for da in dataAttr.split(',')
+                                    match = true if da == val
+                                show = match
                         else
-                            match = false
-                            for da in dataAttr.split(',')
-                                match = true if da == val
-                            show = match
+                            show = false
 
                     $(this).toggle show
 

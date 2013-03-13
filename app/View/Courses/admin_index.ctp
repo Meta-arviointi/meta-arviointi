@@ -13,6 +13,32 @@ echo $this->element('tab-menu', array('links' => $links));
 </div>
 <div class="row">
     <div class="twelvecol last">
+
+    <?php
+
+    echo $this->Form->create(false, array('id' => 'CourseAdminIndexFilters', 'class' => 'filter-form', 'type' => 'get', 'data-target' => 'CourseListAdmin'));
+    $course_status_list = array(
+        '' => __('Kaikki'),
+        'coming' => __('Tulossa'),
+        'current' => __('Käynnissä'),
+        'finished' => __('Päättynyt')
+    );
+    echo $this->Form->input('status', array('label' => __('Tila'), 'options' => $course_status_list));
+
+    $course_years = array();
+    foreach($courses as $c) {
+        $y = date('Y', strtotime($c['Course']['starttime']));
+        if(!isset($course_years[$y])) {
+            $course_years[$y] = $y;
+        }
+    }
+    echo $this->Form->input('started', array('label' => __('Vuosi'), 'options' => $course_years, 'empty' => array('' => 'Kaikki')));
+    echo $this->Form->end();
+
+
+    ?>
+
+    <hr class="row">
     <?php 
      /* DEBUG */
     echo '<pre>';
@@ -22,16 +48,35 @@ echo $this->element('tab-menu', array('links' => $links));
     //debug($students);
     echo '</pre>';
 
-        echo '        <table class="data-table">';
-        echo '        <tr>';
+        echo '        <table class="data-table" id="CourseListAdmin">';
+        echo '        <thead><tr>';
         echo '            <th>'. __('Kurssi') .'</th>';
         echo '            <th>'. __('Alkaa').'</th>';
         echo '            <th>'. __('Päättyy').'</th>';
         echo '            <th>'. __('Tila').'</th>';
-        echo '        </tr>';
+        echo '        </tr></thead>';
+        echo '<tbody>';
+
+
 
     foreach($courses as $course) {
-        echo '<tr>';
+        if (strtotime($course['Course']['starttime']) > time()) {
+            $status = __('Tulossa');
+            $status_code = 'coming';
+        }
+        if (strtotime($course['Course']['endtime']) < time()) {
+            $status = __('Päättynyt');
+            $status_code = 'finished';
+        }
+        if (strtotime($course['Course']['starttime']) < time() && strtotime($course['Course']['endtime']) > time()) {
+            $status = __('Käynnissä');
+            $status_code = 'current';
+        }
+
+        echo '<tr ';
+        echo 'data-status="' . $status_code . '" ';
+        echo 'data-started="' . date('Y', strtotime($course['Course']['starttime'])) . '"';
+        echo '>';
         echo '<td>'.$this->Html->link($course['Course']['name'], 
             array('admin' => false, 'controller' => 'courses', 'action' => 'view', $course['Course']['id'])).'</td>';
         $this->Time->Format('j.n.Y');
@@ -39,17 +84,9 @@ echo $this->element('tab-menu', array('links' => $links));
             array('admin' => false, 'controller' => 'courses', 'action' => 'view', $course['Course']['id'])).'</td>';
         echo '<td>'.$this->Html->link($this->Time->Format('j.n.Y', $course['Course']['endtime']), 
             array('admin' => false, 'controller' => 'courses', 'action' => 'view', $course['Course']['id'])).'</td>';
-        if (strtotime($course['Course']['starttime']) > time()) {
-            echo '<td>Tulossa</td>';
-        }
-        if (strtotime($course['Course']['endtime']) < time()) {
-            echo '<td>Päättynyt</td>';
-        }
-        if (strtotime($course['Course']['starttime']) < time() && strtotime($course['Course']['endtime']) > time()) {
-            echo '<td>Käynnissä</td>';
-        }
+        echo '<td>' . $status . '</td>';
     }
-    echo '    </table>';
+    echo '</tbody></table>';
     echo $this->Html->link('Lisää uusi kurssi', array('action' => 'admin_add', 'controller' => 'courses'), array('class' => 'button modal-link', 'id' => 'add-course-link'));
 
     ?>

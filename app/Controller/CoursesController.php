@@ -18,6 +18,12 @@ class CoursesController extends AppController {
 
         if ( !empty($cid) ) {
             if ( $this->Course->exists($cid) ) {
+                // Check if course_id is changed from last request
+                if ( $cid != $this->Session->read('Course.course_id') ) {
+                    // course_id was changed from last request,
+                    // set users group in current course to session
+                    $this->Course->User->set_new_group($this->Auth->user('id'), $cid);
+                }
                 $this->Session->write('Course.course_id', $cid);
                 $contain = array(
                     'Exercise' => array(
@@ -49,7 +55,6 @@ class CoursesController extends AppController {
                         )
                     )
                 );
-
                 $course_data = $this->Course->get_course($cid, $contain);
                 $course = $course_data['Course'];
                 $exercises = $course_data['Exercise'];
