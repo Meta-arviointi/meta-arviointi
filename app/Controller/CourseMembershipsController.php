@@ -302,6 +302,9 @@ class CourseMembershipsController extends AppController {
         } else if ( $this->request->is('get') ) { // .. or get
             $course_id = $this->request->query['course_id'];
         }
+        // update user's Group ID to Session
+        $this->CourseMembership->Course->User->set_new_group($this->Auth->user('id'), $course_id);
+        
         $this->CourseMembership->Course->id = $course_id;
         if ( $this->CourseMembership->Course->exists() ) {
 
