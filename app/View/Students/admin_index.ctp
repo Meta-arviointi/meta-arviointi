@@ -44,7 +44,16 @@ echo $this->element('tab-menu', array('links' => $links));
 </div>
 <div class="row">
     <div class="twelvecol last">
+    <?php
 
+    echo $this->Form->create(false, array('id' => 'StudentAdminIndexFilters', 'class' => 'filter-form', 'type' => 'get', 'data-target' => 'StudentsListAdmin'));
+    echo $this->Form->input('course', array('label' => __('Kurssi'), 'options' => $courses, 'empty' => array('' => 'Kaikki')));
+    echo $this->Form->end();
+
+
+    ?>
+
+    <hr class="row">
     <?php 
      /* DEBUG */
     echo '<pre>';
@@ -67,19 +76,29 @@ echo $this->element('tab-menu', array('links' => $links));
             )
     );
 ?>
-    <table class="data-table" id="StudentsList">
-        <tr>
-            <th></th><!--checkboxes -->
-            <th><?php echo __('Sukunimi'); ?></th>
-            <th><?php echo __('Etunimi'); ?></th>
-            <th><?php echo __('Opiskelijanumero'); ?></th>
-            <th><?php echo __('Sähköposti'); ?></th>
-            <th><?php echo __('Kurssit'); ?></th>
-            <?php if ( $admin ) { echo '<th>'. __('Toiminnot') . '</th>'; }?>
-        </tr>
+    <table class="data-table" id="StudentsListAdmin">
+        <thead>
+            <tr>
+                <th></th><!--checkboxes -->
+                <th><?php echo __('Sukunimi'); ?></th>
+                <th><?php echo __('Etunimi'); ?></th>
+                <th><?php echo __('Opiskelijanumero'); ?></th>
+                <th><?php echo __('Sähköposti'); ?></th>
+                <th><?php echo __('Kurssit'); ?></th>
+                <?php if ( $admin ) { echo '<th>'. __('Toiminnot') . '</th>'; }?>
+            </tr>
+        </thead>
+        <tbody>
         <?php
         foreach( $students as $student ) {
-            echo '<tr>';
+            $student_courses = array();
+            foreach($student['CourseMembership'] as $cm) {
+                $student_courses[] = $cm['course_id'];
+            }
+
+            echo '<tr ';
+            echo 'data-course="' . implode(",", $student_courses) . '"';
+            echo '>';
             echo '<td>' . $this->Form->checkbox('Student.'.$student['Student']['id'], array(
                                 'value' => $student['Student']['id'],
                                 'hiddenField' => false
@@ -141,6 +160,7 @@ echo $this->element('tab-menu', array('links' => $links));
         }
          
         ?>
+        </tbody>
     </table>
     <?php echo $this->Html->link(__('Lisää uusi opiskelija'), 
         array('admin' => false, 'action' => 'add', 'controller' => 'students'), 

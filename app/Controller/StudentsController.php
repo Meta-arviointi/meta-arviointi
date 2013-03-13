@@ -116,6 +116,7 @@ class StudentsController extends AppController {
         );
         $students = $this->Student->find('all', $options);
         $this->set('students', $students);
+        $this->set('courses', $this->Student->CourseMembership->Course->find('list', array('fields' => array('id', 'name'))));
     }
 
     public function add() {
@@ -248,6 +249,7 @@ class StudentsController extends AppController {
                 // set $gid
                 $gid = $this->Student->Group->id;
             }
+            $duplicate = false;
             $sgroup = $this->Student->student_group($sid, $cid);
             if ( !empty($sgroup) ) {
                 // remove old group 

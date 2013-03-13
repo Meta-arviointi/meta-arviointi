@@ -89,7 +89,7 @@ $(document).ready ->
 
 
     # Ajax filtering
-    $('#StudentsList, #ActionsList').ajaxfilters()
+    $('#StudentsList, #ActionsList, #StudentsListAdmin, #CourseListAdmin, #UsersList').ajaxfilters()
 
     $('#UserCourseSelection select').change ->
         $(this).parents('form').submit()
