@@ -100,8 +100,9 @@ echo $this->element('tab-menu', array('links' => $links));
             if ( !empty($memberships) ) { // check if not empty
                 foreach($memberships as $membership) {
                     $student_group_id = 0;
-                    if(!empty($membership['Student']['Group'])) $student_group_id = $membership['Student']['Group'][0]['id'];
-
+                    if(!empty($membership['Student']['Group'])) {
+                        $student_group_id = $membership['Student']['Group'][0]['id'];  
+                    }
                     $has_actions = 'false';
                     if(count($membership['Action']) > 0) {
                         $has_actions = 'true';
@@ -149,8 +150,8 @@ echo $this->element('tab-menu', array('links' => $links));
                     echo '<td>'.$membership['Student']['student_number'].'</td>';
 
                     // If student belongs to a group, print assistant name
-                    if ( isset($membership['Student']['Group'][0]['User']) ) {
-                        echo '<td>'.$membership['Student']['Group'][0]['User']['name'].'</td>';
+                    if ( isset($membership['Student']['Group']) ) {
+                        echo '<td>'.$users[$membership['Student']['Group'][0]['user_id']].'</td>';
                     } else {
                         // If not in any group, leave cell empty
                         echo '<td><em>' . __('(ei määritelty)') .'</em></td>';

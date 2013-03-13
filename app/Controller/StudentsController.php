@@ -30,17 +30,12 @@ class StudentsController extends AppController {
         $memberships = $this->Student->CourseMembership->find('all', array(
             'conditions' => array('CourseMembership.course_id' => $course_id),
             'contain' => array(
-                'Student' => array(
-                    'Group' => array(
-                        'conditions' => array('Group.course_id' => $course_id),
-                        'User'
-                    )
-                ),
+                'Student' => array('Group'),
                 'Action',
                 'EmailMessage'
             )
         ));
-        //print_r($memberships); die();
+        //debug($memberships);exit;
 
         // Call Group-model to return groups with assistant names
         // in given course ($course_id from Session)
@@ -56,6 +51,12 @@ class StudentsController extends AppController {
         // Group selection (for drop-down selection)
         $this->set('user_groups', $user_groups);
         $this->set('memberships', $memberships);
+        $this->set('users', $this->Student->Group->User->find('list',
+                array(
+                    'fields' => array('User.name')
+                )
+            )
+        );
     }
 
     /**
