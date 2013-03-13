@@ -121,8 +121,8 @@
                         if(current.length > 0)
                             check = current.find('input[type="checkbox"]').first()
                             check.trigger 'click'
-                        e.preventDefault()
-                        return false
+                            e.preventDefault()
+                            return false
 
                 input.keyup (e) ->                    
                     keyword = input.val().toLowerCase()
