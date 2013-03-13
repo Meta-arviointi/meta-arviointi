@@ -52,7 +52,9 @@ class CoursesController extends AppController {
                                     'Group.course_id' => $cid
                                 )
                             )
-                        )
+                        ),
+                        'Action',
+                        'EmailMessage'
                     )
                 );
                 $course_data = $this->Course->get_course($cid, $contain);
@@ -94,6 +96,19 @@ class CoursesController extends AppController {
                 $this->set('users', $users);
                 $this->set('course_memberships', $course_memberships);
                 $this->set('course_id', $cid);
+
+
+                // Create array with 'Group.id' as key and 'User.name' as value
+                // NOTE: 'User.name' is virtual field defined in User-model
+                $user_groups = array();
+                foreach($course_data['User'] as $u) {
+                    foreach($u['Group'] as $g) {
+                        if(!empty($g)) {
+                            $user_groups[$g['id']] = $u['name'];
+                        }
+                    }
+                }
+                $this->set('user_groups', $user_groups);
 
 
             } else {
