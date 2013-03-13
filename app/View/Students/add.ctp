@@ -4,13 +4,12 @@
     <?php
 
     echo $this->Form->create('Student');
-    echo $this->Form->input('first_name');
+    echo $this->Form->input('first_name', array('label' => __('Etunimi')));
+    echo $this->Form->input('last_name', array('label' => __('Sukunimi')));
+    echo $this->Form->input('student_number', array('label' => __('Opiskelijanumero')));
+    echo $this->Form->input('email', array('label' => __('Sähköposti')));
 
-    echo $this->Form->input('last_name');
-    echo $this->Form->input('student_number');
-    echo $this->Form->input('email');
-
-    echo $this->Form->submit('Tallenna');
+    echo $this->Form->submit(__('Tallenna'));
 //  echo $this->Html->link('Peruuta', array('action' => 'index'));
     echo $this->Form->end();
     ?>

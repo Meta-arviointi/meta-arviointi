@@ -294,14 +294,18 @@ class CourseMembershipsController extends AppController {
         // Init. variable to make sure it's not null at the end
         $course_id = $this->Session->read('Course.course_id');
         // get referring CourseMembership.id
-        $url = explode('/', $this->referer(null,true));
-        $cmid = $url[3];
+        $url = parse_url($this->referer(null,true));
+        $path = explode('/', $url['path']);
+        $cmid = $path[3];
         // Check if request is post
         if ( $this->request->is('post') ) {
             $course_id = $this->request->data['course_id'];
         } else if ( $this->request->is('get') ) { // .. or get
             $course_id = $this->request->query['course_id'];
         }
+        // update user's Group ID to Session
+        $this->CourseMembership->Course->User->set_new_group($this->Auth->user('id'), $course_id);
+
         $this->CourseMembership->Course->id = $course_id;
         if ( $this->CourseMembership->Course->exists() ) {
 
