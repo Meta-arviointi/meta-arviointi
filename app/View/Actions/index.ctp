@@ -67,6 +67,7 @@ echo $this->element('tab-menu', array('links' => $links));
     <?php
         echo $this->Html->link(__('Lähetä sähköposti valituille'), array('action' => 'send_action_emails'), array('id' => 'SendActionEmailsLink', 'class' => 'modal-link button is-disabled', 'title' => __('Valitse ensin opiskelijat, joille sähköposti lähetetään.')));
     ?>
+    <input class="filter-keyword" data-target="ActionsList">
 
     <table class="data-table" id="ActionsList">
         <thead>
