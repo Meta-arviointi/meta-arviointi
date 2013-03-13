@@ -241,21 +241,6 @@ class UsersController extends AppController {
         return !empty($user_course['Course']);
     }
 
-    /*
-     * After course_id is changed between requests,
-     * update user's new group_id (related to new course) to Session.
-     */
-    public function set_new_group($user_id, $course_id) {
-        $user = $this->Course->User->user_group($user_id, $course_id);
-        // If present, set group_id to session
-        if ( !empty($user['Group']) ) {
-            $this->Session->write('User.group_id', $user['Group']['id']);
-        } else {
-            // No Group assigned to user in current course.
-            // Delete group_id from session, so no old values remain.
-            $this->Session->delete('User.group_id');
-        }
-    }
 
     public function test($cmid) {
         //debug($this->User->get_last_course($course_id));
