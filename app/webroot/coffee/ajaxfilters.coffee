@@ -26,7 +26,7 @@
                 return params
 
             pushParams = (mergeMode) ->
-                state = {}
+                state = {filters: 'true'}
                 params = getInputParams()
                 state[id] = params
                 $.bbq.pushState state, mergeMode
