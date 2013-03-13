@@ -72,6 +72,8 @@ echo $this->element('tab-menu', array('links' => $links));
             )
     );
 
+    echo '<input class="filter-keyword" data-target="StudentsList">';
+
     echo $this->Form->create(false, array('id' => 'CreateManyActions',
             'url' => array('controller' => 'actions', 'action' => 'create_many'),
             'inputDefaults' => array(

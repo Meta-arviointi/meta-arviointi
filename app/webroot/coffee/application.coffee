@@ -254,7 +254,7 @@ $(document).ready ->
         $('#student-email-form').slideDown 500
 
     $(document).tooltip()
-
+    
     return
 
 
