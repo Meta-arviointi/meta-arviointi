@@ -35,13 +35,8 @@ class ActionsController extends AppController {
                         'conditions' => array(
                             'CourseMembership.course_id' => $course_id
                         ),
-                        'Student' => array(
-                            'Group' => array(
-                                'conditions' => array(
-                                    'Group.course_id' => $course_id
-                                )
-                            )
-                        )
+                        'Student',
+                        'Group'
                     ),
                     'User',
                     'ActionType',
@@ -72,7 +67,7 @@ class ActionsController extends AppController {
 
         // Call Group-model to return groups with assistant names
         // in given course ($course_id from Session)
-        $results = $this->Action->CourseMembership->Student->Group->groups($course_id);
+        $results = $this->Action->CourseMembership->Group->groups($course_id);
 
         // Create array with 'Group.id' as key and 'User.name' as value
         // NOTE: 'User.name' is virtual field defined in User-model

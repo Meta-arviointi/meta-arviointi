@@ -48,7 +48,7 @@ echo $this->element('tab-menu', array('links' => $links));
     <?php 
      /* DEBUG */
     //echo '<pre>';
-    //debug($students);
+    //debug($memberships);
     //echo '</pre>';
 
     // Selection for assistent groups
@@ -92,7 +92,6 @@ echo $this->element('tab-menu', array('links' => $links));
                 <th><?php echo __('Opiskelijanumero'); ?></th>
                 <th><?php echo __('Assistentti'); ?></th> <?php /* TODO sorttuas */ ?>
                 <th><?php echo __('Toimenpiteitä'); ?></th>
-                <th><?php echo __('Toiminnot'); ?></th>
             </tr>
         </thead>
         <tbody>
@@ -100,8 +99,9 @@ echo $this->element('tab-menu', array('links' => $links));
             if ( !empty($memberships) ) { // check if not empty
                 foreach($memberships as $membership) {
                     $student_group_id = 0;
-                    if(!empty($membership['Student']['Group'])) $student_group_id = $membership['Student']['Group'][0]['id'];
-
+                    if(!empty($membership['Group'])) {
+                        $student_group_id = $membership['Group']['id'];  
+                    }
                     $has_actions = 'false';
                     if(count($membership['Action']) > 0) {
                         $has_actions = 'true';
@@ -149,8 +149,8 @@ echo $this->element('tab-menu', array('links' => $links));
                     echo '<td>'.$membership['Student']['student_number'].'</td>';
 
                     // If student belongs to a group, print assistant name
-                    if ( isset($membership['Student']['Group'][0]['User']) ) {
-                        echo '<td>'.$membership['Student']['Group'][0]['User']['name'].'</td>';
+                    if ( !empty($membership['Group']['id']) ) {
+                        echo '<td>'.$users[$membership['Group']['user_id']].'</td>';
                     } else {
                         // If not in any group, leave cell empty
                         echo '<td><em>' . __('(ei määritelty)') .'</em></td>';
@@ -158,23 +158,10 @@ echo $this->element('tab-menu', array('links' => $links));
                     }
 
                     echo '<td>'.(isset($membership['Action']) ? count($membership['Action']) : 0).'</td>';
-                    echo '<td>'. $this->Html->link($this->Html->image('edit-action-icon.png',
-                            array('alt' => __('Lisää toimenpide'), 'title' => __('Lisää toimenpide'))),
-                            array(
-                                'controller' => 'actions',
-                                'action' => 'create',
-                                $membership['CourseMembership']['id']
-                            ),
-                            array(
-                                'class' => 'modal-link quick-action',
-                                'escape' => false
-                            )
-                    ); '</td>';
-                    
                     echo '</tr>';
                 }
             } else { // print "nothing available"
-                echo '<tr><td class="empty" colspan="7">' . __('Ei opiskelijoita') . '</td><tr>';
+                echo '<tr><td class="empty" colspan="6">' . __('Ei opiskelijoita') . '</td><tr>';
             }
             echo $this->Form->end();
             ?>

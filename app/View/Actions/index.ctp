@@ -105,8 +105,8 @@ echo $this->element('tab-menu', array('links' => $links));
                         $action_title = 'H' . $action['Exercise'][0]['exercise_number'];
                 }
                 $student_group_id = '';
-                if(!empty($action['CourseMembership']['Student']['Group'])) {
-                    $student_group_id = $action['CourseMembership']['Student']['Group'][0]['id'];
+                if(!empty($action['CourseMembership']['Group']['id'])) {
+                    $student_group_id = $action['CourseMembership']['Group']['id'];
                 }
                 $ex_ids = array();
                 foreach($action['Exercise'] as $ex) {

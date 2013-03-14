@@ -4,7 +4,7 @@ class Group extends AppModel {
 	public $name = 'Group';
 	
 	public $belongsTo = array('Course', 'User');
-	public $hasAndBelongsToMany = array('Student');
+	public $hasMany = array('CourseMembership');
 
 	/**
 	 * Fetches groups and assistant names.
@@ -30,7 +30,7 @@ class Group extends AppModel {
 	}
 
 	/**
-	 * @return Count of students in group
+	 * @return Count of students (coursememberships) in group
 	 */
 	public function students_count($group_id) {
 		if ( !empty($group_id) ) {
@@ -39,57 +39,13 @@ class Group extends AppModel {
 						'Group.id' => $group_id
 					),
 					'contain' => array(
-						'Student'
+						'CourseMembership'
 					)
 				)
 			);
-			return count($result['Student']);
+			return count($result['CourseMembership']);
 		} else {
 			return 0;
-		}
-	}
-
-	public function link_student($gid, $sid) {
-		if ( !empty($sid) && !empty($gid) ) {
-			$this->contain('Student');
-            $group = $this->findById($gid);
-            $group_students = isset($group['Student']) ? $group['Student'] : array();
-            array_push($group_students, $sid);
-			$options = array(
-				'Group' => array(
-					'id' => $gid
-				),
-				'Student' => array(
-					'Student' => $group_students
-				)
-			);
-			return $this->save($options);
-		} else {
-			return false;
-		}
-	}
-
-	public function unlink_student($gid, $sid) {
-		if ( !empty($sid) && !empty($gid) ) {
-			$this->contain('Student');
-            $group = $this->findById($gid);
-            $group_students = isset($group['Student']) ? $group['Student'] : array();
-            foreach($group_students as $idx => $student) {
-                if ( intval($student['id']) == intval($sid) ) {
-                    unset($group_students[$idx]);
-                }
-            }
-            $options = array(
-                'Group' => array(
-                    'id' => $gid
-                ),
-                'Student' => array(
-                    'Student' => $group_students
-                )
-            );
-            $this->save($options);
-		} else {
-			return false;
 		}
 	}
 

@@ -21,4 +21,3 @@ echo $this->Form->input('id', array(
 );
 echo $this->Form->end('Tallenna');
 
-

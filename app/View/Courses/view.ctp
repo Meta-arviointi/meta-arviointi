@@ -226,7 +226,7 @@ echo $this->element('tab-menu', array('links' => $links));
     echo '<hr class="row">';
 
     echo $this->Html->link(__('Liitä valitut opiskelijat vastuuryhmään'),array(
-            'controller' => 'students',
+            'controller' => 'course_memberships',
             'action' => 'set_groups'
             ),
             array('class' => 'SelectManyLink button modal-link')
@@ -268,7 +268,7 @@ echo $this->element('tab-menu', array('links' => $links));
         foreach($course_memberships as $student) {
             
             $student_group_id = 0;
-            if(!empty($student['Student']['Group'])) $student_group_id = $student['Student']['Group'][0]['id'];
+            if(!empty($student['Group'])) $student_group_id = $student['Group']['id'];
 
             $has_actions = 'false';
             if(count($student['Action']) > 0) {
@@ -303,6 +303,7 @@ echo $this->element('tab-menu', array('links' => $links));
                 data-messages="' . $has_unread_messages . '"
                 data-quit="' . $has_quit . '">';
             // NOTE in below checkbox $student['id'] is CourseMembership.ID, not Student.ID!!!
+            // format is array( 'Student' => array(CM.ID => Student.id))
             echo '<td>' . $this->Form->checkbox('Student.'.$student['id'], array(
                                 'value' => $student['Student']['id'],
                                 'hiddenField' => false
@@ -326,8 +327,8 @@ echo $this->element('tab-menu', array('links' => $links));
             ).'</td>';
             echo '<td>'. $student['Student']['student_number'] .'</td>';
             echo '<td>'. $student['Student']['email'] .'</td>';
-            $assistant = isset($student['Student']['Group'][0]['user_id']) ? 
-                $users_list[$student['Student']['Group'][0]['user_id']] : '';
+            $assistant = isset($student['Group']['user_id']) ? 
+                $users_list[$student['Group']['user_id']] : '';
             echo '<td>'. $assistant .'</td>';
             if ( !empty($is_admin) ) {
                 echo '<td class="row-tools">'. $this->Html->link($this->Html->image('edit-action-icon.png',

@@ -6,7 +6,6 @@ class Student extends AppModel {
 	public $hasMany = array( 
         'CourseMembership'
     );
-	public $hasAndBelongsToMany = array('Group');
 
     public $virtualFields = array(
         'name' => 'Student.first_name || \' \' || Student.last_name'
@@ -65,58 +64,5 @@ class Student extends AppModel {
         }
     }
 
-    /**
-     * @return Group if student has group in given course, else false/null
-     */
-    public function student_group($sid, $cid) {
-        if (!empty($sid) && !empty($cid)) {
-            $result = $this->find('first', array(
-                'conditions' => array(
-                    'Student.id' => $sid
-                ),
-                'contain' => array(
-                    'Group' => array(
-                        'conditions' => array(
-                            'Group.course_id' => $cid
-                        )
-                    )
-                )
-            ));
-            return $result['Group'];
-        } else {
-            return false;
-        }
-    }
-/*
-$students = $this->Student->find('all', array(
-        'conditons' => array(
-            'Student.id' => $sid
-        ),
-        'contain' => array(
-            'Group' => array(
-                'Group.course_id' => $cid)
-            )
-        )
-    )
-);
-
-    public function user_group($user_id, $course_id) {
-        // Check parameters validity
-        if ( !empty($user_id) && !empty($course_id) ) {
-            return $this->Group->find('first', array(
-                'conditions' => array(
-                    'Group.user_id' => $user_id,
-                    'Group.course_id' => $course_id
-                    ),
-                'contain' => array(
-                    'User'
-                    )
-                )
-            );
-        } else {
-            return false;
-        }
-    }
-*/
 }
 ?>

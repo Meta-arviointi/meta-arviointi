@@ -46,13 +46,9 @@ class CoursesController extends AppController {
                         'Student' => array(
                             'order' => array(
                                 'Student.last_name' => 'ASC'
-                            ),
-                            'Group' => array(
-                                'conditions' => array(
-                                    'Group.course_id' => $cid
-                                )
                             )
                         ),
+                        'Group',
                         'Action',
                         'EmailMessage'
                     )
@@ -62,10 +58,9 @@ class CoursesController extends AppController {
                 $exercises = $course_data['Exercise'];
                 $users = $course_data['User'];
                 $course_memberships = $course_data['CourseMembership'];
-
                 $group_count = array();
                 foreach($users as $user) {
-                    if ( !empty($user['Group']) ) {
+                    if ( !empty($user['Group'][0]['id']) ) {
                         $group_id = $user['Group'][0]['id'];
                         $group_count[$user['id']] = $this->Course->Group->students_count($group_id);    
                     }
@@ -103,7 +98,7 @@ class CoursesController extends AppController {
                 $user_groups = array();
                 foreach($course_data['User'] as $u) {
                     foreach($u['Group'] as $g) {
-                        if(!empty($g)) {
+                        if(!empty($g['id'])) {
                             $user_groups[$g['id']] = $u['name'];
                         }
                     }
