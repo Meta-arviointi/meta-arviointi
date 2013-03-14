@@ -30,7 +30,8 @@ class StudentsController extends AppController {
         $memberships = $this->Student->CourseMembership->find('all', array(
             'conditions' => array('CourseMembership.course_id' => $course_id),
             'contain' => array(
-                'Student' => array('Group'),
+                'Student',
+                'Group',
                 'Action',
                 'EmailMessage'
             )
@@ -39,7 +40,7 @@ class StudentsController extends AppController {
 
         // Call Group-model to return groups with assistant names
         // in given course ($course_id from Session)
-        $results = $this->Student->Group->groups($course_id);
+        $results = $this->Student->CourseMembership->Group->groups($course_id);
 
         // Create array with 'Group.id' as key and 'User.name' as value
         // NOTE: 'User.name' is virtual field defined in User-model
@@ -51,7 +52,7 @@ class StudentsController extends AppController {
         // Group selection (for drop-down selection)
         $this->set('user_groups', $user_groups);
         $this->set('memberships', $memberships);
-        $this->set('users', $this->Student->Group->User->find('list',
+        $this->set('users', $this->Student->CourseMembership->Group->User->find('list',
                 array(
                     'fields' => array('User.name')
                 )
@@ -230,133 +231,6 @@ class StudentsController extends AppController {
 		$this->set('students', $students);
 	}
 
-    public function set_group($sid = 0) {
-        $cid = $this->Session->read('Course.course_id');
-        if ( $this->request->is('post') ) {
-            $uid = $this->request->data['User']['id'];
-            $sid = $this->request->data['Student']['id'];
-            $group = $this->Student->Group->User->user_group($uid, $cid);
-            $gid = null;
-            if ( !empty($group) ) {
-                $gid = $group['Group']['id'];
-            } else { // user has no group
-                // Create new group for user $uid
-                $this->Student->Group->create();
-                $this->Student->Group->save(array(
-                    'course_id' => $cid, 
-                    'user_id' => $uid
-                    )
-                );
-                // set $gid
-                $gid = $this->Student->Group->id;
-            }
-            $duplicate = false;
-            $sgroup = $this->Student->student_group($sid, $cid);
-            if ( !empty($sgroup) ) {
-                // remove old group 
-                $sgid = $sgroup[0]['id'];
-                if ( $sgid != $gid ) {
-                    $this->Student->Group->unlink_student($sgid, $sid);
-                } else {
-                    // this user is already linked to this group
-                    $duplicate = true;
-                }
-            }
-            if ( !$duplicate ) {
-                // link student to selected group (different from current)
-                $return = $this->Student->Group->link_student($gid, $sid);
-                if ( $return ) {
-                    $this->Session->setFlash(__('Vastuuryhmä vaihdettu'));
-                    $this->redirect($this->referer());
-                } else {
-                    $this->Session->setFlash(__('Vastuuryhmän tallennuksessa tapahtui virhe'));
-                    $this->redirect($this->referer());
-                }
-            }
-
-
-        } else {
-            // get users in course
-            $users = $this->Student->CourseMembership->Course->get_users($cid);
-            $users_list = array();
-            // make drop-down
-            foreach( $users['User'] as $user ) {
-                $users_list[$user['id']] = $user['name'];
-            }
-
-            $this->set('users', $users_list);
-            $this->set('student_id', $sid);
-        }
-
-    }
-
-    public function set_groups($cid = 0) {
-        if ( $cid <= 0 ) {
-            $cid = $this->Session->read('Course.course_id');
-        }
-        if ( $this->request->is('post') ) {
-            $students = $this->request->data['Student'];
-            $uid = $this->request->data['User']['id'];
-            $group = $this->Student->Group->User->user_group($uid, $cid);
-            $succ = 0;
-            $err = 0;
-            if ( !empty($group) ) {
-                $gid = $group['Group']['id'];
-            } else { // user has no group
-                // Create new group for user $uid
-                $this->Student->Group->create();
-                $this->Student->Group->save(array(
-                    'course_id' => $cid, 
-                    'user_id' => $uid
-                    )
-                );
-                // set $gid
-                $gid = $this->Student->Group->id;
-            }
-            if ( !empty($gid) ) {
-                foreach($students as $student => $sid) {
-                    $sgroup = $this->Student->student_group($sid, $cid);
-                    $duplicate = false;
-                    if ( !empty($sgroup) ) {
-                        // remove old group 
-                        $sgid = $sgroup[0]['id'];
-                        if ( $sgid != $gid ) {
-                            $this->Student->Group->unlink_student($sgid, $sid);
-                        } else {
-                            // this user is already linked to this group
-                            $duplicate = true;
-                        }
-                    }
-                    if ( !$duplicate ) {
-                        // link student to selected group (different from current)
-                        $return = $this->Student->Group->link_student($gid, $sid);
-                        if ( $return ) {
-                            $succ++;
-                        } else {
-                            $err++;
-                        }
-                    }
-                }
-            }
-            $this->Session->setFlash("$succ opiskelijan vastuuryhmä päivitetty ($err epäonnistui)");
-            $this->redirect(array(
-                    'controller' => 'courses',
-                    'action' => 'view',
-                    $cid
-                )
-            );
-        } else { // normal request, get data for Form
-            // get users in course
-            $users = $this->Student->CourseMembership->Course->get_users($cid);
-            $users_list = array();
-            // make drop-down
-            foreach( $users['User'] as $user ) {
-                $users_list[$user['id']] = $user['name'];
-            }
-
-            $this->set('users', $users_list);
-        }
-    }
 
     /**
      * CSV import
@@ -393,7 +267,6 @@ class StudentsController extends AppController {
                     $new_students_count = 0;
                     $new_groups = 0;
                     $curr_row = 0;
-                    $has_group = false; // if student gets linked to group
                     $log_row_count = 0; // rows in log
 
                     $old_students = array(); // old students already in system
@@ -432,7 +305,8 @@ class StudentsController extends AppController {
                             $gid = 0;
                             $uid = 0;
                             $user_group = array();
-                            
+                                    
+                            $has_group = false; // if student gets linked to group
                             // Check if user identifier is available
                             if ( $user_bua ) {
                                 // STEP 1: CHECK USER STATUS
@@ -444,7 +318,7 @@ class StudentsController extends AppController {
                                     // User is in the system, good!
                                                                         
                                     // check if user already linked to course
-                                    if ( !$this->Student->Group->User->user_in_course($uid, $course_id) ) {
+                                    if ( !$this->Student->CourseMembership->Group->User->user_in_course($uid, $course_id) ) {
                                         // not in course, add
                                         $this->Course->contain('User');
                                         $crs = $this->Course->findById($course_id);
@@ -459,8 +333,8 @@ class StudentsController extends AppController {
                                             )
                                         ));
                                         $users++; // increment added users to course
-                                        $this->Student->Group->User->contain();
-                                        $linked_user = $this->Student->Group->User->findById($uid);
+                                        $this->Student->CourseMembership->Group->User->contain();
+                                        $linked_user = $this->Student->CourseMembership->Group->User->findById($uid);
                                         $added_users[] =  $linked_user;
                                     } // else user already assigned to course
 
@@ -469,22 +343,22 @@ class StudentsController extends AppController {
                                         // user's group is not known
 
                                         // Get user's group in course. False if no group set.
-                                        $group = $this->Student->Group->User->user_group($uid, $course_id);
+                                        $group = $this->Student->CourseMembership->Group->User->user_group($uid, $course_id);
                                         if ( !$group ) { 
                                             // User doesn't have group in course ($group = false)
                                             // Create group
-                                            $this->Student->Group->create();
-                                            $this->Student->Group->save(array(
+                                            $this->Student->CourseMembership->Group->create();
+                                            $this->Student->CourseMembership->Group->save(array(
                                                 'course_id' => $course_id, 
                                                 'user_id' => $uid
                                                 )
                                             );
                                             // set $gid
-                                            $gid = $this->Student->Group->id;
+                                            $gid = $this->Student->CourseMembership->Group->id;
                                             $new_groups++;
 
-                                            $this->Student->Group->User->contain();
-                                            $g_user = $this->Student->Group->User->findById($uid);
+                                            $this->Student->CourseMembership->Group->User->contain();
+                                            $g_user = $this->Student->CourseMembership->Group->User->findById($uid);
                                             $new_user_groups[] =  $g_user;                                            
                                         } else { // user has a group already
                                             // Take existing Group's ID
@@ -522,32 +396,32 @@ class StudentsController extends AppController {
 
                             $sid = isset($students_system[$student_number]) ? 
                                 $students_system[$student_number] : null;
+                            $student_cm = null;
                             if ( $sid ) {
 
                                 // Student already saved in system
+                                $this->Student->contain();
                                 $old_students[] = $this->Student->findById($sid);
                                 $row_errors[] = "Opiskelija ($student_number) oli jo järjestelmässä.";
+
+                                // Get CourseMembership
+                                $student_cm = $this->Student->CourseMembership->find('first', array(
+                                        'conditions' => array(
+                                            'CourseMembership.student_id' => $sid,
+                                            'CourseMembership.course_id' => $course_id
+                                        )
+                                    )
+                                );
+
                                 // Check if student has a group assigned in course
-                                $group = $this->Student->student_group($sid, $course_id);
                                 // Also check that $uid is assigned.
                                 // If not, don't link student to course
-                                if ( !$group && $uid ) { 
+                                if ( !isset($student_cm['Group']['id']) && $uid ) { 
                                     // student has no group. user id is known. create group linkage
-                                    $this->Student->Group->contain('Student');
-                                    $group = $this->Student->Group->findById($gid);
-                                    $group_students = isset($group['Student']) ? $group['Student'] : array();
-                                    array_push($group_students, $sid);
-                                    //debug($group_students);
-                                    $options = array(
-                                        'Group' => array(
-                                            'id' => $gid
-                                        ),
-                                        'Student' => array(
-                                            'Student' => $group_students
-                                        )
-                                    );
-                                    $this->Student->Group->save($options);
-                                    $has_group = true;
+                                    if ( isset($student_cm['id']) ) {
+                                        $this->Student->CourseMembership->set_group($student_cm['id'], $gid);
+                                        $has_group = true;    
+                                    }
                                 } else {
                                     if ( !$uid ) {
                                         // We end up here, if $uid is not known (we can't link
@@ -562,43 +436,20 @@ class StudentsController extends AppController {
                                 }
                                 
                             } else { // STUDENT IS NEW
-                                // Create student, and add linkage to group
-                                
-                                if ( !empty($uid) ) {
-                                    $this->Student->create();
-                                    // $uid is known, then we know also $gid
-                                    $rdata = $this->Student->save(array(
-                                        'Student' => array(
-                                            'student_number' => $student_number,
-                                            'last_name' => $student_lname,
-                                            'first_name' => $student_fname,
-                                            'email' => $student_email
-                                        ),
-                                        'Group' => array(
-                                            'id' => $gid
+                                // Create student
+                                $this->Student->create();
+                                $rdata = $this->Student->save(array(
+                                    'Student' => array(
+                                        'student_number' => $student_number,
+                                        'last_name' => $student_lname,
+                                        'first_name' => $student_fname,
+                                        'email' => $student_email
                                         )
-                                    ));
-                                    if ( $rdata ) {
-                                        //$new_students[] =  $rdata;
-                                        $new_students_count++;
-                                        $has_group = true;
-                                    }
-                                } else { // $uid not known, create student w/o group
-                                    $this->Student->create();
-                                    $rdata = $this->Student->save(array(
-                                        'Student' => array(
-                                            'student_number' => $student_number,
-                                            'last_name' => $student_lname,
-                                            'first_name' => $student_fname,
-                                            'email' => $student_email
-                                            )
-                                        )
-                                    );
-                                    if ( $rdata ) {
-                                        //$new_students[] = $rdata;
-                                        $new_students_count++;
-                                        $has_group = false;
-                                    }
+                                    )
+                                );
+                                if ( $rdata ) {
+                                    //$new_students[] = $rdata;
+                                    $new_students_count++;
                                 }
                                 
                                 // get just saved student's id
@@ -608,15 +459,20 @@ class StudentsController extends AppController {
 
                             if ( $sid ) {
                                 // Check if student linked to current course
-                                if (!$this->Student->student_course_membership($sid, $course_id)) {
+                                if ( empty($student_cm) ) {
                                     // Student not linked to current course
                                     // create CourseMembership
                                     $this->Student->CourseMembership->create();
-                                    $this->Student->CourseMembership->save(array(
+                                    $options = array(
                                         'course_id' => $course_id,
                                         'student_id' => $sid
-                                        )
                                     );
+                                    // Check if uid set, add group linkage
+                                    if ( $uid ) {
+                                        $options['group_id'] = $gid;
+                                        $has_group = true;
+                                    } 
+                                    $this->Student->CourseMembership->save($options);
                                     // add student to array of added students
                                     $this->Student->contain();
                                     $student = $this->Student->findById($sid);

@@ -178,41 +178,34 @@ class CourseMembershipsController extends AppController {
             unset($data['User']);
         }
         $cid = $data['course_id'];
-        //krsort($data);
+        $sid = $data['student_id'];
+        $gid = null;
+
+        // Check if Student was selected for group
+        if ( !empty($user_id) ) {
+            // yes, get/create user group and set $gid for saving
+            $group = $this->CourseMembership->Group->User->user_group($user_id, $cid);
+            if ( !empty($group) ) {
+                $gid = $group['Group']['id'];
+            } else { // Create new group
+                // Create new group for user $uid
+                $this->CourseMembership->Group->create();
+                $this->CourseMembership->Group->save(array(
+                    'course_id' => $cid, 
+                    'user_id' => $uid
+                    )
+                );
+                // set $gid
+                $gid = $this->CourseMembership->Group->id;
+            }
+        }
+        // if group id was found, add to $data for saving
+        if ( !empty($gid) ) {
+            $data['group_id'] = $gid;
+        }
         $this->CourseMembership->create();
         if ( $this->CourseMembership->save($data) ) {
-            $sid = $data['student_id'];
-            // Check if Student was selected for group
-            if ( !empty($user_id) ) {
-                $group = $this->CourseMembership->Course->User->user_group($user_id, $cid);
-                if ( !empty($group) ) {
-                    $gid = $group['Group']['id'];
-                    $result = $this->CourseMembership->Student->Group->link_student($gid, $sid);
-                    if ( !empty($result) ) {
-                        return $sid;
-                    } else {
-                        return $sid;
-                    }
-                } else { // Create new group
-                    $result = $this->CourseMembership->Student->Group->save(array(
-                            'Group' => array(
-                                'course_id' => $cid,
-                                'user_id' => $user_id
-                            ),
-                            'Student' => array(
-                                'id' => $sid
-                            )
-                        )
-                    );
-                    if ( !empty($result) ) {
-                        return $sid;
-                    } else {
-                        $sid;
-                    }
-                }
-            } else { // Student was linked to course, but not to a group
-                return $sid;
-            }
+            return $sid;
         } else {
             return false;
         }
@@ -248,12 +241,8 @@ class CourseMembershipsController extends AppController {
                 ),
                 'Course',
                 'EmailMessage',
-                'Student' => array('Group' => array(
-                        'conditions' => array(
-                            'Group.course_id' => $this->Session->read('Course.course_id')
-                        )
-                    )
-                )
+                'Student',
+                'Group'
             )
         );
         $course_membership = $this->CourseMembership->find('first', $options);
@@ -341,24 +330,26 @@ class CourseMembershipsController extends AppController {
         }
     }
 
-    public function delete($cm_id) {
+    public function delete($cm_id, $redirect = true) {
         $this->CourseMembership->id = $cm_id;
         if ( $this->CourseMembership->exists() ) {
             // Check if Student has actions
             if ( !$this->CourseMembership->Action->actions_count($cm_id) ) {
-                $student_id = $this->CourseMembership->field('student_id');
-                $cid = $this->CourseMembership->field('course_id');
+                $gid = $this->CourseMembership->field('group_id');
                 $this->CourseMembership->delete($cm_id, false);
                 $this->Session->setFlash(__('Opiskelija poistettu kurssilta'));
 
-                // Delete Student -> Group association
-                $group = $this->CourseMembership->Student->student_group($student_id, $cid);
-                $gid = $group[0]['id'];
-
-                $this->CourseMembership->Student->Group->unlink_student($gid,$student_id);
-                // Call status check. Group is deleted if student_count = 0.
-                $this->CourseMembership->Student->Group->update_status($gid);
-                $this->redirect($this->referer());
+                if ( $gid ) {
+                    // Student belonged to group.
+                    // Call status check. Group is deleted if student_count = 0.
+                    $this->CourseMembership->Group->update_status($gid);
+                }
+                if ( $redirect ) {
+                    $this->redirect($this->referer());    
+                } else {
+                    // redirect disabled, return $cmid
+                    return $cm_id;
+                }
             } else {
                 $this->Session->setFlash(__('Opiskelijalle on annettu toimenpiteitä, ei voida poistaa'));
                 $this->redirect($this->referer());
@@ -368,7 +359,6 @@ class CourseMembershipsController extends AppController {
 
     public function delete_many() {
         if ( $this->request->is('post') ) {
-            $cid = $this->Session->read('Course.course_id');
             $action_students = array();
             $succ = 0;
             $err = 0;
@@ -376,30 +366,175 @@ class CourseMembershipsController extends AppController {
                 if ( $this->CourseMembership->exists($cmid) ) {
                     // Check if Student has actions
                     if ( !$this->CourseMembership->Action->actions_count($cmid) ) {
-                        $result = $this->CourseMembership->delete($cmid, false);
-                        if ( $result ) {
-                            $succ++;
-                            // Delete Student -> Group association
-                            $group = $this->CourseMembership->Student->student_group($sid, $cid);
-                            $gid = $group[0]['id'];
-
-                            $this->CourseMembership->Student->Group->unlink_student($gid,$sid);
-                            // Call status check. Group is deleted if student_count = 0.
-                            $this->CourseMembership->Student->Group->update_status($gid);    
-                        } else {
-                            $err++;
-                        }
+                        $this->delete($cmid, false);
+                        $succ++;
                     } else {
                         $action_students[$sid] = $cmid;
                         $err++;
                     }
+                } else {
+                    // Unknown membership
+                    $err++;
                 }
             }
             $ascount = count($action_students);
-            $this->Session->setFlash(__("$succ opiskelijaa poistettu kurssilta ($err epäonnistui, $ascount:llä opiskelijalla on toimenpiteitä)"));
+            $this->Session->setFlash(__("$succ opiskelijaa poistettu kurssilta ($err epäonnistui ($ascount:llä opiskelijalla on toimenpiteitä))"));
             $this->redirect($this->referer());
         }
     }
+
+    public function set_groups($cid = 0) {
+        if ( $cid <= 0 ) {
+            $cid = $this->Session->read('Course.course_id');
+        }
+        if ( $this->request->is('post') ) {
+            $students = $this->request->data['Student'];
+            $uid = $this->request->data['User']['id'];
+            $group = $this->CourseMembership->Group->User->user_group($uid, $cid);
+            $succ = 0;
+            $err = 0;
+            if ( !empty($group) ) {
+                $gid = $group['Group']['id'];
+            } else { // user has no group
+                // Create new group for user $uid
+                $this->CourseMembership->Group->create();
+                $this->CourseMembership->Group->save(array(
+                    'course_id' => $cid, 
+                    'user_id' => $uid
+                    )
+                );
+                // set $gid
+                $gid = $this->CourseMembership->Group->id;
+            }
+            if ( !empty($gid) ) {
+                foreach($students as $cmid => $sid) {
+
+                    $update_group = false;
+                    // get possible old group
+                    $sgroup = $this->CourseMembership->student_group($sid, $cid);
+                    if ( !empty($sgroup) ) {
+                        if ( $sgroup['id'] != $gid ) {
+                            if ( $this->CourseMembership->set_group($cmid, $gid) ) {
+                                // update old group as new group was saved
+                                $update_group = true;
+                                $succ++;
+                            } else {
+                                // error in saving
+                                $err++;
+                            }
+                        } else {
+                            // else = old and new group are same, no updates
+                            $succ++;   
+                        }
+                    } else {
+                        // student not in group, save new group 
+                        if ( $this->CourseMembership->set_group($cmid, $gid) ) {
+                            $succ++;
+                        } else {
+                            $err++;
+                        }
+                    }
+                    if ( $update_group ) {
+                        $this->CourseMembership->Group->update_status($sgroup['id']);
+                    }
+                }
+            }
+            $this->Session->setFlash("$succ opiskelijan vastuuryhmä päivitetty ($err epäonnistui)");
+            $this->redirect(array(
+                    'controller' => 'courses',
+                    'action' => 'view',
+                    $cid
+                )
+            );
+        } else { // normal request, get data for Form
+            // get users in course
+            $users = $this->CourseMembership->Course->get_users($cid);
+            $users_list = array();
+            // make drop-down
+            foreach( $users['User'] as $user ) {
+                $users_list[$user['id']] = $user['name'];
+            }
+
+            $this->set('users', $users_list);
+        }
+    }
+
+    public function set_group($cmid = 0) {
+        $cid = $this->Session->read('Course.course_id');
+        if ( $this->request->is('post') ) {
+            $uid = $this->request->data['User']['id'];
+            $cmid = $this->request->data['CourseMembership']['id'];
+            $group = $this->CourseMembership->Group->User->user_group($uid, $cid);
+            $gid = null;
+            if ( !empty($group) ) {
+                $gid = $group['Group']['id'];
+            } else { // user has no group
+                // Create new group for user $uid
+                $this->CourseMembership->Group->create();
+                $this->CourseMembership->Group->save(array(
+                    'course_id' => $cid, 
+                    'user_id' => $uid
+                    )
+                );
+                // set $gid
+                $gid = $this->CourseMembership->Group->id;
+            }
+            $this->CourseMembership->id = $cmid;
+
+            // get possible old group
+            $group_id = $this->CourseMembership->field('group_id');
+            // flag if group should be updated
+            $update_group = false;
+            if ( !empty($group_id) ) {
+                // check if new group is same as old
+                if ( $group_id != $gid ) {
+                    // different, save new group
+                    if ( $this->CourseMembership->set_group($cmid, $gid) ) {
+                        // update old group as new group was saved
+                        $update_group = true;
+                        $return = true;
+                    } else {
+                        // error in saving
+                        $return = false;
+                    }
+                }  else {
+                    // else = old and new group are same, no updates
+                    $return = true;   
+                }
+            } else {
+                // student not in group, save new group 
+                if ( $this->CourseMembership->set_group($cmid, $gid) ) {
+                    $return = true;
+                } else {
+                    $return = false;
+                }
+            }
+            if ( $update_group ) {
+                $this->CourseMembership->Group->update_status($group_id);
+            }
+            if ( $return ) {
+                $this->Session->setFlash(__('Vastuuryhmä vaihdettu'));
+                $this->redirect($this->referer());
+            } else {
+                $this->Session->setFlash(__('Vastuuryhmän tallennuksessa tapahtui virhe'));
+                $this->redirect($this->referer());
+            }
+
+        } else {
+            // get users in course
+            $users = $this->CourseMembership->Course->get_users($cid);
+            $users_list = array();
+            // make drop-down
+            foreach( $users['User'] as $user ) {
+                $users_list[$user['id']] = $user['name'];
+            }
+
+            $this->set('users', $users_list);
+            $this->set('course_membership_id', $cmid);
+        }
+
+    }
+
 
     public function set_quit($id) {
         $this->CourseMembership->read(null, $id);

@@ -92,19 +92,15 @@ echo $this->element('tab-menu', array('links' => $links));
         <p>
         <?php
             $user_id = null;
-            foreach($course_membership['Student']['Group'] as $g) {
-                if($g['course_id'] == $course_membership['CourseMembership']['course_id']) {
-                    $user_id = $g['user_id'];
-                }
-            }
+            $user_id = isset($course_membership['Group']['id']) ? $course_membership['Group']['user_id'] : null;
             echo __('Vastuuassistentti').': <strong>'.
                 ((empty($user_id)) ? 'Ei määritelty' : $users[$user_id])
                 .'</strong>';
             echo '</p>';
             echo $this->Html->link(__('Muuta vastuuryhmää'), array(
-                    'controller' => 'students',
+                    'controller' => 'course_memberships',
                     'action' => 'set_group',
-                    $course_membership['Student']['id']
+                    $course_membership['CourseMembership']['id']
                 ),
                 array('class' => 'modal-link')
             );

@@ -158,13 +158,11 @@ class AppController extends Controller {
                 ),
                 'contain' => array(
                     'Group' => array(
-                        'Student' => array(
-                            'CourseMembership' => array(
-                                'Course',
-                                'EmailMessage' => array(
-                                    'conditions' => array(
-                                        'EmailMessage.read_time' => null
-                                    )
+                        'CourseMembership' => array(
+                            'Course',
+                            'EmailMessage' => array(
+                                'conditions' => array(
+                                    'EmailMessage.read_time' => null
                                 )
                             )
                         )
@@ -175,10 +173,8 @@ class AppController extends Controller {
             $email_messages = array();
             if(!empty($user) && !empty($user['Group'])) {
                 foreach($user['Group'] as $group) {
-                    foreach($group['Student'] as $student) {
-                        foreach($student['CourseMembership'] as $cm) {
-                            $email_messages = array_merge($email_messages, $cm['EmailMessage']);
-                        }
+                    foreach($group['CourseMembership'] as $cm) {
+                        $email_messages = array_merge($email_messages, $cm['EmailMessage']);
                     }
                 }
             }
