@@ -412,7 +412,6 @@ class StudentsController extends AppController {
                                         )
                                     )
                                 );
-
                                 // Check if student has a group assigned in course
                                 // Also check that $uid is assigned.
                                 // If not, don't link student to course
@@ -459,7 +458,7 @@ class StudentsController extends AppController {
 
                             if ( $sid ) {
                                 // Check if student linked to current course
-                                if ( empty($student_cm) ) {
+                                if ( empty($student_cm['CourseMembership']) ) {
                                     // Student not linked to current course
                                     // create CourseMembership
                                     $this->Student->CourseMembership->create();
