@@ -464,11 +464,11 @@ class StudentsController extends AppController {
                                     $this->Student->CourseMembership->create();
                                     $options = array(
                                         'course_id' => $course_id,
-                                        'student_id' => $sid
+                                        'student_id' => intval($sid)
                                     );
                                     // Check if uid set, add group linkage
                                     if ( $uid ) {
-                                        $options['group_id'] = $gid;
+                                        $options['group_id'] = intval($gid);
                                         $has_group = true;
                                     } 
                                     $this->Student->CourseMembership->save($options);
