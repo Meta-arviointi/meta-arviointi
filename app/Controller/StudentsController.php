@@ -412,7 +412,6 @@ class StudentsController extends AppController {
                                         )
                                     )
                                 );
-
                                 // Check if student has a group assigned in course
                                 // Also check that $uid is assigned.
                                 // If not, don't link student to course
@@ -459,17 +458,17 @@ class StudentsController extends AppController {
 
                             if ( $sid ) {
                                 // Check if student linked to current course
-                                if ( empty($student_cm) ) {
+                                if ( empty($student_cm['CourseMembership']) ) {
                                     // Student not linked to current course
                                     // create CourseMembership
                                     $this->Student->CourseMembership->create();
                                     $options = array(
                                         'course_id' => $course_id,
-                                        'student_id' => $sid
+                                        'student_id' => intval($sid)
                                     );
                                     // Check if uid set, add group linkage
                                     if ( $uid ) {
-                                        $options['group_id'] = $gid;
+                                        $options['group_id'] = intval($gid);
                                         $has_group = true;
                                     } 
                                     $this->Student->CourseMembership->save($options);
