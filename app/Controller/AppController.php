@@ -56,26 +56,32 @@ class AppController extends Controller {
     );
 
     public function beforeFilter() {
+
+        // PRINT COURSE SELECTION DROPDOWN LIST TO HEADERBAR
+        // Default is to print, override in controller to prevent print
+        $this->set('course_selection', true);
+
         // Take newest course
         // (no need to be logged in because we
         // need course_id in login())
         if ( !$this->Session->read('Course.course_id') ) {
-                $params = array(
-                    'order' => array('Course.starttime DESC')
-                );
-                $this->_course = $this->Course->find('first', $params);
-                // write course_id to session
+            $params = array(
+                'order' => array('Course.starttime DESC')
+            );
+            $this->_course = $this->Course->find('first', $params);
+            // if there were courses, write course_id to session
+            if ( !empty($this->_course) ) {
                 $this->Session->write('Course.course_id', $this->_course['Course']['id']);
-                //$this->redirect(array('course_id' => $this->_course['Course']['id']));
+            } else { // no courses, set course_id = 0 and don't print course_selection drop-down
+                $this->Session->write('Course.course_id', 0);
+                $this->set('course_selection', false);
+            }
         }
 
         $this->set('all_courses', 
             $this->Course->find('list', array('fields' => 'Course.name'))
         );
 
-        // PRINT COURSE SELECTION DROPDOWN LIST TO HEADERBAR
-        // Default is to print, override in controller to prevent print
-        $this->set('course_selection', true);
         
         $uid = $this->Auth->user('id');
         if ( !empty($uid) ) {
