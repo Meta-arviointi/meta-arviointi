@@ -45,8 +45,18 @@ class UsersController extends AppController {
                 if ( !empty($user['Group']) ) {
                     $this->Session->write('User.group_id', $user['Group']['id']);
                 }
-
-                $this->redirect($this->Auth->redirect());
+                $cid = $this->Session->read('Course.course_id');
+                if ( !empty($cid) ) {
+                    // if there is Course, redirect normally
+                    $this->redirect($this->Auth->redirect());
+                } else { // no course, redirect to admin
+                    $this->redirect(array(
+                            'admin' => true,
+                            'controller' => 'courses',
+                            'action' => 'index'
+                        )
+                    );
+                }
 
             } else {
                 $this->Session->setFlash(__('Käyttäjätunnus tai salasana väärin, yritä uudelleen.'));
@@ -237,7 +247,7 @@ class UsersController extends AppController {
             )
         );
         // If 'Course' is empty, return false
-        // If 'Course' has data, return false
+        // If 'Course' has data, return true
         return !empty($user_course['Course']);
     }
 
