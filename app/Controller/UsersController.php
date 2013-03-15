@@ -45,7 +45,8 @@ class UsersController extends AppController {
                 if ( !empty($user['Group']) ) {
                     $this->Session->write('User.group_id', $user['Group']['id']);
                 }
-                if ( !empty($this->Session->read('Course.course_id')) ) {
+                $cid = $this->Session->read('Course.course_id');
+                if ( !empty($cid) ) {
                     // if there is Course, redirect normally
                     $this->redirect($this->Auth->redirect());
                 } else { // no course, redirect to admin
