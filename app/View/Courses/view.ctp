@@ -254,7 +254,8 @@ echo $this->element('tab-menu', array('links' => $links));
     );
     
     echo '<table class="data-table" id="StudentsList">';
-    echo '    <tr>';
+    echo '<thead>';
+    echo '    <tr class="table-header">';
     echo '        <th></th>';
     echo '        <th>'. __('Etunimi') .'</th>';
     echo '        <th>'. __('Sukunimi') .'</th>';
@@ -263,6 +264,7 @@ echo $this->element('tab-menu', array('links' => $links));
     echo '        <th>'. __('Vastuuassistentti') .'</th>';
     if ( !empty($is_admin) ) { echo '        <th>'. __('Toiminnot') .'</th>';}
     echo '    </tr>';
+    echo '</thead>';
 
     if ( !empty($course_memberships) ) {
         foreach($course_memberships as $student) {
