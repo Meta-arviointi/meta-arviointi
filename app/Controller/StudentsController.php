@@ -155,6 +155,24 @@ class StudentsController extends AppController {
         }
     }
 
+    public function admin_delete_many() {
+        if ( $this->request->is('post') ) {
+            $succ = 0;
+            $err = 0;
+            foreach($this->request->data['Student'] as $student => $sid) {
+                $course_membership = $this->Student->CourseMembership->findAllByStudentId($sid);
+                // delete CourseMemberships (at the same time, actions and emails)
+                foreach($course_membership as $cm) {
+                    $this->Student->CourseMembership->delete($cm['CourseMembership']['id']);
+                }
+                $this->Student->delete($sid);
+                $succ++;
+            }
+            $this->Session->setFlash(__("$succ opiskelijaa poistettu järjestelmästä"));
+            $this->redirect($this->referer());
+        }
+    }
+    
     public function index_ajax() {
 
 

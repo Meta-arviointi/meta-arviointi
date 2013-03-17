@@ -30,7 +30,7 @@
         $('#DeleteManyCourseMemberships').click(function(e) {
             e.preventDefault;
             $('#DeleteManyCourseMembershipsForm').find("form").append(($('#EditStudentGroups').find('input[type="checkbox"]:checked')).attr('type','hidden'));
-            $('#DeleteManyCourseMembershipsForm').find("form").submit();            
+            $('#DeleteManyCourseMembershipsForm').find("form").submit();
         });
 
     });
