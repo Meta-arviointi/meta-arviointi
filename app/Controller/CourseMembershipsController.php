@@ -18,82 +18,48 @@ class CourseMembershipsController extends AppController {
 
         if ( $this->request->is('post') || $this->request->is('put') ) {
             $user_id = null;
+            // check if we have User set in request data
             if ( isset($this->request->data['CourseMembership']) ) {
                 if ( isset($this->request->data['CourseMembership']['User']) ) {
                     $user_id = $this->request->data['CourseMembership']['User'];    
                 }
                 unset($this->request->data['CourseMembership']);
             }
-            if ( $this->CourseMembership->saveAssociated($this->request->data) ) {
-                $sid = $this->CourseMembership->Student->id;
-                // Check if Student was selected for group
-                if ( !empty($user_id) ) {
-                    $group = $this->CourseMembership->Course->User->user_group($user_id, $cid);
-                    if ( !empty($group) ) {
-                        $gid = $group['Group']['id'];
-                        $result = $this->CourseMembership->Student->Group->link_student($gid, $sid);
-                        if ( !empty($result) ) {
-                            $this->Session->setFlash(__('Opiskelija lisätty kurssille'));
-                            $this->redirect(array(
-                                    'admin' => false,
-                                    'controller' => 'courses',
-                                    'action' => 'view',
-                                    $cid
-                                )
-                            );
-                        } else {
-                            $this->Session->setFlash(__('Opiskelijaa ei voitu liittää vastuuryhmään'));
-                            $this->redirect(array(
-                                    'admin' => false,
-                                    'controller' => 'courses',
-                                    'action' => 'view',
-                                    $cid
-                                )
-                            );
-                        }
-                    } else { // Create new group
-                        $result = $this->CourseMembership->Student->Group->save(array(
-                                'Group' => array(
-                                    'course_id' => $cid,
-                                    'user_id' => $user_id
-                                ),
-                                'Student' => array(
-                                    'id' => $sid
-                                )
-                            )
-                        );
-                        if ( !empty($result) ) {
-                            $this->Session->setFlash(__('Opiskelija lisätty kurssille'));
-                            $this->redirect(array(
-                                    'admin' => false,
-                                    'controller' => 'courses',
-                                    'action' => 'view',
-                                    $cid
-                                )
-                            );
-                        } else {
-                            $this->Session->setFlash(__('Opiskelijaa ei voitu liittää vastuuryhmään'));
-                            $this->redirect(array(
-                                    'admin' => false,
-                                    'controller' => 'courses',
-                                    'action' => 'view',
-                                    $cid
-                                )
-                            );
-                        }
-                    }
-                } else { // Student was linked to course, but not to a group
-                    $this->Session->setFlash(__('Opiskelija lisätty kurssille ilman vastuuryhmää'));
-                    $this->redirect(array(
-                            'admin' => false,
-                            'controller' => 'courses',
-                            'action' => 'view',
-                            $cid
-                        )
+            // assume group is set
+            $has_group = true;
+            // check if assistant group was selected
+            if ( !empty($user_id) ) {
+                // check if user has group already
+                $group = $this->CourseMembership->Course->User->user_group($user_id, $cid);
+                if ( !empty($group) ) {
+                    // user has group already, set $gid
+                    $gid = $group['Group']['id'];
+                    $this->request->data['Group'] = array('id' => $gid);
+                } else { // Create new group using saveAssosiated
+                    $this->request->data['Group'] = array(
+                        'course_id' => $cid,
+                        'user_id' => $user_id
                     );
                 }
+            } else { // Student was linked to course, but not to a group
+                $has_group = false;
+            }
+            if ( $this->CourseMembership->saveAssociated($this->request->data) ) {
+                $sid = $this->CourseMembership->Student->id;
+                if ( $has_group ) {
+                    $this->Session->setFlash(__('Opiskelija luotu kurssille ja vastuuryhmä asetettu'));
+                } else {
+                    $this->Session->setFlash(__('Opiskelija luotu kurssille ilman vastuuryhmää'));
+                }
+                $this->redirect(array(
+                        'admin' => false,
+                        'controller' => 'courses',
+                        'action' => 'view',
+                        $cid
+                    )
+                );
             } else {
-                $this->Session->setFlash(__('Opiskelijaa ei voitu liittää kurssille'));
+                $this->Session->setFlash(__('Opiskelijan luominen epäonnistui'));
                 $this->redirect(array(
                         'admin' => false,
                         'controller' => 'courses',
