@@ -24,7 +24,7 @@ class StudentsController extends AppController {
          * to match user's group in new course.
          */
         if ( $course_changed ) {
-            $this->Student->Group->User->set_new_group($this->Auth->user('id'), $course_id);
+            $this->Student->CourseMembership->Course->User->set_new_group($this->Auth->user('id'), $course_id);
         }
 
         $memberships = $this->Student->CourseMembership->find('all', array(
