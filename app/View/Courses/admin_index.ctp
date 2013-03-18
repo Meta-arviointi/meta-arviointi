@@ -54,6 +54,7 @@ echo $this->element('tab-menu', array('links' => $links));
         echo '            <th>'. __('Alkaa').'</th>';
         echo '            <th>'. __('Päättyy').'</th>';
         echo '            <th>'. __('Tila').'</th>';
+        if ( !empty($is_admin) ) { echo '        <th>'. __('Toiminnot') .'</th>';}
         echo '        </tr></thead>';
         echo '<tbody>';
 
@@ -85,6 +86,24 @@ echo $this->element('tab-menu', array('links' => $links));
         echo '<td>'.$this->Html->link($this->Time->Format('j.n.Y', $course['Course']['endtime']), 
             array('admin' => false, 'controller' => 'courses', 'action' => 'view', $course['Course']['id'])).'</td>';
         echo '<td>' . $status . '</td>';
+        if ( !empty($is_admin) ) {
+                echo '<td class="row-tools">'. $this->Html->link($this->Html->image('delete-action-icon.png',
+                            array('alt' => __('Poista kurssi'),
+                                'title' => __('Poista kurssi')
+                                )
+                            ),
+                            array(
+                                'admin' => true,
+                                'controller' => 'courses',
+                                'action' => 'delete',
+                                $course['Course']['id']
+                            ),
+                            array(
+                                'escape' => false,
+                            ),
+                            __('Haluatko varmasti poistaa kurssin? Kaikki kurssiin liittyvä tieto poistetaan (harjoitukset, toimenpiteet)!')
+                ). '</td>';
+            }
     }
     echo '</tbody></table>';
     echo $this->Html->link('Lisää uusi kurssi', array('action' => 'admin_add', 'controller' => 'courses'), array('class' => 'button modal-link', 'id' => 'add-course-link'));

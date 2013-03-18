@@ -3,7 +3,11 @@
 class Course extends AppModel {
 	public $name = 'Course';
 
-	public $hasMany = array('Group', 'Exercise', 'CourseMembership');
+	public $hasMany = array(
+        'CourseMembership' => array('dependent' => true),
+        'Exercise' => array('dependent' => true),
+        'Group' => array('dependent' => true)
+    );
 
 	public $hasAndBelongsToMany = array('User');
 

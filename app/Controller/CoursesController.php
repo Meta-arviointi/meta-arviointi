@@ -7,6 +7,7 @@ class CoursesController extends AppController {
      * attendees.
      */
     public function admin_index() {
+        $this->set('is_admin', $this->Auth->user('is_admin'));
         // don't print course_selection drop-down in admin_index
         $this->set('course_selection', false);
         $courses = $this->Course->get_courses(0);
@@ -199,6 +200,26 @@ class CoursesController extends AppController {
                 $this->Session->setFlash(__('Tuntematon kurssi'));
                 $this->redirect($this->referer());
             }
+        }
+    }
+
+    /**
+     * Deletes course and ALL related data. Only admin can perform delete.
+     * Related data include Exercises, CourseMemberships,
+     * Groups and HABTM relationship with User (table: courses_users).
+     */
+    public function admin_delete($cid) {
+        if ( $this->Auth->user('is_admin') ) {
+            if ( $this->Course->delete($cid, true) ) {
+                $this->Session->setFlash(__("Kurssi poistettu"));
+                $this->redirect($this->referer());
+            } else {
+                $this->Session->setFlash(__("Kurssin poisto epäonnistui"));
+                $this->redirect($this->referer());
+            }    
+        } else {
+            $this->Session->setFlash(__("Ei oikeuksia"));
+            $this->redirect($this->referer());
         }
     }
 
