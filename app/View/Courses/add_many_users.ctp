@@ -2,7 +2,7 @@
     $(document).ready(function() {
     	// Inlcude Student-checkboxes in form before submit
         $('#CourseAddManyUsersForm').submit(function() {
-            // #EditStudentGroups is in /courses/view !
+            // #SelectManyUsers is in /courses/view !
             $(this).append(($('#SelectManyUsers').find('input[type="checkbox"]:checked')).attr('type','hidden'));
             return true;
         });

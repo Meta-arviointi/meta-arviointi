@@ -1,7 +1,7 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $('.SelectManyLink').addClass('disabled');
-        var n = $('#EditStudentGroups').find('input[type="checkbox"]:checked').length;
+        var n = $('#SelectStudents').find('input[type="checkbox"]:checked').length;
         if ( n > 0 ) {
             $('.SelectManyLink').removeClass('disabled');
         }
@@ -15,10 +15,10 @@
             }
         });
 
-        $('#EditStudentGroups').find('input[type="checkbox"]').each(function() {
+        $('#SelectStudents').find('input[type="checkbox"]').each(function() {
             var chkbox = this;
             $(chkbox).click(function() {
-                var n = $('#EditStudentGroups').find('input[type="checkbox"]:checked').length;
+                var n = $('#SelectStudents').find('input[type="checkbox"]:checked').length;
                 if ( n == 0 ) {
                     $('.SelectManyLink').addClass('disabled');
                 } else {
@@ -27,10 +27,10 @@
             })
         });
 
-        $('#DeleteManyCourseMemberships').click(function(e) {
+        $('.post-button button').click(function(e) {
             e.preventDefault;
-            $('#DeleteManyCourseMembershipsForm').find("form").append(($('#EditStudentGroups').find('input[type="checkbox"]:checked')).attr('type','hidden'));
-            $('#DeleteManyCourseMembershipsForm').find("form").submit();
+            $(this).closest('div').find("form").append(($('#SelectStudents').find('input[type="checkbox"]:checked')).attr('type','hidden'));
+            $(this).closest('div').find("form").submit();
         });
 
     });
@@ -224,14 +224,14 @@ echo $this->element('tab-menu', array('links' => $links));
     echo $this->Form->end();
 
     echo '<hr class="row">';
-
+    echo '<div class="table-tools">';
     echo $this->Html->link(__('Liitä valitut opiskelijat vastuuryhmään'),array(
             'controller' => 'course_memberships',
             'action' => 'set_groups'
             ),
             array('class' => 'SelectManyLink button modal-link')
     );
-    echo '<div id="DeleteManyCourseMembershipsForm">';
+    echo '<div class="post-button" id="DeleteManyCourseMembershipsForm">';
     echo $this->Form->postButton(__('Poista opiskelijat kurssilta'),
             array(
                 'controller' => 'course_memberships',
@@ -244,7 +244,21 @@ echo $this->element('tab-menu', array('links' => $links));
     );
     echo '</div>';
 
-    echo $this->Form->create(false, array('id' => 'EditStudentGroups',
+    echo '<div class="post-button" id="SetQuitForm">';
+    echo $this->Form->postButton(__('Merkitse keskeyttäneeksi'),
+            array(
+                'controller' => 'course_memberships',
+                'action' => 'set_quits'
+            ),
+            array(
+                'class' => 'SelectManyLink button',
+                'id' => 'SetQuitsButton'
+            )
+    );
+    echo '</div>';
+    echo '</div>';
+
+    echo $this->Form->create(false, array('id' => 'SelectStudents',
             'url' => array('controller' => 'actions', 'action' => 'add'),
             'inputDefaults' => array(
                 'label' => false,
@@ -267,18 +281,18 @@ echo $this->element('tab-menu', array('links' => $links));
     echo '</thead>';
 
     if ( !empty($course_memberships) ) {
-        foreach($course_memberships as $student) {
+        foreach($course_memberships as $cm) {
             
             $student_group_id = 0;
-            if(!empty($student['Group'])) $student_group_id = $student['Group']['id'];
+            if(!empty($cm['Group'])) $student_group_id = $cm['Group']['id'];
 
             $has_actions = 'false';
-            if(count($student['Action']) > 0) {
+            if(count($cm['Action']) > 0) {
                 $has_actions = 'true';
             }
 
             $deadline = 'false';
-            foreach($student['Action'] as $ac) {
+            foreach($cm['Action'] as $ac) {
                 if(
                     isset($ac['deadline']) &&                   //Deadline is set
                     !empty($ac['deadline']) &&                  //Deadline is not empty
@@ -290,13 +304,13 @@ echo $this->element('tab-menu', array('links' => $links));
             }
 
             $has_unread_messages = 'false';
-            foreach($student['EmailMessage'] as $em) {
+            foreach($cm['EmailMessage'] as $em) {
                 if(empty($em['read_time'])) {
                     $has_unread_messages = 'true';
                 }
             }
 
-            $has_quit = (empty($student['quit_time'])) ? 'false' : 'true';
+            $has_quit = (empty($cm['quit_time'])) ? 'false' : 'true';
 
             echo '<tr class="table-content" 
                 data-group="'.$student_group_id.'" 
@@ -304,33 +318,33 @@ echo $this->element('tab-menu', array('links' => $links));
                 data-deadline="' . $deadline . '"
                 data-messages="' . $has_unread_messages . '"
                 data-quit="' . $has_quit . '">';
-            // NOTE in below checkbox $student['id'] is CourseMembership.ID, not Student.ID!!!
+            // NOTE in below checkbox $cm['id'] is CourseMembership.ID, not Student.ID!!!
             // format is array( 'Student' => array(CM.ID => Student.id))
-            echo '<td>' . $this->Form->checkbox('Student.'.$student['id'], array(
-                                'value' => $student['Student']['id'],
+            echo '<td>' . $this->Form->checkbox('Student.'.$cm['id'], array(
+                                'value' => $cm['Student']['id'],
                                 'hiddenField' => false
                             )
                         ) . '</td>';
-            echo '<td>'. $this->Html->link(__($student['Student']['first_name']),
+            echo '<td>'. $this->Html->link(__($cm['Student']['first_name']),
                 array(
                     'admin' => false,
                     'controller' => 'course_memberships',
                     'action' => 'view',
-                    $student['id'] // CourseMembership ID
+                    $cm['id'] // CourseMembership ID
                 )
             ).'</td>';
-            echo '<td>'. $this->Html->link(__($student['Student']['last_name']),
+            echo '<td>'. $this->Html->link(__($cm['Student']['last_name']),
                 array(
                     'admin' => false,
                     'controller' => 'course_memberships',
                     'action' => 'view',
-                    $student['id'] // CourseMembership ID
+                    $cm['id'] // CourseMembership ID
                 )
             ).'</td>';
-            echo '<td>'. $student['Student']['student_number'] .'</td>';
-            echo '<td>'. $student['Student']['email'] .'</td>';
-            $assistant = isset($student['Group']['user_id']) ? 
-                $users_list[$student['Group']['user_id']] : '';
+            echo '<td>'. $cm['Student']['student_number'] .'</td>';
+            echo '<td>'. $cm['Student']['email'] .'</td>';
+            $assistant = isset($cm['Group']['user_id']) ? 
+                $users_list[$cm['Group']['user_id']] : '';
             echo '<td>'. $assistant .'</td>';
             if ( !empty($is_admin) ) {
                 echo '<td class="row-tools">'. $this->Html->link($this->Html->image('edit-action-icon.png',
@@ -341,7 +355,7 @@ echo $this->element('tab-menu', array('links' => $links));
                             array(
                                 'controller' => 'students',
                                 'action' => 'edit',
-                                $student['Student']['id']
+                                $cm['Student']['id']
                             ),
                             array(
                                 'escape' => false,
@@ -356,7 +370,7 @@ echo $this->element('tab-menu', array('links' => $links));
                             array(
                                 'controller' => 'course_memberships',
                                 'action' => 'delete',
-                                $student['id']
+                                $cm['id']
                             ),
                             array(
                                 'escape' => false

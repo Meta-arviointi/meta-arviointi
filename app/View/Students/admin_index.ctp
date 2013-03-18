@@ -74,7 +74,7 @@ echo $this->element('tab-menu', array('links' => $links));
             )
     );
 
-    echo '<div id="DeleteManyStudentsForm">';
+    echo '<div class="post-button" id="DeleteManyStudentsForm">';
     echo $this->Form->postButton(__('Poista opiskelijat järjestelmästä'),
             array(
                 'controller' => 'students',

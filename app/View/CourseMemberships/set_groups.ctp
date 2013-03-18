@@ -2,8 +2,8 @@
     $(document).ready(function() {
         // Inlcude Student-checkboxes in form before submit
         $('#UserSetGroupsForm').submit(function() {
-            // #EditStudentGroups is in /courses/view !
-            $(this).append(($('#EditStudentGroups').find('input[type="checkbox"]:checked')).attr('type','hidden'));
+            // #SelectStudents is in /courses/view !
+            $(this).append(($('#SelectStudents').find('input[type="checkbox"]:checked')).attr('type','hidden'));
             return true;
         });
 
