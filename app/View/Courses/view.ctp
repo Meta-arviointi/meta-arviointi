@@ -170,7 +170,7 @@ echo $this->element('tab-menu', array('links' => $links));
             ),
             array('class' => 'button')
         );    
-    } else {
+    } else if ( !empty($exercises) ) {
         echo $this->Html->link(__('Muokkaa harjoituksia'), array(
                 $course_id,
                 '?' => array('edit' => 'exercises')
