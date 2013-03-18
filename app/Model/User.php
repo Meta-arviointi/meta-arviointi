@@ -43,10 +43,12 @@ class User extends AppModel {
             'email' => array(
                 'rule' => '/^.+@.+$/i',
                 'required' => true,
+                'on' => 'create',
                 'message' => 'Sähköposti on puutteellinen'
             ),
             'required' => array(
                 'rule' => array('notEmpty'),
+                'on' => 'create',
                 'message' => 'Sähköposti on pakollinen'
             )
         ),
@@ -201,6 +203,21 @@ class User extends AppModel {
             // No Group assigned to user in current course.
             // Delete group_id from session, so no old values remain.
             CakeSession::delete('User.group_id');
+        }
+    }
+
+    public function random_password($length = 8) {
+        if ( $length >= 8 ) {
+            $alphabet = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789";
+            $pass = array(); //remember to declare $pass as an array
+            $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+            for ($i = 0; $i < $length; $i++) {
+                $n = rand(0, $alphaLength);
+                $pass[] = $alphabet[$n];
+            }
+            return implode($pass); //turn the array into a string    
+        } else {
+            return false;
         }
     }
 }
