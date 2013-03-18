@@ -211,6 +211,10 @@ class CoursesController extends AppController {
     public function admin_delete($cid) {
         if ( $this->Auth->user('is_admin') ) {
             if ( $this->Course->delete($cid, true) ) {
+                $session_cid = $this->Session->read('Course.course_id');
+                if ( $session_cid == $cid ) {
+                    $this->Session->delete('Course.course_id');
+                }
                 $this->Session->setFlash(__("Kurssi poistettu"));
                 $this->redirect($this->referer());
             } else {
