@@ -1,12 +1,12 @@
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#CreateManyLink').addClass('disabled');
+        $('.SelectManyLink').addClass('disabled');
         var n = $('#SelectManyCourseMemberships').find('input[type="checkbox"]:checked').length;
         if ( n > 0 ) {
-            $('#CreateManyLink').removeClass('disabled');
+            $('.SelectManyLink').removeClass('disabled');
         }
 
-        $('#CreateManyLink').click(function(event) {
+        $('.SelectManyLink').click(function(event) {
             event.preventDefault();
             if ( $(this).hasClass('disabled')) {
                 return false
@@ -20,11 +20,19 @@
             $(chkbox).click(function() {
                 var n = $('#SelectManyCourseMemberships').find('input[type="checkbox"]:checked').length;
                 if ( n == 0 ) {
-                    $('#CreateManyLink').addClass('disabled');
+                    $('.SelectManyLink').addClass('disabled');
                 } else {
-                    $('#CreateManyLink').removeClass('disabled');
+                    $('.SelectManyLink').removeClass('disabled');
                 }
             })
+        });
+
+        $('#DeleteManyStudents').click(function(e) {
+            e.preventDefault;
+            if ( confirm('Haluatko varmasti poistaa opiskelijat lopullisesti järjestelmästä? Kaikki opiskelijaan liittyvät tiedot (esim. toimenpiteet) poistetaan!') ) {
+                $('#DeleteManyStudentsForm').find("form").append(($('#SelectManyCourseMemberships').find('input[type="checkbox"]:checked')).attr('type','hidden'));
+                $('#DeleteManyStudentsForm').find("form").submit();   
+            }
         });
 
     });
@@ -55,10 +63,31 @@ echo $this->element('tab-menu', array('links' => $links));
 
     <hr class="row">
     <?php 
-     /* DEBUG */
-    echo '<pre>';
-    //debug($students[1]);
-    echo '</pre>';
+    
+    echo '<div class="table-tools">';
+    echo $this->Html->link(__('Lisää valitut kurssille'),array(
+            'controller' => 'course_memberships',
+            'action' => 'create_many'
+            ),
+            array('class' => 'SelectManyLink button modal-link',
+                'id' => 'CreateManyCourseMemberships'
+            )
+    );
+
+    echo '<div class="post-button" id="DeleteManyStudentsForm">';
+    echo $this->Form->postButton(__('Poista opiskelijat järjestelmästä'),
+            array(
+                'controller' => 'students',
+                'action' => 'delete_many'
+            ),
+            array(
+                'class' => 'SelectManyLink button',
+                'id' => 'DeleteManyStudents'
+            )
+            
+    );
+    echo '</div>';
+    echo '</div>';
     echo $this->Form->create(false, array('id' => 'SelectManyCourseMemberships',
             'url' => array('controller' => 'actions', 'action' => 'add'),
             'inputDefaults' => array(
@@ -66,14 +95,6 @@ echo $this->element('tab-menu', array('links' => $links));
                 'div' => false
             )
         )
-    );
-    echo $this->Html->link(__('Lisää valitut kurssille'),array(
-            'controller' => 'course_memberships',
-            'action' => 'create_many'
-            ),
-            array('class' => 'button modal-link',
-                'id' => 'CreateManyLink'
-            )
     );
 ?>
     <table class="data-table" id="StudentsListAdmin">
@@ -90,73 +111,78 @@ echo $this->element('tab-menu', array('links' => $links));
         </thead>
         <tbody>
         <?php
-        foreach( $students as $student ) {
-            $student_courses = array();
-            foreach($student['CourseMembership'] as $cm) {
-                $student_courses[] = $cm['course_id'];
-            }
+        if ( !empty($students) ) {
+            foreach( $students as $student ) {
+                $student_courses = array();
+                foreach($student['CourseMembership'] as $cm) {
+                    $student_courses[] = $cm['course_id'];
+                }
 
-            echo '<tr ';
-            echo 'data-course="' . implode(",", $student_courses) . '"';
-            echo '>';
-            echo '<td>' . $this->Form->checkbox('Student.'.$student['Student']['id'], array(
-                                'value' => $student['Student']['id'],
-                                'hiddenField' => false
+                echo '<tr ';
+                echo 'data-course="' . implode(",", $student_courses) . '"';
+                echo '>';
+                echo '<td>' . $this->Form->checkbox('Student.'.$student['Student']['id'], array(
+                                    'value' => $student['Student']['id'],
+                                    'hiddenField' => false
+                                )
+                            ) . '</td>';
+                echo '<td>'. $this->Html->link(__($student['Student']['last_name']),
+                    array(
+                        'admin' => false,
+                        'controller' => 'students',
+                        'action' => 'edit',
+                        $student['Student']['id']
+                    ),
+                    array('class' => 'modal-link')
+                ).'</td>';
+                echo '<td>'. $this->Html->link(__($student['Student']['first_name']),
+                    array(
+                        'admin' => false,
+                        'controller' => 'students',
+                        'action' => 'edit',
+                        $student['Student']['id']
+                    ),
+                    array('class' => 'modal-link')
+                ).'</td>';
+                echo '<td>'. $student['Student']['student_number'].'</td>';
+                echo '<td>'. $student['Student']['email'].'</td>';
+                echo '<td>';
+                if ( count($student['CourseMembership']) > 1 ) {
+                    foreach( $student['CourseMembership'] as $cm ) {
+                        $course_name = $all_courses[$cm['course_id']];
+                        echo $this->Html->link($course_name, array(
+                                'admin' => false,
+                                'controller' => 'course_memberships',
+                                'action' => 'view',
+                                $cm['id']
                             )
-                        ) . '</td>';
-            echo '<td>'. $this->Html->link(__($student['Student']['last_name']),
-                array(
-                    'admin' => false,
-                    'controller' => 'students',
-                    'action' => 'edit',
-                    $student['Student']['id']
-                ),
-                array('class' => 'modal-link')
-            ).'</td>';
-            echo '<td>'. $this->Html->link(__($student['Student']['first_name']),
-                array(
-                    'admin' => false,
-                    'controller' => 'students',
-                    'action' => 'edit',
-                    $student['Student']['id']
-                ),
-                array('class' => 'modal-link')
-            ).'</td>';
-            echo '<td>'. $student['Student']['student_number'].'</td>';
-            echo '<td>'. $student['Student']['email'].'</td>';
-            echo '<td>';
-            if ( count($student['CourseMembership']) > 1 ) {
-                foreach( $student['CourseMembership'] as $cm ) {
-                    $course_name = $all_courses[$cm['course_id']];
-                    echo $this->Html->link($course_name, array(
-                            'admin' => false,
-                            'controller' => 'course_memberships',
-                            'action' => 'view',
-                            $cm['id']
-                        )
-                    );
-                    echo '<br/>';
-                }
-            } else { // only one OR zero CourseMembership
-                if ( !empty($student['CourseMembership']) ) {
-                    $cm = $student['CourseMembership'][0];
-                    $course_name = $all_courses[$cm['course_id']];
-                    echo $this->Html->link($course_name, array(
-                            'admin' => false,
-                            'controller' => 'course_memberships',
-                            'action' => 'view',
-                            $cm['id']
-                        )
-                    );
-                } else {
-                    echo __('Ei kursseilla');
-                }
+                        );
+                        echo '<br/>';
+                    }
+                } else { // only one OR zero CourseMembership
+                    if ( !empty($student['CourseMembership']) ) {
+                        $cm = $student['CourseMembership'][0];
+                        $course_name = $all_courses[$cm['course_id']];
+                        echo $this->Html->link($course_name, array(
+                                'admin' => false,
+                                'controller' => 'course_memberships',
+                                'action' => 'view',
+                                $cm['id']
+                            )
+                        );
+                    } else {
+                        echo __('Ei kursseilla');
+                    }
 
+                }
+                echo '</td>';
+                if ( !empty($admin) ) {
+                }
+                echo '</tr>';
             }
-            echo '</td>';
-            if ( !empty($admin) ) {
-            }
-            echo '</tr>';
+        } else {
+            $colspan = $admin ? 7 : 6;
+            echo '<tr><td class="empty" colspan="'.$colspan.'">' . __('Ei opiskelijoita') . '</td><tr>';
         }
          
         ?>

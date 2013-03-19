@@ -4,6 +4,12 @@ class StudentsController extends AppController {
     public $name = 'Students';
 
     public function index($course_id = 0) {
+        $sess_cid = $this->Session->read('Course.course_id');
+        // If course_id is 0 in Session, there are no courses in system, redirect to admin
+        if ( !$sess_cid ) {
+            $this->Session->setFlash(__('Lisää kurssi järjestelmään'));
+            $this->redirect(array('admin' => true, 'controller' => 'courses'));
+        }
         // Flag variable to indicate if course is changed
         $course_changed = false;
 
@@ -155,6 +161,24 @@ class StudentsController extends AppController {
         }
     }
 
+    public function admin_delete_many() {
+        if ( $this->request->is('post') ) {
+            $succ = 0;
+            $err = 0;
+            foreach($this->request->data['Student'] as $student => $sid) {
+                $course_membership = $this->Student->CourseMembership->findAllByStudentId($sid);
+                // delete CourseMemberships (at the same time, actions and emails)
+                foreach($course_membership as $cm) {
+                    $this->Student->CourseMembership->delete($cm['CourseMembership']['id']);
+                }
+                $this->Student->delete($sid);
+                $succ++;
+            }
+            $this->Session->setFlash(__("$succ opiskelijaa poistettu järjestelmästä"));
+            $this->redirect($this->referer());
+        }
+    }
+    
     public function index_ajax() {
 
 

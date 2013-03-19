@@ -5,8 +5,13 @@ class CourseMembership extends AppModel {
     
     public $belongsTo = array('Course', 'Student', 'Group');
     public $hasMany = array(
-        'Action',
-        'EmailMessage' => array('order' => 'EmailMessage.sent_time DESC')
+        'Action' => array(
+            'dependent' => true
+        ),
+        'EmailMessage' => array(
+            'dependent' => true,
+            'order' => 'EmailMessage.sent_time DESC',
+        )
     );
 
     public function set_group($cmid, $gid) {
@@ -20,7 +25,7 @@ class CourseMembership extends AppModel {
         }
     }
     
-    public function unsert_group($cmid) {
+    public function unset_group($cmid) {
         if ( !empty($cmid) ) {
             $this->id = $cmid;
             if ( $this->exists() ) {

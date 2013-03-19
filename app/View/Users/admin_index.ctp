@@ -93,68 +93,73 @@ echo $this->element('tab-menu', array('links' => $links));
         </thead>
         <tbody>
             <?php
-            foreach($users as $user) {
-                $user_courses = array();
-                foreach($user['Course'] as $c) {
-                    array_push($user_courses, $c['id']);
-                }
-                echo '<tr ';
-                echo 'data-course="' . implode(",", $user_courses) . '"';
-                echo '>';
-                echo '<td>' . $this->Form->checkbox('User.'.$user['User']['id'], array(
-                                    'value' => $user['User']['id'],
-                                    'hiddenField' => false
-                                )
-                            ) . '</td>';
-                echo '<td>'.$this->Html->link($user['User']['last_name'], 
-                    array('admin' => false,
-                        'controller' => 'users',
-                        'action' => 'view',
-                        $user['User']['id']
-                        )
-                    ).'</td>';
-                echo '<td>'.$this->Html->link($user['User']['first_name'], 
-                    array('admin' => false,
-                         'controller' => 'users',
-                         'action' => 'view',
-                         $user['User']['id']
-                         )
-                    ).'</td>';
-                echo '<td>'.$user_logins[$user['User']['id']].'</td>';
-
-                echo '<td>'.$this->Html->link($user['User']['email'], 
-                    array('admin' => false, 
-                        'controller' => 'users', 
-                        'action' => 'view', 
-                        $user['User']['id']
-                        )
-                    ).'</td>';
-
-                echo '<td>';
-                foreach($user['Course'] as $userc) {
-                    echo $this->Html->link($userc['name'].'<br />',
-                    array('admin' => false, 'controller' => 'courses', 'action' => 'view', $userc['id']),
-                    array('escape' => false));
-                }
-                echo '</td>';
-
-                if ( $admin ) {
-                    echo '<td>'. $this->Html->link($this->Html->image('edit-action-icon.png',
-                            array('alt' => __('Muokkaa'), 'title' => __('Muokkaa'))),
-                            array(
-                                'admin' => false,
-                                'controller' => 'users',
-                                'action' => 'edit',
-                                $user['User']['id']
-                            ),
-                            array(
-                                'id' => 'edit-user-modal',
-                                'class' => 'modal-link',
-                                'escape' => false
+            if ( !empty($users) ) {
+                foreach($users as $user) {
+                    $user_courses = array();
+                    foreach($user['Course'] as $c) {
+                        array_push($user_courses, $c['id']);
+                    }
+                    echo '<tr ';
+                    echo 'data-course="' . implode(",", $user_courses) . '"';
+                    echo '>';
+                    echo '<td>' . $this->Form->checkbox('User.'.$user['User']['id'], array(
+                                        'value' => $user['User']['id'],
+                                        'hiddenField' => false
+                                    )
+                                ) . '</td>';
+                    echo '<td>'.$this->Html->link($user['User']['last_name'], 
+                        array('admin' => false,
+                            'controller' => 'users',
+                            'action' => 'view',
+                            $user['User']['id']
                             )
-                    ); '</td>';    
-                }
-                
+                        ).'</td>';
+                    echo '<td>'.$this->Html->link($user['User']['first_name'], 
+                        array('admin' => false,
+                             'controller' => 'users',
+                             'action' => 'view',
+                             $user['User']['id']
+                             )
+                        ).'</td>';
+                    echo '<td>'.$user_logins[$user['User']['id']].'</td>';
+
+                    echo '<td>'.$this->Html->link($user['User']['email'], 
+                        array('admin' => false, 
+                            'controller' => 'users', 
+                            'action' => 'view', 
+                            $user['User']['id']
+                            )
+                        ).'</td>';
+
+                    echo '<td>';
+                    foreach($user['Course'] as $userc) {
+                        echo $this->Html->link($userc['name'].'<br />',
+                        array('admin' => false, 'controller' => 'courses', 'action' => 'view', $userc['id']),
+                        array('escape' => false));
+                    }
+                    echo '</td>';
+
+                    if ( $admin ) {
+                        echo '<td>'. $this->Html->link($this->Html->image('edit-action-icon.png',
+                                array('alt' => __('Muokkaa'), 'title' => __('Muokkaa'))),
+                                array(
+                                    'admin' => false,
+                                    'controller' => 'users',
+                                    'action' => 'edit',
+                                    $user['User']['id']
+                                ),
+                                array(
+                                    'id' => 'edit-user-modal',
+                                    'class' => 'modal-link',
+                                    'escape' => false
+                                )
+                        ); '</td>';    
+                    }
+                    
+                }    
+            } else {
+                $colspan = $admin ? 7 : 6;
+                echo '<tr><td class="empty" colspan="'.$colspan.'">' . __('Ei assistentteja') . '</td><tr>';
             }
             ?>
         </tbody>

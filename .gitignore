@@ -9,6 +9,7 @@ app/tmp/sessions/*
 app/tmp/tests/*
 app/Config/database.php
 app/Config/email.php
+app/Config/core.php
 !empty
 
 # Näitä ei haluta versionhallintaan!

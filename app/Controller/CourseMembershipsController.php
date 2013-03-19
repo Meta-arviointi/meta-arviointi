@@ -502,16 +502,20 @@ class CourseMembershipsController extends AppController {
     }
 
 
-    public function set_quit($id) {
+    public function set_quit($id, $redirect = true) {
         $this->CourseMembership->read(null, $id);
         $this->CourseMembership->set(array(
-            'quit_time' => date('Y-m-d H:i:s'),
+            'quit_time' => date('Y-m-d H:i:sO'),
             'quit_id'   => $this->Auth->user('id')
         ));
         if($this->CourseMembership->save()) {
             $this->Session->setFlash(__('Opiskelija merkitty keskeyttäneeksi.'));
         }
-        $this->redirect(array('action' => 'view', $id));
+        if ( $redirect) {
+            $this->redirect(array('action' => 'view', $id));
+        } else {
+            return $id;
+        }
     }
 
     public function unset_quit($id) {
@@ -524,6 +528,27 @@ class CourseMembershipsController extends AppController {
             $this->Session->setFlash(__('Keskeyttämismerkintä poistettu.'));
         }
         $this->redirect(array('action' => 'view', $id));
+    }
+
+    /**
+     * Set multiple quits (called from courses/view)
+     */
+    public function set_quits() {
+        if ( $this->request->is('post') ) {
+            $succ = 0;
+            $err = 0;
+            foreach($this->request->data['Student'] as $cmid => $sid) {
+                if ( $this->CourseMembership->exists($cmid) ) {
+                    $this->set_quit($cmid, false);
+                    $succ++;
+                } else {
+                    // Unknown membership
+                    $err++;
+                }
+            }
+            $this->Session->setFlash("$succ opiskelijaa merkitty keskeyttäneeksi");
+            $this->redirect($this->referer());
+        }
     }
 
     /**
