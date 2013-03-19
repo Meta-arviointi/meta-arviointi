@@ -111,73 +111,78 @@ echo $this->element('tab-menu', array('links' => $links));
         </thead>
         <tbody>
         <?php
-        foreach( $students as $student ) {
-            $student_courses = array();
-            foreach($student['CourseMembership'] as $cm) {
-                $student_courses[] = $cm['course_id'];
-            }
+        if ( !empty($students) ) {
+            foreach( $students as $student ) {
+                $student_courses = array();
+                foreach($student['CourseMembership'] as $cm) {
+                    $student_courses[] = $cm['course_id'];
+                }
 
-            echo '<tr ';
-            echo 'data-course="' . implode(",", $student_courses) . '"';
-            echo '>';
-            echo '<td>' . $this->Form->checkbox('Student.'.$student['Student']['id'], array(
-                                'value' => $student['Student']['id'],
-                                'hiddenField' => false
+                echo '<tr ';
+                echo 'data-course="' . implode(",", $student_courses) . '"';
+                echo '>';
+                echo '<td>' . $this->Form->checkbox('Student.'.$student['Student']['id'], array(
+                                    'value' => $student['Student']['id'],
+                                    'hiddenField' => false
+                                )
+                            ) . '</td>';
+                echo '<td>'. $this->Html->link(__($student['Student']['last_name']),
+                    array(
+                        'admin' => false,
+                        'controller' => 'students',
+                        'action' => 'edit',
+                        $student['Student']['id']
+                    ),
+                    array('class' => 'modal-link')
+                ).'</td>';
+                echo '<td>'. $this->Html->link(__($student['Student']['first_name']),
+                    array(
+                        'admin' => false,
+                        'controller' => 'students',
+                        'action' => 'edit',
+                        $student['Student']['id']
+                    ),
+                    array('class' => 'modal-link')
+                ).'</td>';
+                echo '<td>'. $student['Student']['student_number'].'</td>';
+                echo '<td>'. $student['Student']['email'].'</td>';
+                echo '<td>';
+                if ( count($student['CourseMembership']) > 1 ) {
+                    foreach( $student['CourseMembership'] as $cm ) {
+                        $course_name = $all_courses[$cm['course_id']];
+                        echo $this->Html->link($course_name, array(
+                                'admin' => false,
+                                'controller' => 'course_memberships',
+                                'action' => 'view',
+                                $cm['id']
                             )
-                        ) . '</td>';
-            echo '<td>'. $this->Html->link(__($student['Student']['last_name']),
-                array(
-                    'admin' => false,
-                    'controller' => 'students',
-                    'action' => 'edit',
-                    $student['Student']['id']
-                ),
-                array('class' => 'modal-link')
-            ).'</td>';
-            echo '<td>'. $this->Html->link(__($student['Student']['first_name']),
-                array(
-                    'admin' => false,
-                    'controller' => 'students',
-                    'action' => 'edit',
-                    $student['Student']['id']
-                ),
-                array('class' => 'modal-link')
-            ).'</td>';
-            echo '<td>'. $student['Student']['student_number'].'</td>';
-            echo '<td>'. $student['Student']['email'].'</td>';
-            echo '<td>';
-            if ( count($student['CourseMembership']) > 1 ) {
-                foreach( $student['CourseMembership'] as $cm ) {
-                    $course_name = $all_courses[$cm['course_id']];
-                    echo $this->Html->link($course_name, array(
-                            'admin' => false,
-                            'controller' => 'course_memberships',
-                            'action' => 'view',
-                            $cm['id']
-                        )
-                    );
-                    echo '<br/>';
-                }
-            } else { // only one OR zero CourseMembership
-                if ( !empty($student['CourseMembership']) ) {
-                    $cm = $student['CourseMembership'][0];
-                    $course_name = $all_courses[$cm['course_id']];
-                    echo $this->Html->link($course_name, array(
-                            'admin' => false,
-                            'controller' => 'course_memberships',
-                            'action' => 'view',
-                            $cm['id']
-                        )
-                    );
-                } else {
-                    echo __('Ei kursseilla');
-                }
+                        );
+                        echo '<br/>';
+                    }
+                } else { // only one OR zero CourseMembership
+                    if ( !empty($student['CourseMembership']) ) {
+                        $cm = $student['CourseMembership'][0];
+                        $course_name = $all_courses[$cm['course_id']];
+                        echo $this->Html->link($course_name, array(
+                                'admin' => false,
+                                'controller' => 'course_memberships',
+                                'action' => 'view',
+                                $cm['id']
+                            )
+                        );
+                    } else {
+                        echo __('Ei kursseilla');
+                    }
 
+                }
+                echo '</td>';
+                if ( !empty($admin) ) {
+                }
+                echo '</tr>';
             }
-            echo '</td>';
-            if ( !empty($admin) ) {
-            }
-            echo '</tr>';
+        } else {
+            $colspan = $admin ? 7 : 6;
+            echo '<tr><td class="empty" colspan="'.$colspan.'">' . __('Ei opiskelijoita') . '</td><tr>';
         }
          
         ?>
