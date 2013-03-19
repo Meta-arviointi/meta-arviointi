@@ -4,6 +4,12 @@ class StudentsController extends AppController {
     public $name = 'Students';
 
     public function index($course_id = 0) {
+        $sess_cid = $this->Session->read('Course.course_id');
+        // If course_id is 0 in Session, there are no courses in system, redirect to admin
+        if ( !$sess_cid ) {
+            $this->Session->setFlash(__('Lisää kurssi järjestelmään'));
+            $this->redirect(array('admin' => true, 'controller' => 'courses'));
+        }
         // Flag variable to indicate if course is changed
         $course_changed = false;
 
