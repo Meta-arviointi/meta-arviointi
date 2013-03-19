@@ -44,11 +44,7 @@ class CoursesController extends AppController {
                         'conditions' => array(
                             'CourseMembership.course_id' => $cid
                         ),
-                        'Student' => array(
-                            'order' => array(
-                                'Student.last_name' => 'ASC'
-                            )
-                        ),
+                        'Student',
                         'Group',
                         'Action',
                         'EmailMessage'
