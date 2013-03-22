@@ -158,7 +158,7 @@ class CourseMembershipsController extends AppController {
                 $this->CourseMembership->Group->create();
                 $this->CourseMembership->Group->save(array(
                     'course_id' => $cid, 
-                    'user_id' => $uid
+                    'user_id' => $user_id
                     )
                 );
                 // set $gid
