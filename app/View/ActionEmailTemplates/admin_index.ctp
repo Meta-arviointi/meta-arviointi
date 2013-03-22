@@ -37,6 +37,9 @@ echo $this->element('tab-menu', array('links' => $links));
 
 			<dt>{#selite}</dt>
 			<dd>Toimenpiteeseen kirjoitettu seliteteksti</dd>
+
+            <dt>{#aikaraja}</dt>
+            <dd>Toimenpiteessä määritelty uusi aikaraja</dd>
 		</dl>
 	</div>
 </div>
