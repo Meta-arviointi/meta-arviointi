@@ -57,6 +57,25 @@
 			$this->redirect('/');
 		}
 
+		public function send_pw($email, $password, $name) {
+			App::uses('CakeEmail', 'Network/Email');
+			$Email = new CakeEmail();
+			$Email->config(array(
+					'host' => 'smtp.uta.fi',
+					'port' => 25,
+					'transport' => 'Smtp',
+					'from' => array('meta-arviointi@sis.uta.fi' => 'Meta-arviointi'),
+					'to' => $email,
+					'subject' => __('Meta-arviointi - Unohtunut salasana'),
+					'template' => 'forgotten_password'
+				)
+			);
+			// set vars
+			$Email->viewVars(array('name' => $name, 'password' => $password));
+			$Email->send();
+		}
+
+
 
 		private function _flatten_GP_array(array $var,$prefix = false){
 			$return = array();
