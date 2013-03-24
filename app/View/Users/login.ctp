@@ -9,6 +9,10 @@
             echo $this->Form->input('password', array('label' => 'Salasana:'));
         ?>
         </fieldset>
-    <?php echo $this->Form->end(__('Login')); ?>
+    <?php    echo $this->Html->link(__('Salasana unohtunut?'),
+                array('action' => 'forgotten_password'),
+                array('class' => 'modal-link')
+            );
+     echo $this->Form->end(__('Login')); ?>
     </div>
 </div>

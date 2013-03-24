@@ -5,7 +5,7 @@ class UsersController extends AppController {
 
     public function beforeFilter() {
         parent::beforeFilter();
-        $this->Auth->allow(array('login', 'logout'));
+        $this->Auth->allow(array('login', 'logout', 'forgotten_password'));
     }
 
     public function login() {
@@ -76,7 +76,71 @@ class UsersController extends AppController {
         $this->redirect($this->Auth->logout());
     }
 
+    /**
+     * Create random password for $uid.
+     * Saves users new password to database.
+     * @return new password
+     */
+    public function create_new_password($uid) {
+        if ( !empty($uid) ) {
+            $this->User->id = $uid;
+            if ( $this->User->exists() ) {
+                $new_pw = $this->User->random_password();
+                //debug($new_pw);
+                $this->User->saveField('password', $new_pw, false);
+                return $new_pw;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 
+    public function forgotten_password($uid = null) {
+        if ( $this->request->is('post') || !empty($uid) ) {
+            $this->User->contain();
+            $user = null;
+            // form
+            if ( $this->request->is('post') ) {
+                $user = $this->User->findByEmail($this->request->data['User']['email']);    
+            } else if ( !empty($uid) ) { // $uid
+                // normal GET request, where admin has requested new password for user
+                if ( $this->Auth->user('is_admin') ) {
+                    $user = $this->User->findById($uid);    
+                } else { // user is not admin, bad request
+                    $this->Session->setFlash(__('Ei oikeuksia'));
+                    $this->redirect($this->referer());
+                }
+            }
+            if ( !empty($user) ) {
+                // User is set, proceed with creating new password
+                $uid = $user['User']['id'];
+                $email = $user['User']['email'];
+                $name = $user['User']['name'];
+                // Create and save new pw
+                $new_pw = $this->create_new_password($uid);
+                if ( $new_pw ) {
+                    // send new pw as email to user
+                    App::import('Controller', 'EmailMessages');
+                    $e = new EmailMessagesController();
+                    $e->send_pw($email, $new_pw, $name);
+
+                    // redirect
+                    $this->Session->setFlash(__('Uusi salasana lähetetty osoitteeseen: '). $email);
+                    $this->redirect($this->referer());
+                } else {
+                    $this->Session->setFlash(__('Salasanan luonti epäonnistui'));
+                    $this->redirect($this->referer());
+                }
+            } else {
+                $this->Session->setFlash(__('Tuntematon käyttäjä'));
+            }
+        } else {
+            // Normal request. Renders a form for password reset.
+            // Used from login screen
+        }
+    }
 
 
     public function admin_index() {
@@ -137,13 +201,20 @@ class UsersController extends AppController {
     }
 
     public function edit($id = null) {
+        // set self variable 
+        $this->set('self', false);
+        if ( $id == $this->Auth->user('id') ) {
+            $this->set('self', true);
+        }
         if ( $this->request->is('post') || $this->request->is('put') ) {
             $this->set('user', $this->User->findById($id));
+            $this->set('print_back', false);
             if ( $this->User->save($this->request->data) ) {
                 $this->Session->setFlash(__('Käyttäjän tiedot päivitetty'));
                 $this->redirect(array('action' => 'view', $this->User->id));
             } else {
                 $this->Session->setFlash(__('Tietojen tallennus epäonnistui'));
+                //debug($this->User->validationErrors);
             }
 
         } else {
@@ -199,24 +270,7 @@ class UsersController extends AppController {
         }
     }
 
-/*
 
-    public function delete($id = null) {
-        if (!$this->request->is('post')) {
-            throw new MethodNotAllowedException();
-        }
-        $this->User->id = $id;
-        if (!$this->User->exists()) {
-            throw new NotFoundException(__('Invalid user'));
-        }
-        if ($this->User->delete()) {
-            $this->Session->setFlash(__('User deleted'));
-            $this->redirect(array('action' => 'index'));
-        }
-        $this->Session->setFlash(__('User was not deleted'));
-        $this->redirect(array('action' => 'index'));
-    }
-*/
     /**
      * Is user assigned to given course?
      * @return true if user is assigned to course
