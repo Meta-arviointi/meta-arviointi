@@ -1,17 +1,24 @@
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#ActionHandleForm input[type="checkbox"]').on('click', function(e) {
 
-            var form = $('#ActionHandleForm');
-            var url = $(form).attr( 'action' );
-            $.ajax({
-                method: "POST",
-                url: url,
-                data: $(form).serialize()
-            }).done(function(data) {
-                $('#handled').html(data);
+        $('.handle-action-form').each( function() {
+            $(this).find('.handle-action label').on('click', function(e) {
+                $(this).next('input').click();
+            });
+            $(this).find('input[type="checkbox"]').on('change', function(e) {
+                var form = $(this).closest('form');
+                var url = $(form).attr( 'action' );
+                $.ajax({
+                    method: "POST",
+                    url: url,
+                    data: $(form).serialize()
+                }).done(function(data) {
+                    $(form).closest('.action').find('.handler').html(data);
+                });
+
             });
         });
+
 
         $('.student-action-form').each(function() {
             var formToHandle = this;
@@ -257,14 +264,15 @@ echo $this->element('tab-menu', array('links' => $links));
             echo '<div class="action" id="action'.$action['id'].'">';
             echo '<div class="toolbar">';
             echo $this->Form->create('Action', array(
+                    'class' => 'handle-action-form',
                     'controller' => 'actions',
                     'action' => 'handle'
                 )
             );
             echo $this->Form->input('id', array('type' => 'hidden', 'default' => $action['id']));
-            echo '<div id="handle-action">';
+            echo '<div id="handle-action'.$action['id'].'" class="handle-action">';
             $handled_id = isset($action['handled_id']) ? $action['handled_id'] : 0;
-            echo $this->Form->label('handled_id', __('Käsitelty'));
+            echo $this->Form->label(null, __('Käsitelty'), array('class' => 'handle-label'));
             echo $this->Form->checkbox('handled_id', array(
                 'hiddenField' => false,
                 'value' => $handled_id ? $handled_id : $this->Session->read('Auth.User.id'),
@@ -299,7 +307,7 @@ echo $this->element('tab-menu', array('links' => $links));
             );
             echo '</div>';
             echo '<h3>' . $action_title . '</h3>';
-            echo '<div id="handled" class="meta">';
+            echo '<div id="handled'.$action['id'].'" class="meta handler">';
             if ( !empty($action['handled_id']) ) {
                 echo '<span>(' . __('Käsitellyt') . ': ' . 
                     $users[$action['handled_id']] . ' - ' .
