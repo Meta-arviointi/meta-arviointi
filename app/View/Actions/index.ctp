@@ -54,7 +54,7 @@ echo $this->element('tab-menu', array('links' => $links));
 
    echo $this->Form->input('exercise', array('options' => $exercises, 'label' => __('Harjoitus'), 'empty' => array('' => __('Kaikki')), 'default' => ''));
 
-    echo $this->Form->input('resolved', array('options' => array('' => __('Kaikki'), 'true' => __('Kyllä'), 'false' => __('Ei')), 'label' => __('Käsitelty'), 'empty' => array('' => __('Kaikki')), 'default' => ''));
+    echo $this->Form->input('resolved', array('options' => array('' => __('Kaikki'), 'true' => __('Kyllä'), 'false' => __('Ei')), 'label' => __('Käsitelty'), 'empty' => array('' => __('Kaikki')), 'default' => 'false'));
 
     echo $this->Form->end();
     
