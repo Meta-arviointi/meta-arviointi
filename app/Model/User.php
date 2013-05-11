@@ -107,7 +107,12 @@ class User extends AppModel {
                     )
             );
             $user = $this->find('first', $options);
-            return $user['Course'][0];
+            if(empty($user['Course'])) {
+                return false;
+            }
+            else {
+                return $user['Course'][0];
+            }
 
         } else { // Not valid user_id, return false
             return false;
