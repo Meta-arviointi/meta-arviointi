@@ -27,7 +27,7 @@
 	$subject = str_replace('{#aikaraja}', date('d.m.Y H:i', strtotime($action['Action']['deadline'])), $subject);
 	$subject = str_replace('{#opiskelija}', $action['CourseMembership']['Student']['first_name'] . ' ' . $action['CourseMembership']['Student']['last_name'] , $subject);
 	
-	$subject = utf8_decode($subject);
+	//$subject = utf8_decode($subject);
 
 ?>
 
