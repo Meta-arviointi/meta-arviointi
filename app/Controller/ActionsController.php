@@ -312,7 +312,7 @@ class ActionsController extends AppController {
             die();
         }
     }
-
+    
     public function edit($id, $action_type_id = 0) {
         $this->Action->contain(array(
                 'Exercise' => 

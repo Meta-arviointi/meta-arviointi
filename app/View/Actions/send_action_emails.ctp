@@ -1,5 +1,5 @@
 <?php
-	echo $this->Form->create('EmailMessage', array('id' => 'SendActionEmailsForm'));
+	echo $this->Form->create('EmailMessage', array('url' => array('admin' => false, 'controller' => 'email_messages', 'action' => 'send_many'), 'id' => 'SendActionEmailsForm'));
 	$i = 0;
 	$count = count($actions);
 	foreach($actions as $action) {
