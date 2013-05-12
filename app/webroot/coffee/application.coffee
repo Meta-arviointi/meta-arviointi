@@ -1,6 +1,6 @@
 # default configs for datepicker:
 
-window.datepickerDefaults = {
+window.datepickerDefaults =
     dayNames: [
         'Sunnuntai', 
         'Maanantai', 
@@ -25,12 +25,14 @@ window.datepickerDefaults = {
         'Marraskuu',
         'Joulukuu'
     ]
-    timeText: 'Aika',
-    hourText: 'Tunti',
-    minuteText: 'Minuutti',
+    timeText: 'Aika'
+    hourText: 'Tunti'
+    minuteText: 'Minuutti'
     firstDay: 1 #week starts on monday
     dateFormat: 'dd.mm.yy'
-}
+    showButtonPanel: true
+    closeText: 'Sulje'
+    currentText: 'Nyt'
 
 $.fn.setCursorPosition = (pos) ->
     if $(this).get(0).setSelectionRange
