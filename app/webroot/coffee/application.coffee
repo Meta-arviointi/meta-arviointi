@@ -61,7 +61,7 @@ $(document).ready ->
 
     $('.modal').hide()
 
-    $('.modal-close, .modal-overlay').click -> 
+    $('.modal-close').click -> 
         hideModal()
         false
 
