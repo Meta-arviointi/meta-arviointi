@@ -134,7 +134,7 @@ class AppController extends Controller {
                     $this->EmailMessage->set(array(
                         'sender' => $r->from,
                         'receiver' => $r->to,
-                        'subject' => $r->subject,
+                        'subject' => mb_decode_mimeheader($r->subject),
                         'content' => $r->body,
                         'sent_time' => date('Y-m-d H:i:sO', strtotime($r->date))
                     ));

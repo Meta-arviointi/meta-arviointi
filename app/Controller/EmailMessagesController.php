@@ -16,7 +16,7 @@
 				$this->request->data['EmailMessage']['receiver'] = $membership['Student']['email'];
 
 				// Append user name to the message
-				$this->request->data["EmailMessage"]["content"] .= "\n\n" . __("Ystävällisin terveisin") . ",\n" . $this->Session->read('Auth.User.name');
+				$this->request->data["EmailMessage"]["content"] .= "\r\n\r\n" . __("Ystävällisin terveisin") . ",\r\n" . $this->Session->read('Auth.User.name');
 
 				if($this->EmailMessage->save($this->request->data)) {
 					$message = array(
@@ -48,7 +48,7 @@
 					$em['receiver'] = $membership['Student']['email'];
 
 					// Append user name to the message
-					$em["content"] .= "\n\n" . __("Ystävällisin terveisin") . ",\n" . $this->Session->read('Auth.User.name');
+					$em["content"] .= "\r\n\r\n" . __("Ystävällisin terveisin") . ",\r\n" . $this->Session->read('Auth.User.name');
 
 					$this->EmailMessage->create();
 					if($this->EmailMessage->save($em)) {
@@ -77,7 +77,7 @@
 			$em['receiver'] = $membership['Student']['email'];
 
 			// Append user name to the message
-			$em["content"] .= "\n\n" . __("Ystävällisin terveisin") . ",\n" . $this->Session->read('Auth.User.name');
+			$em["content"] .= "\r\n\r\n" . __("Ystävällisin terveisin") . ",\r\n" . $this->Session->read('Auth.User.name');
 
 			$this->EmailMessage->create();
 			if($this->EmailMessage->save($em)) {
@@ -127,6 +127,7 @@
 				$ch = curl_init($json_url);
 				$options = array(
 					CURLOPT_RETURNTRANSFER => true,
+					CURLOPT_BINARYTRANSFER => true,
 					CURLOPT_SSL_VERIFYPEER => false,
 					CURLOPT_HTTPHEADER => array("Content-type: multipart/form-data"),
 					//CURLOPT_HTTPHEADER => array('Content-type: application/json') ,
