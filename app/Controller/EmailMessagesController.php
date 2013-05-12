@@ -69,6 +69,38 @@
 			$this->redirect($this->referer());
 		}
 
+		public function send_ajax() {
+			$msgs = array_values($this->request->data['EmailMessage']);
+			$em = $msgs[0];
+
+			$membership = $this->EmailMessage->CourseMembership->findById($em['course_membership_id']);
+			$em['receiver'] = $membership['Student']['email'];
+
+			// Append user name to the message
+			$em["content"] .= "\n\n" . __("Ystävällisin terveisin") . ",\n" . $this->Session->read('Auth.User.name');
+
+			$this->EmailMessage->create();
+			if($this->EmailMessage->save($em)) {
+				$message = array(
+					"to" => $em["receiver"],
+					"subject" => $em["subject"],
+					"body" => $em["content"]
+				);
+				if($this->_send_via_gateway($message)) {
+					$this->EmailMessage->set('sent_time', date('Y-m-d H:i:sO'));
+					$this->EmailMessage->set('read_time', date('Y-m-d H:i:sO'));
+					$this->EmailMessage->save();
+					echo 'SUCCESS';
+					die();
+				}
+				else {
+					echo 'FAIL';
+					die();
+				}
+			}
+
+		}
+
 
 		public function send_pw($email, $password, $name) {
 			App::uses('CakeEmail', 'Network/Email');

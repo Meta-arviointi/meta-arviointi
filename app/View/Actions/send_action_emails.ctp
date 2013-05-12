@@ -44,13 +44,15 @@
 
 		echo '<strong>'.__('Vastaanottaja').':</strong> ' . $action['CourseMembership']['Student']['name'] . ' &lt;' . $action['CourseMembership']['Student']['email'] . '&gt;';
 
+		echo '<div class="inputs">';
 		echo $this->Form->input('EmailMessage.'.$i.'.course_membership_id', array('type' => 'hidden', 'value' => $action['CourseMembership']['id']));
         echo $this->Form->input('EmailMessage.'.$i.'.subject', array('label' => __('Otsikko'), 'value' => $subject));
         echo $this->Form->input('EmailMessage.'.$i.'.content', array('label' => __('Viesti'), 'value' => $content, 'rows' => 10));
         echo __('Ystävällisin terveisin') . ',<br>' . $this->Session->read('Auth.User.name');
         echo '<div class="submit">';
-        echo $this->Html->link(__('Lähetä'), array('controller' => 'email_messages', 'action' => 'send'), array('class' => 'button'));
+        echo $this->Html->link(__('Lähetä'), array('controller' => 'email_messages', 'action' => 'send_ajax'), array('class' => 'button send-single'));
         echo $this->Form->submit(__('Lähetä kaikki'), array('div' => false, 'class' => 'send-all'));
+        echo '</div>';
         echo '</div>';
         echo '</div>';
         $i++;
@@ -75,4 +77,26 @@
     $('#SendActionEmailsForm .send-all').click(function() {
     	return confirm('<?php echo __('Haluatko varmasti lähettää kaikki viestit?')?>');
     });
+
+    $('#SendActionEmailsForm .send-single').click(function() {
+    	msg = {};
+    	msgform = $(this).parents('.message-form')
+    	msgform.find('input, textarea').each(function() {
+    		input = $(this);
+    		msg[input.attr('name')] = input.val();
+    	});
+    	$.ajax({
+    		url: $(this).attr('href'),
+    		type: 'POST',
+    		data: msg,
+    		success: function(data) {
+    			if(data == 'SUCCESS') {
+    				msgform.find('.inputs').remove();
+    				msgform.append('<p>Lähetetty</p>');
+    			}
+    		}
+    	});
+    	return false;
+    });
+
 </script>
