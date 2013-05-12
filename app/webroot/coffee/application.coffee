@@ -120,6 +120,7 @@ $(document).ready ->
         false
 
     $('#student-email-form a.cancel').on 'click', ->
+        $('#EmailMessageSubject, #EmailMessageContent').val ''
         $(this).parents('form').hide()
         false
 
@@ -253,7 +254,8 @@ $(document).ready ->
         $.scrollTo studentEmailFormContainer, 500, {offset: {top: -120}}
         $('#student-email-form').slideDown 500
 
-    $(document).tooltip()
+    $(document).tooltip
+        tooltipClass: 'meta-tooltip'
     
     return
 
