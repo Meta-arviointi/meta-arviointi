@@ -130,12 +130,17 @@ class AppController extends Controller {
             if(!empty($results)) {
                 $this->loadModel('EmailMessage');
                 foreach($results as $r) {
+                    $base64body = base64_decode($r->body, true);
+                    if($base64body) {
+                        $r->body = $base64body;
+                    }
+
                     $this->EmailMessage->create();
                     $this->EmailMessage->set(array(
                         'sender' => $r->from,
                         'receiver' => $r->to,
-                        'subject' => mb_decode_mimeheader($r->subject),
-                        'content' => $r->body,
+                        'subject' => str_replace("_", " ", mb_decode_mimeheader($r->subject)),
+                        'content' => quoted_printable_decode($r->body),
                         'sent_time' => date('Y-m-d H:i:sO', strtotime($r->date))
                     ));
 
