@@ -53,11 +53,13 @@ echo $this->element('tab-menu', array('links' => $links));
     </div>
 </div>
 <div class="row">
-    <div class="twelvecol last">
 <?php
+    echo '<div class="ninecol">';
     echo '<h1>'.$course['name'].'</h1>';
     echo '<p class="course-dates">' .__('Kurssi alkaa').': '. $this->Time->Format('j.n.Y', $course['starttime']) . '</p>';
     echo '<p class="course-dates">' .__('Kurssi päättyy').': '. $this->Time->Format('j.n.Y', $course['endtime']) . '</p>';
+    echo '</div>';
+    echo '<div class="threecol last course-tools">';
     echo $this->Html->link(__('Muokkaa'), array(
             'action' => 'edit',
             $course['id']
@@ -66,23 +68,14 @@ echo $this->element('tab-menu', array('links' => $links));
             'class' => 'button modal-link'
         )
     );
+    echo '</div>';
+    echo '</div>';
 
     echo '<hr class="row">';
 
-    echo '<h2>Harjoitukset</h2>';
-    echo '<table class="data-table">';
-    echo '    <tr>';
-    echo '        <th>'. __('Harjoituskerta') .'</th>';
-    echo '        <th colspan="2">'. __('Tehtävä') .'</th>';
-    echo '        <th colspan="2">'. __('Arviointi') .'</th>';
-    echo '    </tr>';
-    echo '    <tr>';
-    echo '        <th></th>';
-    echo '        <th>'. __('Aukeaa') .'</th>';
-    echo '        <th>'. __('Palautus') .'</th>';
-    echo '        <th>'. __('Aukeaa') .'</th>';
-    echo '        <th>'. __('Palautus') .'</th>';
-    echo '    </tr>';
+    echo '<div class="row">';
+    echo '<div class="twelvecol last">';
+
     if ( $edit_exercises ) {
         echo $this->Form->create('Exercise', array(
                 'url' => array(
@@ -95,6 +88,29 @@ echo $this->element('tab-menu', array('links' => $links));
                 )
             )
         );
+        echo '<div class="section-header">';
+        echo '<h2>Harjoitukset</h2>';
+
+        echo $this->Form->submit(__('Tallenna harjoitukset'), array('div' => false));
+        echo $this->Html->link(__('Peruuta'), array($course_id), array('class' => 'button'));
+        echo $this->Html->link('Lisää harjoitus', array('action' => 'add', 'controller' => 'exercises'), array('class' => 'button modal-link', 'id' => 'add-exercise-link'));
+
+        echo '</div>';
+
+        echo '<table class="data-table">';
+        echo '    <tr>';
+        echo '        <th>'. __('Harjoituskerta') .'</th>';
+        echo '        <th colspan="2">'. __('Tehtävä') .'</th>';
+        echo '        <th colspan="2">'. __('Arviointi') .'</th>';
+        echo '    </tr>';
+        echo '    <tr>';
+        echo '        <th></th>';
+        echo '        <th>'. __('Aukeaa') .'</th>';
+        echo '        <th>'. __('Palautus') .'</th>';
+        echo '        <th>'. __('Aukeaa') .'</th>';
+        echo '        <th>'. __('Palautus') .'</th>';
+        echo '    </tr>';
+
         $i = 0;
         foreach($exercises as $exercise) {
 
@@ -145,8 +161,43 @@ echo $this->element('tab-menu', array('links' => $links));
             $i++;
         }
 
+        echo '</table>';
+        echo $this->Form->end();
+
     } else {
+        echo '<div class="section-header">';
+        echo '<h2>Harjoitukset</h2>';
+
+        if (!empty($exercises) ) {
+            echo $this->Html->link(__('Muokkaa harjoituksia'), array(
+                    $course_id,
+                    '?' => array('edit' => 'exercises')
+                ),
+                array('class' => 'button')
+            );
+        }
+
+        echo $this->Html->link('Lisää harjoitus', array('action' => 'add', 'controller' => 'exercises'), array('class' => 'button modal-link', 'id' => 'add-exercise-link'));
+
+        echo '</div>';
+
+        echo '<table class="data-table">';
+        echo '    <tr>';
+        echo '        <th>'. __('Harjoituskerta') .'</th>';
+        echo '        <th colspan="2">'. __('Tehtävä') .'</th>';
+        echo '        <th colspan="2">'. __('Arviointi') .'</th>';
+        echo '    </tr>';
+        echo '    <tr>';
+        echo '        <th></th>';
+        echo '        <th>'. __('Aukeaa') .'</th>';
+        echo '        <th>'. __('Palautus') .'</th>';
+        echo '        <th>'. __('Aukeaa') .'</th>';
+        echo '        <th>'. __('Palautus') .'</th>';
+        echo '    </tr>';
+
         if ( !empty($exercises) ) {
+
+
             foreach($exercises as $exercise) {
                 echo '<tr>';
                 echo '<td>'. $exercise['exercise_string'] .'</td>';
@@ -158,30 +209,18 @@ echo $this->element('tab-menu', array('links' => $links));
         } else {
              echo '<tr><td class="empty" colspan="5">' . __('Ei harjoituksia') . '</td><tr>';
         }    
+
+        echo '</table>';
     }
     
-    
-
-    echo '</table>';
-    if ( $edit_exercises ) {
-        echo $this->Form->end(__('Tallenna harjoitukset'));
-        echo $this->Html->link(__('Peruuta'), array(
-                $course_id,
-            ),
-            array('class' => 'button')
-        );    
-    } else if ( !empty($exercises) ) {
-        echo $this->Html->link(__('Muokkaa harjoituksia'), array(
-                $course_id,
-                '?' => array('edit' => 'exercises')
-            ),
-            array('class' => 'button')
-        );    
-    }
-    echo $this->Html->link('Lisää harjoitus', array('action' => 'add', 'controller' => 'exercises'), array('class' => 'button modal-link', 'id' => 'add-exercise-link'));
-
     echo '<hr class="row">';
+    echo '<div class="section-header">';
     echo '<h2>'.__('Assistentit').'</h2>';
+
+    echo $this->Html->link('Lisää/poista kurssin assistentteja', array('action' => 'add_users', 'controller' => 'courses'), array('class' => 'button modal-link', 'id' => 'add-user-link'));
+   
+    echo '</div>';
+
     echo '<table class="data-table">';
     echo '    <tr>';
     echo '        <th>'. __('Nimi') .'</th>';
@@ -206,11 +245,20 @@ echo $this->element('tab-menu', array('links' => $links));
     
     echo '</table>';
 
-    echo $this->Html->link('Lisää/poista kurssin assistentteja', array('action' => 'add_users', 'controller' => 'courses'), array('class' => 'button modal-link', 'id' => 'add-user-link'));
-   
-
-    echo '<hr class="row">';    
+    echo '<hr class="row">';   
+    echo '<div class="section-header">'; 
     echo '<h2>'.__('Opiskelijat').'</h2>';
+    echo $this->Html->link('Lisää uusi opiskelija kurssille', array(
+                'action' => 'add',
+                'controller' => 'course_memberships'
+            ),
+            array(
+                'class' => 'button modal-link',
+                'id' => 'add-students-link',
+                'div'
+            )
+    );
+    echo '</div>';
 
 
     // Selection for assistent groups
@@ -384,16 +432,6 @@ echo $this->element('tab-menu', array('links' => $links));
     }
     echo '</table>';
     echo $this->Form->end();
-    echo $this->Html->link('Lisää uusi opiskelija kurssille', array(
-                'action' => 'add',
-                'controller' => 'course_memberships'
-            ),
-            array(
-                'class' => 'button modal-link',
-                'id' => 'add-students-link',
-                'div'
-            )
-    );
     echo '<div id="csv-upload">';
     echo '<h2>' . __('Lisää opiskelijat CSV-tiedostosta') . '</h2>';
     echo '<div>Rivit muodossa: sukunimi;etunimi;opnumero;email;assari_tunnus</div>';
