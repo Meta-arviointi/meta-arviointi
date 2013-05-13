@@ -190,8 +190,11 @@ class AppController extends Controller {
             //Check for chat messages 
             $this->loadModel('ChatMessage');
             $chat_messages = $this->ChatMessage->find('all', array(
-                'order' => 'ChatMessage.id DESC',
-                'limit' => 10
+                'order' => 'ChatMessage.created DESC',
+                'limit' => 50,
+                'conditions' => array(
+                    'ChatMessage.created >' => date('Y-m-d H:i:s', strtotime('-7 days'))
+                )
             ));
             $chat_messages = array_reverse($chat_messages);
             $this->set('chat_messages', $chat_messages);

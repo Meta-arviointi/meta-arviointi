@@ -167,7 +167,7 @@
 					<div class="chat-messages">
 						<?php foreach($chat_messages as $msg) {
 							echo '<div class="chat-message" data-msg-id="'.$msg['ChatMessage']['id'].'">';
-							echo '<span class="user">'.$msg['User']['first_name'].' '.$msg['User']['last_name'].'</span>';
+							echo '<span class="timestamp">'.date('H:i', strtotime($msg['ChatMessage']['created'])).'</span><span class="user">'.$msg['User']['first_name'].' '.$msg['User']['last_name'].'</span>';
 							echo '<p class="chat-message-content">'.$msg['ChatMessage']['content'].'</p>';
 							echo '</div>';
 						} ?>

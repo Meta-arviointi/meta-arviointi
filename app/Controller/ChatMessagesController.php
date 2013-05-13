@@ -25,7 +25,8 @@
 				$msgs[] = array(
 					'id' => $msg['ChatMessage']['id'],
 					'user' => $msg['User']['first_name'] . ' ' . $msg['User']['last_name'],
-					'content' => $msg['ChatMessage']['content']
+					'content' => $msg['ChatMessage']['content'],
+					'timestamp' => date('H:i', strtotime($msg['ChatMessage']['created']))
 				);
 			}
 			$this->set('json', $msgs);

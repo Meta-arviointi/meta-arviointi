@@ -150,12 +150,12 @@ $(document).ready ->
         chat_input = $('#chat-input')
         chat_refreshing = false
 
-        chat_scroll_bottom = ->
-            chat_viewport.scrollTo 'max', 500
+        chat_scroll_bottom = (animate = true) ->
+            chat_viewport.scrollTo 'max', (if animate then 500 else 0)
             return
-        chat_scroll_bottom()
+        chat_scroll_bottom(false)
 
-        $('#chat-toggle').on 'click', ->
+        $('.chat-header').on 'click', ->
             chat.toggleClass 'open'
             chat_scroll_bottom()
             state = 'closed'
@@ -186,6 +186,7 @@ $(document).ready ->
                         for msg in data
                             if chat_messages.children('.chat-message[data-msg-id="'+msg.id+'"]').length == 0
                                 chat_messages.append('<div class="chat-message" data-msg-id="' + msg.id + '">
+                                    <span class="timestamp">' + msg.timestamp + '</span>
                                     <span class="user">' + msg.user + '</span>
                                     <p class="chat-message-content">' + msg.content + '</p>
                                 </div>')
